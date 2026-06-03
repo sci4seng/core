@@ -421,7 +421,22 @@ SS. **Two related fixes for the Rmd-vignette ↔ docs/models drift
 
 ### Lift function documentation (deferred 2026-05-25)
 
-TT. **Add inline WHY comments to every function in
+TT. **DONE 2026-06-03.** Inline WHY comments on `../lifts/R/functions.R`
+    body. 9 priority helpers (detect_late_hires, compute_velocity_changes,
+    parse_szz_bugfixes, compute_injection_changes, estimate_leak_rate,
+    parse_mbox_dir, build_reply_edges, detect_radio_silence, plus
+    compute_file_churn and assign_file_partition) already had inline
+    comments from an earlier pass that survived the port. Today filled
+    the gap on 10 more (compute_cohorts, estimate_transition_rates,
+    compute_failrate_per_window, compute_per_phase_defects,
+    compute_dora_metrics, get_tag_dates, compute_pay_rate,
+    compute_born_rate_proxy, flatten_refactoring_json,
+    compute_file_bug_frequency). Source-check passes (R 4.6, 32
+    functions exported). Commit `2483667` in sibling sci4seng/lifts.
+
+    Original deferral spec preserved below for reference.
+
+TT (original spec). **Add inline WHY comments to every function in
     `../lifts/R/functions.R`.** Today each function carries a
     roxygen header (param/return/export) but the function BODY has
     no inline comments explaining the mechanism. Reader can see
