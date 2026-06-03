@@ -1,0 +1,282 @@
+- name: alertfatigue
+  year: "—"
+  source: "[tacit, SOC literature]"
+  tier: C
+  data: none
+  data_note: ""
+- name: brokenwin
+  year: "—"
+  source: "Hunt &amp; Thomas, The Pragmatic Programmer (book); Wilson+Kelling 1982 (essay)"
+  tier: B
+  data: partial
+  data_note: "could quantify TODO/FIXME density growth over time"
+- name: bugage
+  year: "—"
+  source: "[tacit]"
+  tier: C
+  data: partial
+  data_note: "would need issue-open-time time series"
+- name: buildtrap
+  year: "—"
+  source: "Perri, Escaping the Build Trap (book)"
+  tier: B
+  data: none
+  data_note: "no value-realised data in OSS git"
+- name: cace
+  year: "2015"
+  source: "Sculley et al NeurIPS — Hidden Technical Debt in ML"
+  tier: A
+  data: none
+  data_note: "same gap as drift"
+- name: collapse
+  year: "2024"
+  source: "Shumailov et al Nature — 10.1038/s41586-024-07566-y"
+  tier: A
+  data: none
+  data_note: "no training-data provenance logs"
+- name: commons
+  year: "—"
+  source: "Hardin Science 1968 — 10.1126/science.162.3859.1243"
+  tier: A
+  data: partial
+  data_note: "per-team file-touches share of common modules; no CI data"
+- name: configdrift
+  year: "—"
+  source: "[tacit]"
+  tier: C
+  data: none
+  data_note: "environment configs are deploy-time, not git-resident"
+- name: coordn2
+  year: "1975"
+  source: "Brooks (MMM); Curtis et al CACM 1988"
+  tier: B
+  data: have
+  data_note: "identity_match count vs commits-per-week → fit n(n−1)/2 overhead"
+- name: costchange
+  year: "1981"
+  source: "Boehm, Software Engineering Economics (book)"
+  tier: A
+  data: have
+  data_note: "SZZ pairs + release tags → phase-bucketed bug cost"
+- name: ctxswitch
+  year: "—"
+  source: "Weinberg, Quality Software Management (book); Meyer et al FSE 2014"
+  tier: B
+  data: have
+  data_note: "per-developer per-day file-diversity → context-switch proxy"
+- name: deadcode
+  year: "—"
+  source: "[tacit]"
+  tier: C
+  data: partial
+  data_note: "could approximate via Depends reachability (callable but never called)"
+- name: deprot
+  year: "2018"
+  source: "Decan, Mens, Constantinou MSR — 10.1145/3196398.3196401"
+  tier: A
+  data: have
+  data_note: "pom.xml / requirements.txt git history → dependency version trajectory"
+- name: diffusion
+  year: "1969"
+  source: "Bass Management Science — 10.1287/mnsc.15.5.215"
+  tier: A
+  data: partial
+  data_note: "first-use spreading of an internal API call could be Bass-fit; needs API-usage scrape"
+- name: docdrift
+  year: "—"
+  source: "[tacit]"
+  tier: C
+  data: partial
+  data_note: "README/docs/*.md git-blame age vs whole-repo touch rate"
+- name: drift
+  year: "—"
+  source: "Gama et al ACM CSUR 2014 — 10.1145/2523813"
+  tier: A
+  data: none
+  data_note: "no project on disk is an ML system with production accuracy logs"
+- name: entropy
+  year: "1980"
+  source: "Lehman, Proc. IEEE — 10.1109/PROC.1980.11805"
+  tier: A
+  data: have
+  data_note: "gitlog + scc → LOC trajectory per release tag"
+- name: erodegoals
+  year: "—"
+  source: "Senge archetype (book)"
+  tier: B
+  data: partial
+  data_note: "CI test-suite pass-rate drift would need GH Actions logs"
+- name: escalation
+  year: "—"
+  source: "Staw Org Behavior 1976 — 10.1016/0030-5073(76)90005-2"
+  tier: A
+  data: none
+  data_note: "sunk-cost decisions not visible in OSS git history"
+- name: estbias
+  year: "—"
+  source: "Jorgensen IEEE TSE 2004 — 10.1109/TSE.2004.108; Kahneman+Tversky '79"
+  tier: A
+  data: none
+  data_note: "no project on disk records estimate-vs-actual time"
+- name: exposure
+  year: "2006"
+  source: "Frei et al SIGCOMM LSAD — 10.1145/1162666.1162671"
+  tier: A
+  data: partial
+  data_note: "NVD CVE entries for openssl/tomcat exist publicly; would need NVD-to-commit mapping pipeline"
+- name: flagdebt
+  year: "—"
+  source: "[tacit]"
+  tier: C
+  data: partial
+  data_note: "could grep for feature-flag patterns in code, age them via git blame"
+- name: fwchurn
+  year: "—"
+  source: "[tacit]"
+  tier: C
+  data: none
+  data_note: "cross-project framework adoption telemetry absent"
+- name: goodhart
+  year: "—"
+  source: "Goodhart 1975; Strathern 1997 (peer-reviewed adaptation)"
+  tier: B
+  data: none
+  data_note: "metric-gaming signals are mostly absent in OSS"
+- name: hyrum
+  year: "—"
+  source: "[named, unmodeled — Hyrum's Law]"
+  tier: C
+  data: none
+  data_note: "would need usage telemetry of internal APIs"
+- name: labeldebt
+  year: "—"
+  source: "[tacit]"
+  tier: C
+  data: none
+  data_note: ""
+- name: limits
+  year: "—"
+  source: "Senge, The Fifth Discipline (book)"
+  tier: B
+  data: have
+  data_note: "commits/week vs team size → asymptotic ceiling fit"
+- name: linus
+  year: "1999"
+  source: "Raymond, The Cathedral and the Bazaar; Mockus TOSEM 2002"
+  tier: B
+  data: have
+  data_note: "review-comment counts from GH PR data + SZZ for defect recurrence"
+- name: little
+  year: "1961"
+  source: "Little Operations Research — 10.1287/opre.9.3.383"
+  tier: A
+  data: have
+  data_note: "GH issue/PR data for Helix + kaiaulu + JIRA gives WIP, throughput, cycle time"
+- name: migration
+  year: "—"
+  source: "[tacit]"
+  tier: C
+  data: partial
+  data_note: "detect via parallel-API patterns in commit messages (\"deprecat\", \"migrate\")"
+- name: mirroring
+  year: "2006"
+  source: "MacCormack, Baldwin, Rusnak Management Science — 10.1287/mnsc.1060.0552"
+  tier: A
+  data: have
+  data_note: "Depends file-DSM + gitlog who-touches-what DSM → MacCormack mirror coefficient"
+- name: nosilver
+  year: "1986"
+  source: "Brooks IEEE Computer — 10.1109/MC.1987.1663532"
+  tier: A
+  data: partial
+  data_note: "essential vs accidental complexity is inherently judgmental; could proxy via RefMiner refactor share"
+- name: orgchurn
+  year: "2010"
+  source: "Nagappan, Murphy, Basili ICSE — 10.1145/1368088.1368160"
+  tier: A
+  data: have
+  data_note: "identity-departure detection (last commit &gt; N months) + SZZ rate spike"
+- name: ossfail
+  year: "2017"
+  source: "Coelho, Valente FSE — 10.1145/3106237.3106246"
+  tier: A
+  data: have
+  data_note: "truck factor from gitlog + observed \"death\" partial via abandoned branches"
+- name: ownership
+  year: "2011"
+  source: "Bird et al FSE — 10.1145/2025113.2025119"
+  tier: A
+  data: have
+  data_note: "per-module per-author commits + SZZ defects → minor-author share regression"
+- name: pareto
+  year: "1992"
+  source: "Fenton+Ohlsson IEEE TSE — 10.1109/32.879815; Ostrand+Weyuker FSE"
+  tier: A
+  data: have
+  data_note: "SZZ + file mapping → per-file bug count, hotspot persistence"
+- name: patchherd
+  year: "—"
+  source: "SIR-shaped; no SE-specific peer-reviewed source"
+  tier: B
+  data: none
+  data_note: "fix-uptake telemetry not in OSS git"
+- name: postel
+  year: "—"
+  source: "RFC 760/793; IAB RFC 5841 \"harmful consequences\""
+  tier: B
+  data: none
+  data_note: "interop ambiguity logs not in OSS git"
+- name: revlat
+  year: "—"
+  source: "[tacit]"
+  tier: C
+  data: have
+  data_note: "GH PR data for Helix + kaiaulu has review wait timestamps"
+- name: riskcomp
+  year: "—"
+  source: "Peltzman JPE 1975 — 10.1086/260352"
+  tier: B
+  data: none
+  data_note: "would need a controlled experiment (more tests → less careful code)"
+- name: scope
+  year: "—"
+  source: "Boehm; Jones, Applied Software Measurement (books)"
+  tier: B
+  data: have
+  data_note: "JIRA issue inflow rate vs close rate gives backlog growth"
+- name: secondsys
+  year: "1975"
+  source: "Brooks, MMM (book)"
+  tier: B
+  data: none
+  data_note: "Apache projects don't have a clean \"system #2 attempt\" event"
+- name: shiftburden
+  year: "—"
+  source: "Repenning, Sterman ASQ 2002 — 10.2307/3094847"
+  tier: A
+  data: partial
+  data_note: "heuristic hotfix detection from commit msg (\"hotfix\", \"urgent\") + SZZ recurrence"
+- name: successful
+  year: "—"
+  source: "Merton Science 1968 — 10.1126/science.159.3810.56"
+  tier: B
+  data: have
+  data_note: "module test-coverage / commit attention divergence over time"
+- name: tenx
+  year: "1968"
+  source: "Sackman, Erikson, Grant CACM — 10.1145/362851.362858"
+  tier: A
+  data: partial
+  data_note: "per-developer LOC/commit/day as productivity proxy; not Sackman's controlled-task design"
+- name: testshape
+  year: "2009"
+  source: "Cohn, Succeeding with Agile (book; \"test pyramid\")"
+  tier: B
+  data: partial
+  data_note: "infer test-tier from path prefix (unit/integ/system) heuristically"
+- name: wirth
+  year: "1995"
+  source: "Wirth IEEE Computer — 10.1109/2.348001"
+  tier: A
+  data: partial
+  data_note: "binary size per release tag computable; hardware capability is exogenous (Moore's-law table)"
