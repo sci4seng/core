@@ -130,6 +130,33 @@ def move_project(p: Path, dry_run: bool):
     return True
 
 
+def render_vignettes(dry_run: bool) -> bool:
+    """Knit canonical vignettes via `make -C paper render`. Make's dep
+    tracking skips up-to-date .html outputs, so this is cheap if no
+    Rmd has changed. Returns True if make returned 0.
+
+    Requires Rscript on PATH; quietly succeeds and warns otherwise so
+    a missing R toolchain doesn't kill the whole pipeline."""
+    rscript = shutil.which("Rscript")
+    if rscript is None:
+        print("\n→ render: SKIPPED (Rscript not on PATH — install R + "
+              "kaiaulu to enable raw-data render).")
+        return True
+    cmd = ["make", "-C", "paper", "render"]
+    print(f"\n→ render: {' '.join(cmd)}")
+    if dry_run:
+        return True
+    r = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True)
+    tail = (r.stdout + r.stderr).strip().splitlines()
+    for line in tail[-4:]:
+        print(f"  {line}")
+    if r.returncode != 0:
+        print(f"  render returncode={r.returncode}")
+        return False
+    print(f"  render OK ({len(tail)} make output lines)")
+    return True
+
+
 def run_step(label, cmd, cwd, dry_run: bool):
     print(f"\n→ {label}: {' '.join(cmd)} (cwd={cwd.relative_to(ROOT)})")
     if dry_run:
@@ -183,6 +210,7 @@ def main():
     before = snapshot_audit()
 
     # 1+2. Move artifacts
+    knitted_projects = []
     if lifts or projects:
         print("\nMoving artifacts:")
         for p in lifts:
@@ -191,10 +219,20 @@ def main():
             for p in projects:
                 ok = move_project(p, args.dry_run)
                 if ok:
-                    print(f"        TODO: knit extract/lifts/*.Rmd against data/{p.name}/ "
-                          f"(R toolchain — not yet wired; run `make render` manually for now).")
+                    knitted_projects.append(p.name)
         elif projects:
             print(f"\n  --lifts-only: leaving {len(projects)} project subdir(s) untouched.")
+
+    # 3. Raw-data render path (ZZ). After moving project subdirs, knit
+    # the canonical vignettes — make's dep tracking skips up-to-date
+    # html. Vignettes write per-project lift CSVs directly into
+    # paper/outputs/, so a successful render is also the source for
+    # the subsequent melt_lifts step.
+    if knitted_projects and not args.lifts_only:
+        ok = render_vignettes(args.dry_run)
+        if not ok:
+            print("  render FAILED (one or more vignettes did not knit). "
+                  "Continuing pipeline with whatever CSVs already exist.")
 
     # 4-10. Pipeline
     have_sources = lift_source_csvs_exist()

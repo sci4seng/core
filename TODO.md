@@ -647,12 +647,23 @@ ZZ. **PARTIAL DONE.** Built `data/dropzone/` + `scripts/refresh.py`
     then prints a per-model before/after diff of (cell, verdict,
     verdict_n, gap).
 
-    **Raw-data render path still TODO**: drops of
-    `data/dropzone/<project>/git_repo/` etc. get moved to
-    `data/<project>/` but auto-knitting `extract/lifts/*.Rmd` is not
-    yet wired — needs Rscript + kaiaulu + perceval toolchain check
-    + per-project Rmd discovery. For now, refresh.py prints a
-    `TODO: run \`make render\` manually` note.
+    **Raw-data render path: DONE 2026-06-03.** Wired
+    `scripts/refresh.py` to call `make -C paper render` after moving
+    project subdirs from `data/dropzone/<p>/` to
+    `data/<p>/`. The Makefile's `render` target already uses make's
+    dep tracking, so up-to-date `.html` outputs are skipped (no waste).
+    Vignettes write per-project lift CSVs straight into
+    `paper/outputs/`, where `melt_lifts.py` finds them on the next
+    pipeline step.
+
+    Toolchain check via `shutil.which("Rscript")`: if R is not
+    installed, the render step prints a warning and continues with
+    whatever CSVs already exist. This keeps the lift-CSV-only flow
+    (the original PARTIAL-DONE path) working even on machines
+    without an R toolchain.
+
+    Dry-run verified: `python3 scripts/refresh.py --dry-run` shows the
+    correct sequence (move → render → melt_lifts → ... → gen_md).
 
     Original entry preserved below for reference.
 
