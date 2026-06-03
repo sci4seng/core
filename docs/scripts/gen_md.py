@@ -57,33 +57,98 @@ def front_matter(title, parent=None, nav_order=None, has_children=False):
     return "\n".join(lines) + "\n\n"
 
 
+# --- Glossary linking ------------------------------------------------------
+# Each scorecard panel mentions terms whose canonical defs live in
+# docs/glossary.md. gloss() emits a markdown link with a hover tooltip
+# (rendered by Jekyll as <a href="..." title="...">).
+#
+# Anchor + tooltip are looked up from this dict; bare terms not in the
+# dict pass through as `name` with no link.
+
+GLOSS = {
+    "boundary_adq":       ("boundary_adq",       "F&S 4/7: tmax=80 verdict still holds"),
+    "anomaly_check":      ("anomaly_check",      "F&S behaviour-anomaly: hi inputs do not flip y sign"),
+    "extreme_eqn":        ("extreme_eqn",        "F&S extreme-conditions: no NaN/Inf at lo/hi inputs"),
+    "mr_zero_input":      ("mr_zero_input",      "Chen MR3: ctrl=lo idempotent"),
+    "mr_monotone":        ("mr_monotone",        "Chen MR1: y monotone in ctrl over 5 grid points"),
+    "mr_dt_halving":      ("mr_dt_halving",      "Chen MR8 / Sterman 6: y invariant to dt/2"),
+    "mr_bound_consist":   ("mr_bound_consist",   "Chen MR9: clip vs reject agree"),
+    "mr_scale":           ("mr_scale",           "Chen MR2: 2x inputs do not flip sign or explode"),
+    "rq":                 ("rq",                 "Single-shot research-question test"),
+    "rq_n":               ("rq_n",               "N-shot rq with Cliff's d + KS + median-eps"),
+    "verdict":            ("verdict",            "CONFIRM / REFUTE / neutral on (y0, y1)"),
+    "verdict_n":          ("verdict_n",          "N-shot verdict via stats.same"),
+    "gap":                ("gap",                "signed y1 - y0 from single-shot rq()"),
+    "gap_n":              ("gap_n",              "pooled-mean y1 - y0 from rq_n"),
+    "sd0_n":              ("sd0_n",              "stddev of y0 samples in rq_n"),
+    "sd1_n":              ("sd1_n",              "stddev of y1 samples in rq_n"),
+    "eps_n":              ("eps_n",              "0.35 * sd(y0): same-list tolerance"),
+    "stress(inputs)":     ("stress_inputs",      "200 perturbed UPPER-input backgrounds"),
+    "stress(params)":     ("stress_params",      "200 perturbed lower-param backgrounds"),
+    "inp_cnt":            ("inp_cnt",            "CONFIRM count out of 200 input-perturbed runs"),
+    "par_cnt":            ("par_cnt",            "CONFIRM count out of 200 param-perturbed runs"),
+    "2x2 cell":           ("cell",               "{universal, process, world, fragile} from (inp_cnt, par_cnt)"),
+    "universal":          ("universal",          "Both inputs and params CONFIRM"),
+    "process-conditional":("process-conditional","Inputs CONFIRM, params not"),
+    "world-conditional":  ("world-conditional",  "Params CONFIRM, inputs not"),
+    "fragile":            ("fragile",            "Neither axis CONFIRMs in majority"),
+    "Cliff's delta":      ("cliffs_delta",       "Non-parametric effect size; same iff |d|<=0.195"),
+    "KS":                 ("ks",                 "Kolmogorov-Smirnov distance"),
+    "param_plausibility": ("param_plausibility", "in_range/at_boundary/out_of_range from boundary_check.csv"),
+    "boundary_adq_data":  ("boundary_adq_data",  "Lifted value reaches or exceeds declared [lo, hi]"),
+    "calibrated_rq_rerun":("calibrated_rq_rerun","rq() under Helix-calibrated init"),
+    "family_member_coherence": ("family_member_coherence", "Per-project sign agreement across the family"),
+    "behavior_reproduction":   ("behavior_reproduction",   "Sim trajectory vs monthly historical CSV"),
+}
+
+
+def gloss(term, label=None, from_dir="models"):
+    """Markdown link to docs/glossary.md anchor with hover tooltip.
+
+    from_dir picks the relative prefix:
+      "models"  -> ../glossary.md  (per-model pages)
+      "root"    -> glossary.md     (findings.md / data.md / index)
+    Bare terms not in GLOSS pass through unwrapped (still in backticks).
+    """
+    spec = GLOSS.get(term)
+    visible = label or term
+    if not spec:
+        return f"`{visible}`"
+    anchor, tip = spec
+    prefix = "../glossary.md" if from_dir == "models" else "glossary.md"
+    # Escape double quotes inside the tooltip
+    safe_tip = tip.replace('"', "&quot;")
+    return f'[`{visible}`]({prefix}#{anchor} "{safe_tip}")'
+
+
 def render_model(name, audit, idx):
     bc = BOUNDS.get(name, [])
     cv = CALIB.get(name)
     lf = LIFTS.get(name, [])
 
     cell = audit["cell"]
+    cell_link = gloss(cell) if cell in GLOSS else f"**{cell}**"
     out = [front_matter(name, parent="Models", nav_order=idx)]
     out.append(f"# {name}\n\n")
-    out.append(f"Cell: **{cell}** &middot; "
-               f"`verdict`: {audit['verdict']} (gap {audit['gap']}) &middot; "
-               f"`verdict_n`: {audit['verdict_n']} (gap {audit['gap_n']})\n\n")
+    out.append(f"Cell: {cell_link} &middot; "
+               f"{gloss('verdict')}: {audit['verdict']} ({gloss('gap')} {audit['gap']}) &middot; "
+               f"{gloss('verdict_n')}: {audit['verdict_n']} ({gloss('gap_n')} {audit['gap_n']})\n\n")
 
     # --- Effect summary ---
     out.append("## Verdict (N=100 stats-grade)\n\n")
     out.append("| metric | value |\n|---|---|\n")
     for k in ["verdict_n", "gap_n", "sd0_n", "sd1_n", "eps_n"]:
-        out.append(f"| `{k}` | {audit[k]} |\n")
-    out.append(f"| stress(inputs) | {audit['inp_cnt']} / 200 CONFIRM |\n")
-    out.append(f"| stress(params) | {audit['par_cnt']} / 200 CONFIRM |\n")
-    out.append(f"| 2x2 cell | **{cell}** |\n\n")
+        out.append(f"| {gloss(k)} | {audit[k]} |\n")
+    out.append(f"| {gloss('stress(inputs)')} | {audit['inp_cnt']} / 200 CONFIRM |\n")
+    out.append(f"| {gloss('stress(params)')} | {audit['par_cnt']} / 200 CONFIRM |\n")
+    out.append(f"| {gloss('2x2 cell')} | {cell_link} |\n\n")
 
     # --- Tier 1: Structural V&V ---
     out.append("## Tier 1 — Structural V&V (prudence)\n\n")
     out.append("| test | result |\n|---|---|\n")
     for t in ["boundary_adq","anomaly_check","extreme_eqn","mr_zero_input",
               "mr_monotone","mr_dt_halving","mr_bound_consist","mr_scale"]:
-        out.append(f"| `{t}` | {audit.get(t,'')} |\n")
+        out.append(f"| {gloss(t)} | {audit.get(t,'')} |\n")
     out.append("\n")
 
     # --- Tier 2: Data-tier (auto from lift CSVs) ---
@@ -104,7 +169,7 @@ def render_model(name, audit, idx):
             pp = f"warn &middot; {n_at}/{n} at_boundary, {n_in} in_range"
         else:
             pp = f"PASS &middot; {n_in}/{n} in_range"
-    out.append(f"| `param_plausibility` | {pp} |\n")
+    out.append(f"| {gloss('param_plausibility')} | {pp} |\n")
 
     # boundary_adq_data
     if not bc:
@@ -113,7 +178,7 @@ def render_model(name, audit, idx):
         ba = "PASS — lifted values reach or exceed declared [lo, hi]"
     else:
         ba = "warn — all lifted values strictly inside [lo, hi]"
-    out.append(f"| `boundary_adq_data` | {ba} |\n")
+    out.append(f"| {gloss('boundary_adq_data')} | {ba} |\n")
 
     # calibrated_rq_rerun
     if not cv:
@@ -124,7 +189,7 @@ def render_model(name, audit, idx):
         cr = f"{cv['calib_verdict']} — verdict stable (default={cv['default_verdict']})"
     else:
         cr = f"{cv['calib_verdict']} — verdict changed (default={cv['default_verdict']})"
-    out.append(f"| `calibrated_rq_rerun` | {cr} |\n")
+    out.append(f"| {gloss('calibrated_rq_rerun')} | {cr} |\n")
 
     # family_member_coherence
     if not lf:
@@ -132,9 +197,9 @@ def render_model(name, audit, idx):
     else:
         projs = {r["project"] for r in lf}
         fc = f"{len(projs)} projects lifted (sign tally not auto-computed)"
-    out.append(f"| `family_member_coherence` | {fc} |\n")
+    out.append(f"| {gloss('family_member_coherence')} | {fc} |\n")
 
-    out.append("| `behavior_reproduction` | not run — requires monthly historical CSV |\n\n")
+    out.append(f"| {gloss('behavior_reproduction')} | not run — requires monthly historical CSV |\n\n")
 
     # --- Lift values per project (if any) ---
     if lf:
@@ -301,6 +366,223 @@ def render_data(audit, lifts):
     return "".join(out)
 
 
+def render_glossary():
+    out = [front_matter("Glossary", nav_order=6)]
+    out.append("# Glossary\n\n")
+    out.append(
+      "Each scorecard term on the model pages links here for a one-line "
+      "definition, a literature citation, and a deep link into the "
+      "implementation in `paper/`. Hover any linked term in a model "
+      "scorecard for the same tooltip.\n\n"
+    )
+
+    sections = [
+      ("Forrester &amp; Senge / Sterman structural tests",
+       "Eight automated structural tests run against every model. "
+       "First three are Forrester &amp; Senge (1980); next five are "
+       "metamorphic relations after Chen et al. (1998). "
+       "Source: `paper/tests.py`.",
+       [
+         ("boundary_adq",
+          "Re-run `rq()` at `tmax=80` (4× default horizon). FAIL if "
+          "the verdict flips — the time-horizon boundary is load-bearing.",
+          "Forrester &amp; Senge (1980) test 4/7.",
+          "paper/tests.py:32"),
+         ("anomaly_check",
+          "Compare baseline `y` to a stressed run with every UPPER "
+          "input at its `hi`. FAIL on qualitative sign-flip.",
+          "Forrester &amp; Senge (1980) behaviour-anomaly test.",
+          "paper/tests.py:50"),
+         ("extreme_eqn",
+          "Run with each UPPER input set to its `lo` and `hi` in turn. "
+          "FAIL on any NaN, ±Inf in any state.",
+          "Forrester &amp; Senge (1980) extreme-conditions test.",
+          "paper/tests.py:70"),
+         ("mr_zero_input",
+          "Setting `ctrl` to its `lo` bound must produce the same "
+          "trajectory as a baseline with `ctrl` explicitly held at `lo`.",
+          "Chen et al. (1998) metamorphic relation MR3.",
+          "paper/tests.py:97"),
+         ("mr_monotone",
+          "Sweep `ctrl` across 5 grid points in `[lo,hi]`. `y` must "
+          "be monotone in the direction predicted by `rq()`.",
+          "Chen et al. (1998) MR1.",
+          "paper/tests.py:118"),
+         ("mr_dt_halving",
+          "Halve the integration step `dt`. `y` must agree within 10% — "
+          "Sterman's integration-error check.",
+          "Chen et al. (1998) MR8; Sterman (2000) test 6.",
+          "paper/tests.py:143"),
+         ("mr_bound_consist",
+          "Run with `mode='reject'` vs `'clip'`. FAIL if `reject` "
+          "aborts or if outputs differ — clamping was load-bearing.",
+          "Chen et al. (1998) MR9.",
+          "paper/tests.py:158"),
+         ("mr_scale",
+          "Scale all UPPER inputs by 2×. FAIL on sign-flip or 100× "
+          "explosion. Nonlinear `y_ratio` is expected, not a bug.",
+          "Chen et al. (1998) MR2 (linearity probe).",
+          "paper/tests.py:176"),
+       ]),
+      ("rq() and verdict family",
+       "Per-model research-question test and its N-shot stats-grade "
+       "replacement. Source: `paper/sd.py`.",
+       [
+         ("rq",
+          "Single-shot research-question test. Returns "
+          "`{verdict, y0, y1, gap, desc}`.",
+          "MYTHS framework primitive.",
+          "paper/sd.py:82"),
+         ("rq_n",
+          "Sample N perturbed backgrounds (default N=100, triangular). "
+          "Run `y0` and `y1` per sample. Classify via `stats.same` "
+          "(Cliff's δ + KS + median-ε).",
+          "MYTHS framework primitive.",
+          "paper/sd.py:209"),
+         ("verdict",
+          "Single-shot verdict on `(y0, y1)`. CONFIRM if signed gap "
+          "exceeds `max(5% · |y0|, 0.5)`; REFUTE if against; else neutral.",
+          "",
+          "paper/sd.py:82"),
+         ("verdict_n",
+          "Stats-grade verdict over two y-lists. `neutral` iff "
+          "`stats.same(y0s, y1s, ε)`; else sign of `mean(y0)−mean(y1)`.",
+          "",
+          "paper/sd.py:93"),
+         ("gap",
+          "Signed `y1 − y0` from a single-shot `rq()` call.",
+          "",
+          "paper/sd.py:82"),
+         ("gap_n",
+          "Pooled-mean gap from `rq_n`: `mean(y1s) − mean(y0s)`. "
+          "Reported with `sd0_n`, `sd1_n`, `eps_n`.",
+          "",
+          "paper/sd.py:93"),
+         ("sd0_n",
+          "Sample standard deviation of `y0s` from `rq_n`.",
+          "",
+          "paper/sd.py:93"),
+         ("sd1_n",
+          "Sample standard deviation of `y1s` from `rq_n`.",
+          "",
+          "paper/sd.py:93"),
+         ("eps_n",
+          "Same-list tolerance used by `stats.same`: `0.35 · sd(y0s)`.",
+          "Knob: `the.stats.eps = 0.35`.",
+          "paper/stats.py:65"),
+       ]),
+      ("Stress matrix and 2x2 typology",
+       "Per-model classification from 200 perturbed-background runs.",
+       [
+         ("stress_inputs",
+          "Run `rq()` on 200 triangular-perturbed backgrounds with only "
+          "UPPER-case state variables perturbed (the world axis).",
+          "",
+          "paper/sd.py:161"),
+         ("stress_params",
+          "Same harness, lower-case (parameter) perturbation only — "
+          "the process axis.",
+          "",
+          "paper/sd.py:161"),
+         ("inp_cnt",
+          "CONFIRM count out of 200 input-perturbed runs.",
+          "",
+          "paper/tests.py:208"),
+         ("par_cnt",
+          "CONFIRM count out of 200 param-perturbed runs.",
+          "",
+          "paper/tests.py:208"),
+         ("cell",
+          "2x2 classification from (inputs, params) verdict pair. "
+          "CONFIRM on a side requires ≥50%; REFUTE requires ≥20%.",
+          "",
+          "paper/tests.py:226"),
+         ("universal",
+          "Both `stress(inputs)` and `stress(params)` return CONFIRM. "
+          "Thesis holds across world and process variation.",
+          "", ""),
+         ("process-conditional",
+          "Inputs CONFIRM, params not. Mechanism robust to environment; "
+          "whether it manifests depends on team/process configuration.",
+          "", ""),
+         ("world-conditional",
+          "Params CONFIRM, inputs not. Thesis holds for a fixed "
+          "parameterisation but breaks under varied initial conditions.",
+          "", ""),
+         ("fragile",
+          "Neither axis returns a CONFIRM majority. Thesis depends "
+          "on a narrow regime.",
+          "", ""),
+       ]),
+      ("Statistical primitives",
+       "Same-list test inside `verdict_n`.",
+       [
+         ("cliffs_delta",
+          "Non-parametric effect-size: `(gt − lt) / (n · m)`. Two "
+          "lists are 'same' iff `|δ| ≤ 0.195`.",
+          "Cliff (1993); threshold per Romano et al.",
+          "paper/stats.py:68"),
+         ("ks",
+          "Two-sample Kolmogorov-Smirnov distance with the 5% "
+          "critical value `1.36 · √((n+m)/(nm))`.",
+          "Smirnov (1948); knob: `the.stats.conf = 1.36`.",
+          "paper/stats.py:70"),
+       ]),
+      ("Data-tier checks",
+       "Auto-derived from lift CSVs.",
+       [
+         ("param_plausibility",
+          "Counts `in_range` / `at_boundary` / `out_of_range` from "
+          "`boundary_check.csv`. Any `out_of_range` → FAIL.",
+          "", "core/docs/scripts/gen_md.py"),
+         ("boundary_adq_data",
+          "Empirical companion to `boundary_adq`: PASS iff at least "
+          "one lifted value reaches or exceeds the declared `[lo, hi]`.",
+          "", "core/docs/scripts/gen_md.py"),
+         ("calibrated_rq_rerun",
+          "Re-run `rq()` with params replaced by Helix-calibrated "
+          "lifted values. From `calibrated_verdicts.csv`.",
+          "", "core/docs/scripts/gen_md.py"),
+         ("family_member_coherence",
+          "Per-project sign agreement across the family. Currently "
+          "reports project count only; sign tally is hand-tuned per model.",
+          "", "core/docs/scripts/gen_md.py"),
+         ("behavior_reproduction",
+          "Sim trajectory vs monthly historical CSV. Not run "
+          "(requires per-project monthly time series).",
+          "", ""),
+       ]),
+    ]
+
+    for sec_title, sec_intro, entries in sections:
+        out.append(f"## {sec_title}\n\n")
+        out.append(sec_intro + "\n\n")
+        for anchor, body, cite, src in entries:
+            out.append(f'<h3 id="{anchor}"><code>{anchor}</code></h3>\n\n')
+            out.append(body + "\n\n")
+            if cite:
+                out.append(f"_{cite}_\n\n")
+            if src:
+                out.append(f"Source: `{src}`\n\n")
+
+    out.append("## References\n\n")
+    out.append(
+      "- Forrester, J. W. &amp; Senge, P. M. (1980). Tests for building "
+      "confidence in system dynamics models. *System Dynamics*, "
+      "TIMS Studies in the Management Sciences 14, 209–228.\n"
+      "- Sterman, J. D. (2000). *Business Dynamics: Systems Thinking and "
+      "Modeling for a Complex World*. McGraw-Hill.\n"
+      "- Chen, T. Y., Cheung, S. C. &amp; Yiu, S. M. (1998). Metamorphic "
+      "testing: a new approach for generating next test cases. HKUST-CS98-01.\n"
+      "- Cliff, N. (1993). Dominance statistics: ordinal analyses to answer "
+      "ordinal questions. *Psychological Bulletin* 114(3), 494–509.\n"
+      "- Smirnov, N. (1948). Table for estimating the goodness of fit of "
+      "empirical distributions. *Annals of Mathematical Statistics* 19(2), "
+      "279–281.\n"
+    )
+    return "".join(out)
+
+
 def main():
     DOCS.mkdir(parents=True, exist_ok=True)
     (DOCS / "models").mkdir(exist_ok=True)
@@ -320,10 +602,11 @@ def main():
     # Top-level pages
     (DOCS / "findings.md").write_text(render_findings(AUDIT, LIFTS))
     (DOCS / "data.md").write_text(render_data(AUDIT, LIFTS))
+    (DOCS / "glossary.md").write_text(render_glossary())
 
     n = len(AUDIT)
-    print(f"Wrote {n} model pages + findings.md + data.md + models/index.md")
-    print(f"  total: {n + 3} markdown files under {DOCS.relative_to(ROOT)}/")
+    print(f"Wrote {n} model pages + findings.md + data.md + glossary.md + models/index.md")
+    print(f"  total: {n + 4} markdown files under {DOCS.relative_to(ROOT)}/")
 
 
 if __name__ == "__main__":

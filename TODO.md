@@ -1,6 +1,6 @@
 # TODO.md — handoff for next session (post-compaction)
 
-Snapshot 2026-05-25. Repo `github.com/sci4seng/icse27theories` @ `main`.
+Snapshot 2026-05-25. Repo `github.com/sci4seng/core` @ `main`.
 
 ## DECIDED
 

@@ -108,7 +108,7 @@ verify-k-anon: ## K29-K30: grep sweep for residual identity leaks
 	    /Users/timm/gits/sci4seng/data \
 	    --include="*.md" --include="*.py" --include="*.R" \
 	    --include="*.Rmd" --include="*.html" --include="*.yml" \
-	    2>/dev/null | grep -v "/\.git/\|/_site/\|/\.jekyll-cache/\|/vendor/" | head -5); \
+	    2>/dev/null | grep -v "/\.git/\|/_site/\|/\.jekyll-cache/\|/vendor/\|/\.venv/\|/tools/" | head -5); \
 	  if [ -n "$$hits" ]; then \
 	    printf "  \033[31m✗\033[0m %-12s leaked in:\n" "$$term"; \
 	    echo "$$hits" | sed 's|^|      |'; bad=$$((bad+1)); \

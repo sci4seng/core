@@ -6,43 +6,43 @@ nav_order: 8
 
 # congruence
 
-Cell: **universal** &middot; `verdict`: CONFIRM (gap -314.85) &middot; `verdict_n`: CONFIRM (gap -202.19)
+Cell: [`universal`](../glossary.md#universal "Both inputs and params CONFIRM") &middot; [`verdict`](../glossary.md#verdict "CONFIRM / REFUTE / neutral on (y0, y1)"): CONFIRM ([`gap`](../glossary.md#gap "signed y1 - y0 from single-shot rq()") -314.85) &middot; [`verdict_n`](../glossary.md#verdict_n "N-shot verdict via stats.same"): CONFIRM ([`gap_n`](../glossary.md#gap_n "pooled-mean y1 - y0 from rq_n") -202.19)
 
 ## Verdict (N=100 stats-grade)
 
 | metric | value |
 |---|---|
-| `verdict_n` | CONFIRM |
-| `gap_n` | -202.19 |
-| `sd0_n` | 68.11 |
-| `sd1_n` | 175.55 |
-| `eps_n` | 23.84 |
-| stress(inputs) | 196 / 200 CONFIRM |
-| stress(params) | 196 / 200 CONFIRM |
-| 2x2 cell | **universal** |
+| [`verdict_n`](../glossary.md#verdict_n "N-shot verdict via stats.same") | CONFIRM |
+| [`gap_n`](../glossary.md#gap_n "pooled-mean y1 - y0 from rq_n") | -202.19 |
+| [`sd0_n`](../glossary.md#sd0_n "stddev of y0 samples in rq_n") | 68.11 |
+| [`sd1_n`](../glossary.md#sd1_n "stddev of y1 samples in rq_n") | 175.55 |
+| [`eps_n`](../glossary.md#eps_n "0.35 * sd(y0): same-list tolerance") | 23.84 |
+| [`stress(inputs)`](../glossary.md#stress_inputs "200 perturbed UPPER-input backgrounds") | 196 / 200 CONFIRM |
+| [`stress(params)`](../glossary.md#stress_params "200 perturbed lower-param backgrounds") | 196 / 200 CONFIRM |
+| [`2x2 cell`](../glossary.md#cell "{universal, process, world, fragile} from (inp_cnt, par_cnt)") | [`universal`](../glossary.md#universal "Both inputs and params CONFIRM") |
 
 ## Tier 1 — Structural V&V (prudence)
 
 | test | result |
 |---|---|
-| `boundary_adq` | PASS |
-| `anomaly_check` | PASS |
-| `extreme_eqn` | ERR:ValueError |
-| `mr_zero_input` | PASS |
-| `mr_monotone` | PASS |
-| `mr_dt_halving` | PASS |
-| `mr_bound_consist` | PASS |
-| `mr_scale` | ERR:ValueError |
+| [`boundary_adq`](../glossary.md#boundary_adq "F&S 4/7: tmax=80 verdict still holds") | PASS |
+| [`anomaly_check`](../glossary.md#anomaly_check "F&S behaviour-anomaly: hi inputs do not flip y sign") | PASS |
+| [`extreme_eqn`](../glossary.md#extreme_eqn "F&S extreme-conditions: no NaN/Inf at lo/hi inputs") | ERR:ValueError |
+| [`mr_zero_input`](../glossary.md#mr_zero_input "Chen MR3: ctrl=lo idempotent") | PASS |
+| [`mr_monotone`](../glossary.md#mr_monotone "Chen MR1: y monotone in ctrl over 5 grid points") | PASS |
+| [`mr_dt_halving`](../glossary.md#mr_dt_halving "Chen MR8 / Sterman 6: y invariant to dt/2") | PASS |
+| [`mr_bound_consist`](../glossary.md#mr_bound_consist "Chen MR9: clip vs reject agree") | PASS |
+| [`mr_scale`](../glossary.md#mr_scale "Chen MR2: 2x inputs do not flip sign or explode") | ERR:ValueError |
 
 ## Tier 2 — Data-tier checks (auto from lift CSVs)
 
 | test | result |
 |---|---|
-| `param_plausibility` | **FAIL** &middot; 2/6 out_of_range, 0 at_boundary, 4 in_range |
-| `boundary_adq_data` | PASS — lifted values reach or exceed declared [lo, hi] |
-| `calibrated_rq_rerun` | CONFIRM — verdict stable (default=CONFIRM) |
-| `family_member_coherence` | 3 projects lifted (sign tally not auto-computed) |
-| `behavior_reproduction` | not run — requires monthly historical CSV |
+| [`param_plausibility`](../glossary.md#param_plausibility "in_range/at_boundary/out_of_range from boundary_check.csv") | **FAIL** &middot; 2/6 out_of_range, 0 at_boundary, 4 in_range |
+| [`boundary_adq_data`](../glossary.md#boundary_adq_data "Lifted value reaches or exceeds declared [lo, hi]") | PASS — lifted values reach or exceed declared [lo, hi] |
+| [`calibrated_rq_rerun`](../glossary.md#calibrated_rq_rerun "rq() under Helix-calibrated init") | CONFIRM — verdict stable (default=CONFIRM) |
+| [`family_member_coherence`](../glossary.md#family_member_coherence "Per-project sign agreement across the family") | 3 projects lifted (sign tally not auto-computed) |
+| [`behavior_reproduction`](../glossary.md#behavior_reproduction "Sim trajectory vs monthly historical CSV") | not run — requires monthly historical CSV |
 
 ## Lift values per project
 
