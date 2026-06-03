@@ -706,10 +706,41 @@ ZZ. **Single command to ingest new/updated project data and rebuild
 
 ### Audit coverage gaps (deferred 2026-05-25)
 
-YY. **audit_staleness.py misses prose-embedded lift stats**.
-    Currently checks: cell label, inp_cnt/par_cnt, badge counts,
-    typology totals, model count. Does NOT check summary statistics
-    in page prose that are computed from `lifts.csv`.
+YY. **DONE 2026-06-03.** Rewrote `paper/scripts/audit_staleness.py`
+    for sci4seng's Jekyll Markdown site (was icse27theories-flavored
+    and crashing on missing `gen_rich.py` / `index.html`). Now does
+    three passes:
+
+    1. **Structured numerics**: model-count and per-cell totals in
+       `paper/MODELS_README.md` + `docs/models/index.md` cross-checked
+       against `full_audit.csv`.
+    2. **Prose-pattern sweep (the YY ask)**: scans every
+       `docs/models/*.md` and `../lifts/vignettes/*.Rmd` for
+       `N/M (positive|negative|noisy|projects|cases|show|of|signal|
+       confirm|lifted)` and `N of M ...` patterns. Markdown table
+       rows are skipped because their numbers come straight from
+       the CSV (by-construction-correct). Hits print to stderr with
+       `file:line: snippet` so reviewers can verify each one against
+       `lifts.csv`.
+    3. **Per-model lift recap**: prints per-model project count +
+       row count from `lifts.csv` to stderr — the reference table
+       reviewers compare prose hits against.
+
+    Run output today: 0 prose hits (no stale prose in either site or
+    vignettes), structured checks PASS.
+
+    Note: the YY brief mentioned a concrete drift on the OLD
+    icse27theories `brooks.html` (`5/8 positive` vs lifts.csv 6/8).
+    That HTML file does not exist in sci4seng — `docs/models/brooks.md`
+    is auto-regenerated. The drift mechanism now is the SS-inlined
+    vignette content; the prose sweep catches it if it appears there.
+
+    Original deferral spec preserved below for reference.
+
+YY (original spec). **audit_staleness.py misses prose-embedded lift
+    stats**. Currently checks: cell label, inp_cnt/par_cnt, badge
+    counts, typology totals, model count. Does NOT check summary
+    statistics in page prose that are computed from `lifts.csv`.
     Concrete miss: `brooks.html` Panel 5 row `family_member_coherence`
     says "5/8 positive sign with n_hires ≥ 50; 3/8 noisy with small
     samples". Current lifts.csv gives 6/8 + 2/8 (tomcat n_hires=50
