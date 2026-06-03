@@ -1,4 +1,4 @@
-name: "Science for SE"
+  name: "Science for SE"
   on:
     push:
       branches: [main]
