@@ -25,6 +25,7 @@ Cell: [`fragile`](../glossary.md#fragile "Neither axis CONFIRMs in majority") &m
 
 | test | result |
 |---|---|
+| [`dim_check`](../glossary.md#dim_check "Every init param exposes a well-formed unit string") | PASS |
 | [`boundary_adq`](../glossary.md#boundary_adq "F&S 4/7: tmax=80 verdict still holds") | FAIL |
 | [`anomaly_check`](../glossary.md#anomaly_check "F&S behaviour-anomaly: hi inputs do not flip y sign") | PASS |
 | [`extreme_eqn`](../glossary.md#extreme_eqn "F&S extreme-conditions: no NaN/Inf at lo/hi inputs") | ERR:ValueError |

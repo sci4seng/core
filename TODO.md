@@ -812,8 +812,13 @@ YY (original spec). **audit_staleness.py misses prose-embedded lift
    recipe; not enumerated until authorization.)
 8. **`sd.opt()` calibration pass** — currently rq() reruns at default;
    actual fitting of intr_rate etc not done.
-9. **S4 dim_check** still NOT BUILT in `tests.py`. Other tests cover
-   most of the ground but the placeholder remains.
+9. **DONE 2026-06-03.** S4 dim_check built in `paper/tests.py` and
+   wired into `paper/full_audit.py` ALL_TESTS + the scorecard via
+   `docs/scripts/gen_md.py` + `docs/glossary.md`. Pragmatic
+   per-param unit-string probe (atom or `/`-separated atoms; allows
+   `$`, `%`, `-` in atoms for cost / fraction / hyphenated units like
+   `debt-items`). All 34 models PASS. Does NOT do full symbolic-unit
+   propagation through step() — that would need a CAS pass.
 10. **Behavior reproduction (S17)** + **behavior prediction (S18)** —
     never attempted. Need monthly historical CSVs to compare against
     sim trajectories.

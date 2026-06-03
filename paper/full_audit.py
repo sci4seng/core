@@ -24,7 +24,7 @@ from sd import (diapers, brooks, bugs, debt, sir, rework, learn, brooksq,
                 maturity,
                 # 1 added 2026-05-25 per SME GH #3 (motif-based STC):
                 congruence_motif)
-from tests import (boundary_adq, anomaly_check, extreme_eqn,
+from tests import (dim_check, boundary_adq, anomaly_check, extreme_eqn,
                    mr_zero_input, mr_monotone, mr_dt_halving,
                    mr_bound_consist, mr_scale, stress_matrix)
 
@@ -36,7 +36,7 @@ MODELS = [diapers, brooks, bugs, debt, sir, rework, learn, brooksq,
           orgchurn, ownership, ossfail, deprot, scope, ctxswitch, limits,
           successful, maturity]
 
-TESTS = [boundary_adq, anomaly_check, extreme_eqn,
+TESTS = [dim_check, boundary_adq, anomaly_check, extreme_eqn,
          mr_zero_input, mr_monotone, mr_dt_halving,
          mr_bound_consist, mr_scale]
 

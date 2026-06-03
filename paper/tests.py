@@ -198,7 +198,46 @@ def mr_scale(model_factory, factor=2.0):
           'detail': f'y_ratio={ratio:.2f} (lin~{factor:.1f})'}
 
 
-ALL_TESTS = [boundary_adq, anomaly_check, extreme_eqn,
+# --- Dimensional consistency (S4, task 9) -----------------------------------
+
+# Tokens that constitute a "well-formed" unit string. Atoms (e.g. `items`,
+# `devs`, `frac`) and per-something denominators are accepted; anything
+# else is suspect.
+_UNIT_ATOM = r"[A-Za-z\$%][A-Za-z0-9_-]*"
+_UNIT_RE   = __import__("re").compile(
+    rf"^{_UNIT_ATOM}(/{_UNIT_ATOM})*(\^[+-]?\d+)?$"
+)
+
+
+def dim_check(model_factory):
+  """Verify init params expose a unit string and that step()/y() do not
+  fail at default init. Pragmatic dim-consistency check: every init entry
+  must be `[default, lo, hi, units]` with `units` a non-empty
+  identifier-shaped token (single atom or `/`-separated atoms, optional
+  `^N` power). Does NOT do full symbolic-unit propagation through step().
+  """
+  m = model_factory()
+  bad = []
+  for k, spec in m.init.items():
+    # Must be length 4 (default, lo, hi, units). Earlier versions of the
+    # framework used 3-tuples; new spec is 4-tuples.
+    if not isinstance(spec, (list, tuple)) or len(spec) != 4:
+      bad.append(f"{k}: spec length {len(spec) if hasattr(spec,'__len__') else '?'} (want 4)")
+      continue
+    units = spec[3]
+    if not isinstance(units, str) or not units.strip():
+      bad.append(f"{k}: missing units")
+      continue
+    if not _UNIT_RE.match(units.strip()):
+      bad.append(f"{k}: malformed units {units!r}")
+  if bad:
+    return {'test':'dim_check', 'status':FAIL,
+            'detail':'; '.join(bad[:5])}
+  return {'test':'dim_check', 'status':PASS,
+          'detail':f'{len(m.init)} params unit-checked'}
+
+
+ALL_TESTS = [dim_check, boundary_adq, anomaly_check, extreme_eqn,
              mr_zero_input, mr_monotone, mr_dt_halving,
              mr_bound_consist, mr_scale]
 

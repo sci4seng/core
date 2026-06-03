@@ -9,7 +9,15 @@ Each scorecard term on the model pages links here for a one-line definition, a l
 
 ## Forrester &amp; Senge / Sterman structural tests
 
-Eight automated structural tests run against every model. First three are Forrester &amp; Senge (1980); next five are metamorphic relations after Chen et al. (1998). Source: `paper/tests.py`.
+Nine automated structural tests run against every model. `dim_check` is a unit-string sanity probe. First three of the remaining are Forrester &amp; Senge (1980); last five are metamorphic relations after Chen et al. (1998). Source: `paper/tests.py`.
+
+<h3 id="dim_check"><code>dim_check</code></h3>
+
+Every init param entry must be `[default, lo, hi, units]` with `units` a non-empty identifier-shaped token (atom or `/`-separated atoms, optional `^N` power). Pragmatic dimensional probe; does NOT do full symbolic propagation.
+
+_MYTHS framework primitive (S4 in Sterman 2000)._
+
+Source: `paper/tests.py`
 
 <h3 id="boundary_adq"><code>boundary_adq</code></h3>
 

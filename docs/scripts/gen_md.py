@@ -72,6 +72,7 @@ def front_matter(title, parent=None, nav_order=None, has_children=False):
 # dict pass through as `name` with no link.
 
 GLOSS = {
+    "dim_check":          ("dim_check",          "Every init param exposes a well-formed unit string"),
     "boundary_adq":       ("boundary_adq",       "F&S 4/7: tmax=80 verdict still holds"),
     "anomaly_check":      ("anomaly_check",      "F&S behaviour-anomaly: hi inputs do not flip y sign"),
     "extreme_eqn":        ("extreme_eqn",        "F&S extreme-conditions: no NaN/Inf at lo/hi inputs"),
@@ -152,8 +153,9 @@ def render_model(name, audit, idx):
     # --- Tier 1: Structural V&V ---
     out.append("## Tier 1 — Structural V&V (prudence)\n\n")
     out.append("| test | result |\n|---|---|\n")
-    for t in ["boundary_adq","anomaly_check","extreme_eqn","mr_zero_input",
-              "mr_monotone","mr_dt_halving","mr_bound_consist","mr_scale"]:
+    for t in ["dim_check","boundary_adq","anomaly_check","extreme_eqn",
+              "mr_zero_input","mr_monotone","mr_dt_halving",
+              "mr_bound_consist","mr_scale"]:
         out.append(f"| {gloss(t)} | {audit.get(t,'')} |\n")
     out.append("\n")
 
@@ -406,11 +408,19 @@ def render_glossary():
 
     sections = [
       ("Forrester &amp; Senge / Sterman structural tests",
-       "Eight automated structural tests run against every model. "
-       "First three are Forrester &amp; Senge (1980); next five are "
+       "Nine automated structural tests run against every model. "
+       "`dim_check` is a unit-string sanity probe. First three of the "
+       "remaining are Forrester &amp; Senge (1980); last five are "
        "metamorphic relations after Chen et al. (1998). "
        "Source: `paper/tests.py`.",
        [
+         ("dim_check",
+          "Every init param entry must be `[default, lo, hi, units]` "
+          "with `units` a non-empty identifier-shaped token (atom or "
+          "`/`-separated atoms, optional `^N` power). Pragmatic "
+          "dimensional probe; does NOT do full symbolic propagation.",
+          "MYTHS framework primitive (S4 in Sterman 2000).",
+          "paper/tests.py"),
          ("boundary_adq",
           "Re-run `rq()` at `tmax=80` (4× default horizon). FAIL if "
           "the verdict flips — the time-horizon boundary is load-bearing.",
