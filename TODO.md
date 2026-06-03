@@ -309,8 +309,45 @@ UU. **Add a second congruence model to the bucket — motif-based STC
 
 ### Model-derived findings re-validation (deferred 2026-05-25)
 
-VV. **Re-validate the May 11 aidebt regime-crossover claim against
-    current sd.py.** Claim: leverage measurement = ratio
+VV. **DONE 2026-06-03 (claim REFUTED).** Re-validated the May 11
+    aidebt regime-crossover claim against current sd.py. Built
+    `paper/scripts/grid_aidebt.py`: 10x10 sweep over
+    (pay_rate, born_ai_mult), repeated at tmax ∈ {10, 20, 30, 50, 80}.
+    Outputs: 5 `outputs/grid_aidebt_tmax{T}.csv`, one
+    `outputs/grid_aidebt_summary.csv`, one
+    `outputs/figs/grid_aidebt.svg` (faceted heatmap).
+
+    **Key finding: the regime flip is TEMPORAL, not parametric.**
+
+    Verdict distribution by tmax (100 cells/grid):
+    - tmax= 10: 25 CONFIRM /  70 REFUTE /  5 neutral
+    - tmax= 20: 22 CONFIRM /  78 REFUTE
+    - tmax= 30: 29 CONFIRM /  71 REFUTE
+    - tmax= 50: 99 CONFIRM /   1 REFUTE
+    - tmax= 80: 99 CONFIRM /   1 REFUTE
+
+    Median crossover ratio at tmax 10/20/30 is 0.27 / 0.20 / 0.25
+    (range 0.0–0.33). NOT near 1.5x anywhere in the grid. At tmax
+    50/80 there is essentially no verdict-flip surface — the
+    long-run cumulative-debt effect dominates and AI uniformly hurts.
+
+    The May 11 leverage-ratio framing does not survive contact with
+    sd.py — the regime boundary lives in the tmax axis, not the
+    `pay_rate / (born_base × (1 + born_ai_mult))` axis. The
+    methodology paper should NOT cite the 1.5x crossover as a
+    finding; use the temporal regime flip instead.
+
+    **Prudence caveat unresolved (VV step 6)**: aidebt still has
+    `boundary_adq=FAIL`, `extreme_eqn=ERR`, `mr_scale=ERR`. Grid
+    numbers above are tentative until those three rows resolve.
+    The temporal-regime finding is qualitative-robust to those
+    prudence rows (the sign-flip is large; not a near-threshold
+    call).
+
+    Original deferral spec preserved below for reference.
+
+VV (original spec). **Re-validate the May 11 aidebt regime-crossover
+    claim against current sd.py.** Claim: leverage measurement = ratio
     `pay_rate / (born_base × (1 + born_ai_mult))`, crossover ≈ 1.5×,
     teams above benefit from AI, teams below degrade. Source: May 11
     chat — model-based reasoning, never grid-validated.
