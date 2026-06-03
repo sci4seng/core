@@ -1,0 +1,12 @@
+// User overrides — appended after just-the-docs cascade.
+
+// Faint zebra-striping on data tables (odd rows pale grey).
+.main-content table tbody tr:nth-child(odd) td {
+  background-color: #fafafa;
+}
+
+// (Optional) tighter row padding so tables stay compact.
+// .main-content table th,
+// .main-content table td {
+//   padding: 0.25rem 0.6rem;
+// }
