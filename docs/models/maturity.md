@@ -5,8 +5,11 @@ nav_order: 24
 ---
 
 # maturity
+
 Cell: **process-conditional** &middot; `verdict`: CONFIRM (gap -491.93) &middot; `verdict_n`: neutral (gap -1968.60)
+
 ## Verdict (N=100 stats-grade)
+
 | metric | value |
 |---|---|
 | `verdict_n` | neutral |
@@ -19,6 +22,7 @@ Cell: **process-conditional** &middot; `verdict`: CONFIRM (gap -491.93) &middot;
 | 2x2 cell | **process-conditional** |
 
 ## Tier 1 — Structural V&V (prudence)
+
 | test | result |
 |---|---|
 | `boundary_adq` | PASS |
@@ -31,6 +35,7 @@ Cell: **process-conditional** &middot; `verdict`: CONFIRM (gap -491.93) &middot;
 | `mr_scale` | ERR:ValueError |
 
 ## Tier 2 — Data-tier checks (auto from lift CSVs)
+
 | test | result |
 |---|---|
 | `param_plausibility` | N/A — no lift rows |
@@ -40,6 +45,7 @@ Cell: **process-conditional** &middot; `verdict`: CONFIRM (gap -491.93) &middot;
 | `behavior_reproduction` | not run — requires monthly historical CSV |
 
 ## Source
+
 - SD model: `paper/sd.py::maturity()`
 - Audit row: `paper/outputs/full_audit.csv` (line for `maturity`)
 

@@ -5,8 +5,11 @@ nav_order: 8
 ---
 
 # congruence
+
 Cell: **universal** &middot; `verdict`: CONFIRM (gap -314.85) &middot; `verdict_n`: CONFIRM (gap -202.19)
+
 ## Verdict (N=100 stats-grade)
+
 | metric | value |
 |---|---|
 | `verdict_n` | CONFIRM |
@@ -19,6 +22,7 @@ Cell: **universal** &middot; `verdict`: CONFIRM (gap -314.85) &middot; `verdict_
 | 2x2 cell | **universal** |
 
 ## Tier 1 — Structural V&V (prudence)
+
 | test | result |
 |---|---|
 | `boundary_adq` | PASS |
@@ -31,6 +35,7 @@ Cell: **universal** &middot; `verdict`: CONFIRM (gap -314.85) &middot; `verdict_
 | `mr_scale` | ERR:ValueError |
 
 ## Tier 2 — Data-tier checks (auto from lift CSVs)
+
 | test | result |
 |---|---|
 | `param_plausibility` | **FAIL** &middot; 2/6 out_of_range, 0 at_boundary, 4 in_range |
@@ -40,6 +45,7 @@ Cell: **universal** &middot; `verdict`: CONFIRM (gap -314.85) &middot; `verdict_
 | `behavior_reproduction` | not run — requires monthly historical CSV |
 
 ## Lift values per project
+
 | project | `Brokers_n` | `Clusters_n` | `largest_cluster` | `n_devs` | `n_devs_main` |
 |---|---|---|---|---|---|
 | airflow | 4 | 7 | 46 | 142 | 142 |
@@ -49,12 +55,14 @@ Cell: **universal** &middot; `verdict`: CONFIRM (gap -314.85) &middot; `verdict_
 _(showing first 5 of 9 metrics; full data in `paper/outputs/lifts.csv`)_
 
 ## Boundary violations
+
 | project | param | lifted | lo | hi |
 |---|---|---|---|---|
 | tomcat | `Brokers` | 39 | 0 | 20 |
 | tomcat | `Clusters` | 33 | 1 | 20 |
 
 ## Source
+
 - SD model: `paper/sd.py::congruence()`
 - Audit row: `paper/outputs/full_audit.csv` (line for `congruence`)
 - Lift Rmd: `sci4seng/lifts/vignettes/lift_congruence.Rmd`

@@ -5,8 +5,11 @@ nav_order: 13
 ---
 
 # debt
+
 Cell: **universal** &middot; `verdict`: CONFIRM (gap -56.65) &middot; `verdict_n`: CONFIRM (gap -34.00)
+
 ## Verdict (N=100 stats-grade)
+
 | metric | value |
 |---|---|
 | `verdict_n` | CONFIRM |
@@ -19,6 +22,7 @@ Cell: **universal** &middot; `verdict`: CONFIRM (gap -56.65) &middot; `verdict_n
 | 2x2 cell | **universal** |
 
 ## Tier 1 — Structural V&V (prudence)
+
 | test | result |
 |---|---|
 | `boundary_adq` | PASS |
@@ -31,6 +35,7 @@ Cell: **universal** &middot; `verdict`: CONFIRM (gap -56.65) &middot; `verdict_n
 | `mr_scale` | ERR:ValueError |
 
 ## Tier 2 — Data-tier checks (auto from lift CSVs)
+
 | test | result |
 |---|---|
 | `param_plausibility` | PASS &middot; 10/10 in_range |
@@ -40,6 +45,7 @@ Cell: **universal** &middot; `verdict`: CONFIRM (gap -56.65) &middot; `verdict_n
 | `behavior_reproduction` | not run — requires monthly historical CSV |
 
 ## Lift values per project
+
 | project | `born_rate_mean` | `born_rate_median` | `n_commits` | `n_refactor_events` | `pay_rate_mean` |
 |---|---|---|---|---|---|
 | ambari | 0.2614923114 | 0.2700270027 | 6374 | 66037 | 0.4765075729 |
@@ -51,6 +57,7 @@ Cell: **universal** &middot; `verdict`: CONFIRM (gap -56.65) &middot; `verdict_n
 _(showing first 5 of 8 metrics; full data in `paper/outputs/lifts.csv`)_
 
 ## Source
+
 - SD model: `paper/sd.py::debt()`
 - Audit row: `paper/outputs/full_audit.csv` (line for `debt`)
 - Lift Rmd: `sci4seng/lifts/vignettes/lift_debt.Rmd`

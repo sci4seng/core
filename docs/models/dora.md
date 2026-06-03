@@ -5,8 +5,11 @@ nav_order: 17
 ---
 
 # dora
+
 Cell: **universal** &middot; `verdict`: CONFIRM (gap -45.35) &middot; `verdict_n`: CONFIRM (gap -58.67)
+
 ## Verdict (N=100 stats-grade)
+
 | metric | value |
 |---|---|
 | `verdict_n` | CONFIRM |
@@ -19,6 +22,7 @@ Cell: **universal** &middot; `verdict`: CONFIRM (gap -45.35) &middot; `verdict_n
 | 2x2 cell | **universal** |
 
 ## Tier 1 — Structural V&V (prudence)
+
 | test | result |
 |---|---|
 | `boundary_adq` | PASS |
@@ -31,6 +35,7 @@ Cell: **universal** &middot; `verdict`: CONFIRM (gap -45.35) &middot; `verdict_n
 | `mr_scale` | ERR:ValueError |
 
 ## Tier 2 — Data-tier checks (auto from lift CSVs)
+
 | test | result |
 |---|---|
 | `param_plausibility` | PASS &middot; 23/23 in_range |
@@ -40,6 +45,7 @@ Cell: **universal** &middot; `verdict`: CONFIRM (gap -45.35) &middot; `verdict_n
 | `behavior_reproduction` | not run — requires monthly historical CSV |
 
 ## Lift values per project
+
 | project | `arrival_rate` | `batch_size` | `cfr` | `n_tags` | `rec_rate` |
 |---|---|---|---|---|---|
 | airflow | 3.3776818333 | 9.1058823529 | 0.2502936340 | 936 | 0.0061599038 |
@@ -54,6 +60,7 @@ Cell: **universal** &middot; `verdict`: CONFIRM (gap -45.35) &middot; `verdict_n
 _(showing first 5 of 7 metrics; full data in `paper/outputs/lifts.csv`)_
 
 ## Source
+
 - SD model: `paper/sd.py::dora()`
 - Audit row: `paper/outputs/full_audit.csv` (line for `dora`)
 - Lift Rmd: `sci4seng/lifts/vignettes/lift_dora.Rmd`

@@ -5,8 +5,11 @@ nav_order: 6
 ---
 
 # bugs
+
 Cell: **universal** &middot; `verdict`: CONFIRM (gap +38.06) &middot; `verdict_n`: CONFIRM (gap +22.16)
+
 ## Verdict (N=100 stats-grade)
+
 | metric | value |
 |---|---|
 | `verdict_n` | CONFIRM |
@@ -19,6 +22,7 @@ Cell: **universal** &middot; `verdict`: CONFIRM (gap +38.06) &middot; `verdict_n
 | 2x2 cell | **universal** |
 
 ## Tier 1 — Structural V&V (prudence)
+
 | test | result |
 |---|---|
 | `boundary_adq` | PASS |
@@ -31,6 +35,7 @@ Cell: **universal** &middot; `verdict`: CONFIRM (gap +38.06) &middot; `verdict_n
 | `mr_scale` | ERR:ValueError |
 
 ## Tier 2 — Data-tier checks (auto from lift CSVs)
+
 | test | result |
 |---|---|
 | `param_plausibility` | N/A — no lift rows |
@@ -40,6 +45,7 @@ Cell: **universal** &middot; `verdict`: CONFIRM (gap +38.06) &middot; `verdict_n
 | `behavior_reproduction` | not run — requires monthly historical CSV |
 
 ## Lift values per project
+
 | project | `fit_r2` | `gokumoto_a` | `gokumoto_b` | `n_bugs_resolved` | `n_issues_total` |
 |---|---|---|---|---|---|
 | camel | 0.5980 | 177.60 | 1.000e-07 | 185 | 500 |
@@ -49,6 +55,7 @@ Cell: **universal** &middot; `verdict`: CONFIRM (gap +38.06) &middot; `verdict_n
 _(showing first 5 of 9 metrics; full data in `paper/outputs/lifts.csv`)_
 
 ## Source
+
 - SD model: `paper/sd.py::bugs()`
 - Audit row: `paper/outputs/full_audit.csv` (line for `bugs`)
 - Lift Rmd: `sci4seng/lifts/vignettes/lift_bugs.Rmd`

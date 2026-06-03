@@ -5,8 +5,11 @@ nav_order: 5
 ---
 
 # brooksq
+
 Cell: **fragile** &middot; `verdict`: CONFIRM (gap -45.91) &middot; `verdict_n`: neutral (gap -0.38)
+
 ## Verdict (N=100 stats-grade)
+
 | metric | value |
 |---|---|
 | `verdict_n` | neutral |
@@ -19,6 +22,7 @@ Cell: **fragile** &middot; `verdict`: CONFIRM (gap -45.91) &middot; `verdict_n`:
 | 2x2 cell | **fragile** |
 
 ## Tier 1 — Structural V&V (prudence)
+
 | test | result |
 |---|---|
 | `boundary_adq` | FAIL |
@@ -31,6 +35,7 @@ Cell: **fragile** &middot; `verdict`: CONFIRM (gap -45.91) &middot; `verdict_n`:
 | `mr_scale` | ERR:ValueError |
 
 ## Tier 2 — Data-tier checks (auto from lift CSVs)
+
 | test | result |
 |---|---|
 | `param_plausibility` | **FAIL** &middot; 10/16 out_of_range, 0 at_boundary, 6 in_range |
@@ -40,6 +45,7 @@ Cell: **fragile** &middot; `verdict`: CONFIRM (gap -45.91) &middot; `verdict_n`:
 | `behavior_reproduction` | not run — requires monthly historical CSV |
 
 ## Lift values per project
+
 | project | `brooks_tax_median` | `inj_rate_increase` | `inj_rate_post_med` | `inj_rate_pre_med` | `latency_days` |
 |---|---|---|---|---|---|
 | airflow | 0.3109919571 | -0.011111111 | 1.4444444444 | 1.4444444444 | 30 |
@@ -54,6 +60,7 @@ Cell: **fragile** &middot; `verdict`: CONFIRM (gap -45.91) &middot; `verdict_n`:
 _(showing first 5 of 10 metrics; full data in `paper/outputs/lifts.csv`)_
 
 ## Boundary violations
+
 | project | param | lifted | lo | hi |
 |---|---|---|---|---|
 | helix | `leak_rate` | 0.5713 | 0 | 0.5 |
@@ -68,6 +75,7 @@ _(showing first 5 of 10 metrics; full data in `paper/outputs/lifts.csv`)_
 | camel | `leak_rate` | 0.7121 | 0 | 0.5 |
 
 ## Source
+
 - SD model: `paper/sd.py::brooksq()`
 - Audit row: `paper/outputs/full_audit.csv` (line for `brooksq`)
 - Lift Rmd: `sci4seng/lifts/vignettes/lift_brooksq.Rmd`

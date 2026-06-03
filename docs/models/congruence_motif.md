@@ -5,8 +5,11 @@ nav_order: 9
 ---
 
 # congruence_motif
+
 Cell: **universal** &middot; `verdict`: CONFIRM (gap -68.78) &middot; `verdict_n`: neutral (gap -60.03)
+
 ## Verdict (N=100 stats-grade)
+
 | metric | value |
 |---|---|
 | `verdict_n` | neutral |
@@ -19,6 +22,7 @@ Cell: **universal** &middot; `verdict`: CONFIRM (gap -68.78) &middot; `verdict_n
 | 2x2 cell | **universal** |
 
 ## Tier 1 — Structural V&V (prudence)
+
 | test | result |
 |---|---|
 | `boundary_adq` | PASS |
@@ -31,6 +35,7 @@ Cell: **universal** &middot; `verdict`: CONFIRM (gap -68.78) &middot; `verdict_n
 | `mr_scale` | ERR:ValueError |
 
 ## Tier 2 — Data-tier checks (auto from lift CSVs)
+
 | test | result |
 |---|---|
 | `param_plausibility` | N/A — no lift rows |
@@ -40,6 +45,7 @@ Cell: **universal** &middot; `verdict`: CONFIRM (gap -68.78) &middot; `verdict_n
 | `behavior_reproduction` | not run — requires monthly historical CSV |
 
 ## Source
+
 - SD model: `paper/sd.py::congruence_motif()`
 - Audit row: `paper/outputs/full_audit.csv` (line for `congruence_motif`)
 

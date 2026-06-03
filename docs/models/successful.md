@@ -5,8 +5,11 @@ nav_order: 34
 ---
 
 # successful
+
 Cell: **process-conditional** &middot; `verdict`: CONFIRM (gap -1100.00) &middot; `verdict_n`: REFUTE (gap +10532.43)
+
 ## Verdict (N=100 stats-grade)
+
 | metric | value |
 |---|---|
 | `verdict_n` | REFUTE |
@@ -19,6 +22,7 @@ Cell: **process-conditional** &middot; `verdict`: CONFIRM (gap -1100.00) &middot
 | 2x2 cell | **process-conditional** |
 
 ## Tier 1 — Structural V&V (prudence)
+
 | test | result |
 |---|---|
 | `boundary_adq` | PASS |
@@ -31,6 +35,7 @@ Cell: **process-conditional** &middot; `verdict`: CONFIRM (gap -1100.00) &middot
 | `mr_scale` | ERR:ValueError |
 
 ## Tier 2 — Data-tier checks (auto from lift CSVs)
+
 | test | result |
 |---|---|
 | `param_plausibility` | N/A — no lift rows |
@@ -40,6 +45,7 @@ Cell: **process-conditional** &middot; `verdict`: CONFIRM (gap -1100.00) &middot
 | `behavior_reproduction` | not run — requires monthly historical CSV |
 
 ## Source
+
 - SD model: `paper/sd.py::successful()`
 - Audit row: `paper/outputs/full_audit.csv` (line for `successful`)
 

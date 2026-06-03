@@ -5,8 +5,11 @@ nav_order: 10
 ---
 
 # coordn2
+
 Cell: **fragile** &middot; `verdict`: REFUTE (gap +860.00) &middot; `verdict_n`: neutral (gap +181.90)
+
 ## Verdict (N=100 stats-grade)
+
 | metric | value |
 |---|---|
 | `verdict_n` | neutral |
@@ -19,6 +22,7 @@ Cell: **fragile** &middot; `verdict`: REFUTE (gap +860.00) &middot; `verdict_n`:
 | 2x2 cell | **fragile** |
 
 ## Tier 1 — Structural V&V (prudence)
+
 | test | result |
 |---|---|
 | `boundary_adq` | PASS |
@@ -31,6 +35,7 @@ Cell: **fragile** &middot; `verdict`: REFUTE (gap +860.00) &middot; `verdict_n`:
 | `mr_scale` | ERR:ValueError |
 
 ## Tier 2 — Data-tier checks (auto from lift CSVs)
+
 | test | result |
 |---|---|
 | `param_plausibility` | N/A — no lift rows |
@@ -40,6 +45,7 @@ Cell: **fragile** &middot; `verdict`: REFUTE (gap +860.00) &middot; `verdict_n`:
 | `behavior_reproduction` | not run — requires monthly historical CSV |
 
 ## Source
+
 - SD model: `paper/sd.py::coordn2()`
 - Audit row: `paper/outputs/full_audit.csv` (line for `coordn2`)
 

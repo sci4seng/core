@@ -11,6 +11,7 @@ Port  ?= 4000                               # for serve (jekyll bind port)
 BrewR ?= $(shell brew --prefix ruby 2>/dev/null)/bin # for serve (brew ruby override)
 GemB  ?= $(HOME)/.gem/ruby/4.0.0/bin        # for serve (user gem bin)
 F     ?= $(firstword $(wildcard docs/*.md)) # for vi
+Live  ?= https://sci4seng.github.io/core    # for verify-live (live site URL)
 
 ## ---------------------------------------------------------------
 
@@ -66,6 +67,38 @@ refresh: ## run paper pipeline + regen site
 
 push: ## prompt msg, commit -am, push
 	@read -p "Reason? " msg; git commit -am "$$msg"; git push; git status
+
+publish: refresh ## refresh + git add -A + commit + push + wait + open live URL
+	@read -p "Commit msg? " msg; git add -A && git commit -m "$$msg" && git push
+	@printf "\n\033[1;33m  waiting 30s for GH Pages to rebuild...\033[0m\n"
+	@sleep 30
+	@printf "\033[1;32m  opening $(Live)\033[0m\n"
+	@$(OPEN) $(Live)
+
+verify-live: ## curl $(Live) and check K1–K3 (title, findings, typology)
+	$(call need,curl,verify-live)
+	@printf "Checking %s ...\n\n" "$(Live)"
+	@U="$(Live)"; pass=0; fail=0; \
+	probe() { local label="$$1" url="$$2" pat="$$3"; \
+	  local body=$$(curl -sL --max-time 15 "$$url"); \
+	  if [ -z "$$body" ]; then printf "  \033[31m✗\033[0m %-30s 0 bytes / unreachable\n" "$$label"; fail=$$((fail+1)); return; fi; \
+	  if echo "$$body" | grep -qE "$$pat"; then \
+	    printf "  \033[32m✓\033[0m %-30s matched: %s\n" "$$label" "$$pat"; pass=$$((pass+1)); \
+	  else \
+	    printf "  \033[31m✗\033[0m %-30s MISSING: %s   (at %s)\n" "$$label" "$$pat" "$$url"; fail=$$((fail+1)); \
+	  fi; }; \
+	probe "K1 title"          "$$U/"            "MYTHS"; \
+	probe "K1 subtitle"       "$$U/"            "Models Yielding Testable Hypotheses"; \
+	probe "K2 findings F0"    "$$U/findings/"   "F0"; \
+	probe "K2 findings F3"    "$$U/findings/"   "F3"; \
+	probe "K3 typology univ"  "$$U/typology/"   "universal"; \
+	probe "K3 typology proc"  "$$U/typology/"   "process-conditional"; \
+	probe "K3 typology frag"  "$$U/typology/"   "fragile"; \
+	probe "K3 typology world" "$$U/typology/"   "world-conditional"; \
+	probe "Models index"      "$$U/models/"     "brooks"; \
+	probe "Model: brooks"     "$$U/models/brooks/" "fragile"; \
+	printf "\nResult: \033[32m%d pass\033[0m / \033[31m%d fail\033[0m\n" "$$pass" "$$fail"; \
+	[ "$$fail" -eq 0 ]
 
 ## doctor + shell ------------------------------------------------
 

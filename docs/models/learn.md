@@ -5,8 +5,11 @@ nav_order: 20
 ---
 
 # learn
+
 Cell: **universal** &middot; `verdict`: CONFIRM (gap -5.28) &middot; `verdict_n`: neutral (gap -3.67)
+
 ## Verdict (N=100 stats-grade)
+
 | metric | value |
 |---|---|
 | `verdict_n` | neutral |
@@ -19,6 +22,7 @@ Cell: **universal** &middot; `verdict`: CONFIRM (gap -5.28) &middot; `verdict_n`
 | 2x2 cell | **universal** |
 
 ## Tier 1 — Structural V&V (prudence)
+
 | test | result |
 |---|---|
 | `boundary_adq` | PASS |
@@ -31,6 +35,7 @@ Cell: **universal** &middot; `verdict`: CONFIRM (gap -5.28) &middot; `verdict_n`
 | `mr_scale` | ERR:ValueError |
 
 ## Tier 2 — Data-tier checks (auto from lift CSVs)
+
 | test | result |
 |---|---|
 | `param_plausibility` | **FAIL** &middot; 3/38 out_of_range, 7 at_boundary, 28 in_range |
@@ -40,6 +45,7 @@ Cell: **universal** &middot; `verdict`: CONFIRM (gap -5.28) &middot; `verdict_n`
 | `behavior_reproduction` | not run — requires monthly historical CSV |
 
 ## Lift values per project
+
 | project | `Jr_n` | `Sr_n` | `Tr_n` | `n_slices` | `promote_rate` |
 |---|---|---|---|---|---|
 | airflow | 1221 | 23 | 94 | 28 | 0.1338393894 |
@@ -54,6 +60,7 @@ Cell: **universal** &middot; `verdict`: CONFIRM (gap -5.28) &middot; `verdict_n`
 _(showing first 5 of 8 metrics; full data in `paper/outputs/lifts.csv`)_
 
 ## Boundary violations
+
 | project | param | lifted | lo | hi |
 |---|---|---|---|---|
 | junit5 | `Jr` | 155 | 0 | 100 |
@@ -61,6 +68,7 @@ _(showing first 5 of 8 metrics; full data in `paper/outputs/lifts.csv`)_
 | openssl | `Jr` | 854 | 0 | 100 |
 
 ## Source
+
 - SD model: `paper/sd.py::learn()`
 - Audit row: `paper/outputs/full_audit.csv` (line for `learn`)
 - Lift Rmd: `sci4seng/lifts/vignettes/lift_learn.Rmd`

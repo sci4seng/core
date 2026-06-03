@@ -19,6 +19,24 @@ HERE    = Path(__file__).resolve()
 DOCS    = HERE.parents[1]              # core/docs
 ROOT    = HERE.parents[2]              # core/
 OUTPUTS = ROOT / "paper" / "outputs"
+CANDIDATES_YML = DOCS / "_data" / "candidates.yml"   # 47-entry inventory
+
+
+def load_candidates():
+    """Parse docs/_data/candidates.yml — flat single-line yaml-ish.
+    Each block: `- name: X` then 5 lines of `  key: "value"`."""
+    if not CANDIDATES_YML.exists():
+        return []
+    out, cur = [], None
+    for line in CANDIDATES_YML.read_text().splitlines():
+        if line.startswith("- name: "):
+            if cur: out.append(cur)
+            cur = {"name": line[len("- name: "):].strip()}
+        elif cur and ": " in line:
+            k, _, v = line.strip().partition(": ")
+            cur[k] = v.strip().strip('"')
+    if cur: out.append(cur)
+    return out
 
 AUDIT   = {r["model"]: r for r in csv.DictReader((OUTPUTS / "full_audit.csv").open())}
 BOUNDS  = defaultdict(list)
@@ -46,13 +64,13 @@ def render_model(name, audit, idx):
 
     cell = audit["cell"]
     out = [front_matter(name, parent="Models", nav_order=idx)]
-    out.append(f"# {name}\n")
+    out.append(f"# {name}\n\n")
     out.append(f"Cell: **{cell}** &middot; "
                f"`verdict`: {audit['verdict']} (gap {audit['gap']}) &middot; "
-               f"`verdict_n`: {audit['verdict_n']} (gap {audit['gap_n']})\n")
+               f"`verdict_n`: {audit['verdict_n']} (gap {audit['gap_n']})\n\n")
 
     # --- Effect summary ---
-    out.append("## Verdict (N=100 stats-grade)\n")
+    out.append("## Verdict (N=100 stats-grade)\n\n")
     out.append("| metric | value |\n|---|---|\n")
     for k in ["verdict_n", "gap_n", "sd0_n", "sd1_n", "eps_n"]:
         out.append(f"| `{k}` | {audit[k]} |\n")
@@ -61,7 +79,7 @@ def render_model(name, audit, idx):
     out.append(f"| 2x2 cell | **{cell}** |\n\n")
 
     # --- Tier 1: Structural V&V ---
-    out.append("## Tier 1 — Structural V&V (prudence)\n")
+    out.append("## Tier 1 — Structural V&V (prudence)\n\n")
     out.append("| test | result |\n|---|---|\n")
     for t in ["boundary_adq","anomaly_check","extreme_eqn","mr_zero_input",
               "mr_monotone","mr_dt_halving","mr_bound_consist","mr_scale"]:
@@ -69,7 +87,7 @@ def render_model(name, audit, idx):
     out.append("\n")
 
     # --- Tier 2: Data-tier (auto from lift CSVs) ---
-    out.append("## Tier 2 — Data-tier checks (auto from lift CSVs)\n")
+    out.append("## Tier 2 — Data-tier checks (auto from lift CSVs)\n\n")
     out.append("| test | result |\n|---|---|\n")
 
     # param_plausibility
@@ -120,7 +138,7 @@ def render_model(name, audit, idx):
 
     # --- Lift values per project (if any) ---
     if lf:
-        out.append("## Lift values per project\n")
+        out.append("## Lift values per project\n\n")
         # collect (project, metric) → value
         by_proj = defaultdict(dict)
         metrics_seen = []
@@ -143,7 +161,7 @@ def render_model(name, audit, idx):
     # --- Boundary violations (if any) ---
     out_of_range = [r for r in bc if r["status"] == "out_of_range"]
     if out_of_range:
-        out.append("## Boundary violations\n")
+        out.append("## Boundary violations\n\n")
         out.append("| project | param | lifted | lo | hi |\n|---|---|---|---|---|\n")
         for r in out_of_range:
             out.append(f"| {r['project']} | `{r['param']}` | {r['lifted']} | "
@@ -151,7 +169,7 @@ def render_model(name, audit, idx):
         out.append("\n")
 
     # --- Pointers ---
-    out.append("## Source\n")
+    out.append("## Source\n\n")
     out.append(f"- SD model: `paper/sd.py::{name}()`\n")
     out.append(f"- Audit row: `paper/outputs/full_audit.csv` (line for `{name}`)\n")
     if lf:
@@ -160,10 +178,16 @@ def render_model(name, audit, idx):
     return "".join(out)
 
 
-def render_models_index(audit):
+def render_models_index(audit, candidates):
+    n_active = len(audit)
+    future = [c for c in candidates if c["name"] not in audit]
     out = [front_matter("Models", nav_order=4, has_children=True)]
-    out.append("# Models (35)\n\n")
-    out.append("One page per model. Sort by cell, then by name.\n\n")
+    out.append(f"# Models — {n_active} active, {len(future)} future-work\n\n")
+    out.append(f"- **{n_active} active**: SD model in `paper/sd.py`, "
+               "audit row in `full_audit.csv`, per-model page below.\n")
+    out.append(f"- **{len(future)} future-work**: named in the SE literature "
+               "but not yet built. See [future-work candidates](future).\n\n")
+    out.append("## Active models, grouped by 2x2 cell\n\n")
     by_cell = defaultdict(list)
     for name, row in audit.items():
         by_cell[row["cell"]].append(name)
@@ -171,13 +195,49 @@ def render_models_index(audit):
                  "world-conditional"]:
         items = sorted(by_cell.get(cell, []))
         if not items: continue
-        out.append(f"## {cell} ({len(items)})\n\n")
+        out.append(f"### {cell} ({len(items)})\n\n")
         for n in items:
             r = audit[n]
             out.append(f"- [{n}]({n}.md) &middot; "
                        f"`verdict_n`: {r['verdict_n']} &middot; "
                        f"`inp_cnt`: {r['inp_cnt']}/200, "
                        f"`par_cnt`: {r['par_cnt']}/200\n")
+        out.append("\n")
+    return "".join(out)
+
+
+def render_future(audit, candidates):
+    """Emit models/future.md from candidates.yml minus current audit set."""
+    future = [c for c in candidates if c["name"] not in audit]
+    out = [front_matter("Future-work candidates", parent="Models", nav_order=99)]
+    out.append(f"# Future-work candidates ({len(future)})\n\n")
+    out.append("Named in the SE literature but not yet built into "
+               "`paper/sd.py`. Source-quality tiers:\n\n")
+    out.append("- **A** = peer-reviewed archival (DOI / IEEE / ACM / journal)\n")
+    out.append("- **B** = book or grey-lit anchor; partial peer-reviewed companion\n")
+    out.append("- **C** = tacit / named-only / not formally modelled\n\n")
+    out.append("Data legend:\n\n")
+    out.append("- **have**: data on disk now, lift could run\n")
+    out.append("- **partial**: would need 1–2 days of new pipeline\n")
+    out.append("- **none**: structurally absent on the 8-project family\n\n")
+
+    # Group by tier
+    by_tier = defaultdict(list)
+    for c in future:
+        by_tier[c["tier"]].append(c)
+    for tier in ("A", "B", "C"):
+        items = sorted(by_tier.get(tier, []), key=lambda x: x["name"])
+        if not items: continue
+        out.append(f"## Tier {tier} ({len(items)})\n\n")
+        out.append("| name | year | source | data |\n|---|---|---|---|\n")
+        for c in items:
+            yr   = c.get("year", "—") or "—"
+            src  = (c.get("source") or "").replace("|", "\\|")[:120]
+            data = c.get("data", "?")
+            note = (c.get("data_note") or "").replace("|", "\\|")[:80]
+            dstr = f"**{data}**" if data == "have" else data
+            if note: dstr += f" — {note}"
+            out.append(f"| `{c['name']}` | {yr} | {src} | {dstr} |\n")
         out.append("\n")
     return "".join(out)
 
@@ -245,8 +305,12 @@ def main():
     DOCS.mkdir(parents=True, exist_ok=True)
     (DOCS / "models").mkdir(exist_ok=True)
 
-    # Models index
-    (DOCS / "models" / "index.md").write_text(render_models_index(AUDIT))
+    # Models index + future-work sub-page
+    candidates = load_candidates()
+    (DOCS / "models" / "index.md").write_text(
+        render_models_index(AUDIT, candidates))
+    (DOCS / "models" / "future.md").write_text(
+        render_future(AUDIT, candidates))
 
     # Per-model
     for i, name in enumerate(sorted(AUDIT.keys()), start=1):

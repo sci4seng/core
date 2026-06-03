@@ -4,11 +4,14 @@ nav_order: 4
 has_children: true
 ---
 
-# Models (35)
+# Models — 35 active, 32 future-work
 
-One page per model. Sort by cell, then by name.
+- **35 active**: SD model in `paper/sd.py`, audit row in `full_audit.csv`, per-model page below.
+- **32 future-work**: named in the SE literature but not yet built. See [future-work candidates](future).
 
-## universal (23)
+## Active models, grouped by 2x2 cell
+
+### universal (23)
 
 - [aiwork](aiwork.md) &middot; `verdict_n`: neutral &middot; `inp_cnt`: 188/200, `par_cnt`: 170/200
 - [archpat](archpat.md) &middot; `verdict_n`: neutral &middot; `inp_cnt`: 129/200, `par_cnt`: 122/200
@@ -34,7 +37,7 @@ One page per model. Sort by cell, then by name.
 - [sir](sir.md) &middot; `verdict_n`: CONFIRM &middot; `inp_cnt`: 200/200, `par_cnt`: 165/200
 - [teamtopo](teamtopo.md) &middot; `verdict_n`: CONFIRM &middot; `inp_cnt`: 200/200, `par_cnt`: 145/200
 
-## process-conditional (7)
+### process-conditional (7)
 
 - [diapers](diapers.md) &middot; `verdict_n`: neutral &middot; `inp_cnt`: 84/200, `par_cnt`: 200/200
 - [limits](limits.md) &middot; `verdict_n`: neutral &middot; `inp_cnt`: 36/200, `par_cnt`: 181/200
@@ -44,14 +47,14 @@ One page per model. Sort by cell, then by name.
 - [pareto](pareto.md) &middot; `verdict_n`: neutral &middot; `inp_cnt`: 69/200, `par_cnt`: 198/200
 - [successful](successful.md) &middot; `verdict_n`: REFUTE &middot; `inp_cnt`: 47/200, `par_cnt`: 200/200
 
-## fragile (4)
+### fragile (4)
 
 - [brooks](brooks.md) &middot; `verdict_n`: neutral &middot; `inp_cnt`: 12/200, `par_cnt`: 68/200
 - [brooksq](brooksq.md) &middot; `verdict_n`: neutral &middot; `inp_cnt`: 6/200, `par_cnt`: 80/200
 - [coordn2](coordn2.md) &middot; `verdict_n`: neutral &middot; `inp_cnt`: 0/200, `par_cnt`: 91/200
 - [scope](scope.md) &middot; `verdict_n`: neutral &middot; `inp_cnt`: 25/200, `par_cnt`: 28/200
 
-## world-conditional (1)
+### world-conditional (1)
 
 - [aidebt](aidebt.md) &middot; `verdict_n`: CONFIRM &middot; `inp_cnt`: 183/200, `par_cnt`: 74/200
 

@@ -5,8 +5,11 @@ nav_order: 4
 ---
 
 # brooks
+
 Cell: **fragile** &middot; `verdict`: CONFIRM (gap -147.50) &middot; `verdict_n`: neutral (gap -0.58)
+
 ## Verdict (N=100 stats-grade)
+
 | metric | value |
 |---|---|
 | `verdict_n` | neutral |
@@ -19,6 +22,7 @@ Cell: **fragile** &middot; `verdict`: CONFIRM (gap -147.50) &middot; `verdict_n`
 | 2x2 cell | **fragile** |
 
 ## Tier 1 — Structural V&V (prudence)
+
 | test | result |
 |---|---|
 | `boundary_adq` | PASS |
@@ -31,6 +35,7 @@ Cell: **fragile** &middot; `verdict`: CONFIRM (gap -147.50) &middot; `verdict_n`
 | `mr_scale` | ERR:ValueError |
 
 ## Tier 2 — Data-tier checks (auto from lift CSVs)
+
 | test | result |
 |---|---|
 | `param_plausibility` | N/A — no lift rows |
@@ -40,6 +45,7 @@ Cell: **fragile** &middot; `verdict`: CONFIRM (gap -147.50) &middot; `verdict_n`
 | `behavior_reproduction` | not run — requires monthly historical CSV |
 
 ## Lift values per project
+
 | project | `brooks_tax_mean` | `brooks_tax_median` | `n_hires` | `seed` | `window_days` |
 |---|---|---|---|---|---|
 | airflow | 0.3116968507 | 0.3109919571 | 1285 | 1 | 90 |
@@ -52,6 +58,7 @@ Cell: **fragile** &middot; `verdict`: CONFIRM (gap -147.50) &middot; `verdict_n`
 | tomcat | 0.0232660259 | 0.0551530533 | 50 | 1 | 90 |
 
 ## Source
+
 - SD model: `paper/sd.py::brooks()`
 - Audit row: `paper/outputs/full_audit.csv` (line for `brooks`)
 - Lift Rmd: `sci4seng/lifts/vignettes/lift_brooks.Rmd`

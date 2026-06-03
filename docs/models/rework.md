@@ -5,8 +5,11 @@ nav_order: 31
 ---
 
 # rework
+
 Cell: **universal** &middot; `verdict`: CONFIRM (gap -48.32) &middot; `verdict_n`: CONFIRM (gap -31.69)
+
 ## Verdict (N=100 stats-grade)
+
 | metric | value |
 |---|---|
 | `verdict_n` | CONFIRM |
@@ -19,6 +22,7 @@ Cell: **universal** &middot; `verdict`: CONFIRM (gap -48.32) &middot; `verdict_n
 | 2x2 cell | **universal** |
 
 ## Tier 1 — Structural V&V (prudence)
+
 | test | result |
 |---|---|
 | `boundary_adq` | PASS |
@@ -31,6 +35,7 @@ Cell: **universal** &middot; `verdict`: CONFIRM (gap -48.32) &middot; `verdict_n
 | `mr_scale` | ERR:ValueError |
 
 ## Tier 2 — Data-tier checks (auto from lift CSVs)
+
 | test | result |
 |---|---|
 | `param_plausibility` | PASS &middot; 8/8 in_range |
@@ -40,6 +45,7 @@ Cell: **universal** &middot; `verdict`: CONFIRM (gap -48.32) &middot; `verdict_n
 | `behavior_reproduction` | not run — requires monthly historical CSV |
 
 ## Lift values per project
+
 | project | `failrate_mean` | `failrate_median` | `n_windows` | `seed` | `window_days` |
 |---|---|---|---|---|---|
 | airflow | 0.3514683097 | 0.3976261127 | 29 | 1 | 90 |
@@ -52,6 +58,7 @@ Cell: **universal** &middot; `verdict`: CONFIRM (gap -48.32) &middot; `verdict_n
 | tomcat | 0.1935612146 | 0.1794258373 | 59 | 1 | 90 |
 
 ## Source
+
 - SD model: `paper/sd.py::rework()`
 - Audit row: `paper/outputs/full_audit.csv` (line for `rework`)
 - Lift Rmd: `sci4seng/lifts/vignettes/lift_rework.Rmd`

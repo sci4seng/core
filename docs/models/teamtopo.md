@@ -5,8 +5,11 @@ nav_order: 35
 ---
 
 # teamtopo
+
 Cell: **universal** &middot; `verdict`: CONFIRM (gap -139.84) &middot; `verdict_n`: CONFIRM (gap -56.16)
+
 ## Verdict (N=100 stats-grade)
+
 | metric | value |
 |---|---|
 | `verdict_n` | CONFIRM |
@@ -19,6 +22,7 @@ Cell: **universal** &middot; `verdict`: CONFIRM (gap -139.84) &middot; `verdict_
 | 2x2 cell | **universal** |
 
 ## Tier 1 — Structural V&V (prudence)
+
 | test | result |
 |---|---|
 | `boundary_adq` | PASS |
@@ -31,6 +35,7 @@ Cell: **universal** &middot; `verdict`: CONFIRM (gap -139.84) &middot; `verdict_
 | `mr_scale` | ERR:ValueError |
 
 ## Tier 2 — Data-tier checks (auto from lift CSVs)
+
 | test | result |
 |---|---|
 | `param_plausibility` | N/A — no lift rows |
@@ -40,6 +45,7 @@ Cell: **universal** &middot; `verdict`: CONFIRM (gap -139.84) &middot; `verdict_
 | `behavior_reproduction` | not run — requires monthly historical CSV |
 
 ## Source
+
 - SD model: `paper/sd.py::teamtopo()`
 - Audit row: `paper/outputs/full_audit.csv` (line for `teamtopo`)
 

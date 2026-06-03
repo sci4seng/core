@@ -5,8 +5,11 @@ nav_order: 3
 ---
 
 # archpat
+
 Cell: **universal** &middot; `verdict`: CONFIRM (gap +228.69) &middot; `verdict_n`: neutral (gap +59.01)
+
 ## Verdict (N=100 stats-grade)
+
 | metric | value |
 |---|---|
 | `verdict_n` | neutral |
@@ -19,6 +22,7 @@ Cell: **universal** &middot; `verdict`: CONFIRM (gap +228.69) &middot; `verdict_
 | 2x2 cell | **universal** |
 
 ## Tier 1 — Structural V&V (prudence)
+
 | test | result |
 |---|---|
 | `boundary_adq` | PASS |
@@ -31,6 +35,7 @@ Cell: **universal** &middot; `verdict`: CONFIRM (gap +228.69) &middot; `verdict_
 | `mr_scale` | ERR:ValueError |
 
 ## Tier 2 — Data-tier checks (auto from lift CSVs)
+
 | test | result |
 |---|---|
 | `param_plausibility` | **FAIL** &middot; 3/4 out_of_range, 0 at_boundary, 1 in_range |
@@ -40,6 +45,7 @@ Cell: **universal** &middot; `verdict`: CONFIRM (gap +228.69) &middot; `verdict_
 | `behavior_reproduction` | not run — requires monthly historical CSV |
 
 ## Lift values per project
+
 | project | `Legacy_n` | `Other_n` | `Patterned_n` | `modules` | `n_files` |
 |---|---|---|---|---|---|
 | ambari | 1890 | 4329 | 381 | ambari-serve | 6600 |
@@ -48,6 +54,7 @@ Cell: **universal** &middot; `verdict`: CONFIRM (gap +228.69) &middot; `verdict_
 _(showing first 5 of 7 metrics; full data in `paper/outputs/lifts.csv`)_
 
 ## Boundary violations
+
 | project | param | lifted | lo | hi |
 |---|---|---|---|---|
 | helix | `Legacy` | 384 | 0 | 200 |
@@ -55,6 +62,7 @@ _(showing first 5 of 7 metrics; full data in `paper/outputs/lifts.csv`)_
 | ambari | `Legacy` | 1890 | 0 | 200 |
 
 ## Source
+
 - SD model: `paper/sd.py::archpat()`
 - Audit row: `paper/outputs/full_audit.csv` (line for `archpat`)
 - Lift Rmd: `sci4seng/lifts/vignettes/lift_archpat.Rmd`

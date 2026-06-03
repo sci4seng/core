@@ -1,24 +1,53 @@
-  name: "Science for SE"
-  on:
-    push:
-      branches: [main]
-  permissions:
-    contents: read
-    pages: write
-    id-token: write
-  jobs:
-    build-deploy:
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v4
-        - uses: ruby/setup-ruby@v1
-          with:
-            ruby-version: '3.3'
-            bundler-cache: true
-            working-directory: docs
-        - run: cd docs && bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}"
-        - uses: actions/upload-pages-artifact@v3
-          with:
-            path: docs/_site
-        - id: deploy
-          uses: actions/deploy-pages@v4
+name: "Science for SE — pages"
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:        # allow manual trigger from GH UI
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:                # cancel old in-progress runs
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: pages           # MUST have id=pages for base_path output
+        uses: actions/configure-pages@v5
+
+      - uses: actions/setup-python@v5    # for gen_md.py
+        with:
+          python-version: '3.12'
+
+      - name: Regen MD from CSVs
+        run: python3 docs/scripts/gen_md.py
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+          working-directory: docs
+
+      - name: Jekyll build
+        run: |
+          cd docs
+          bundle exec jekyll build \
+            --baseurl "${{ steps.pages.outputs.base_path }}"
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/_site
+
+      - id: deploy
+        uses: actions/deploy-pages@v4

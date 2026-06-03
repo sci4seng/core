@@ -5,8 +5,11 @@ nav_order: 14
 ---
 
 # defmap
+
 Cell: **universal** &middot; `verdict`: CONFIRM (gap -100.00) &middot; `verdict_n`: CONFIRM (gap -19.33)
+
 ## Verdict (N=100 stats-grade)
+
 | metric | value |
 |---|---|
 | `verdict_n` | CONFIRM |
@@ -19,6 +22,7 @@ Cell: **universal** &middot; `verdict`: CONFIRM (gap -100.00) &middot; `verdict_
 | 2x2 cell | **universal** |
 
 ## Tier 1 — Structural V&V (prudence)
+
 | test | result |
 |---|---|
 | `boundary_adq` | PASS |
@@ -31,6 +35,7 @@ Cell: **universal** &middot; `verdict`: CONFIRM (gap -100.00) &middot; `verdict_
 | `mr_scale` | ERR:ValueError |
 
 ## Tier 2 — Data-tier checks (auto from lift CSVs)
+
 | test | result |
 |---|---|
 | `param_plausibility` | N/A — no lift rows |
@@ -40,6 +45,7 @@ Cell: **universal** &middot; `verdict`: CONFIRM (gap -100.00) &middot; `verdict_
 | `behavior_reproduction` | not run — requires monthly historical CSV |
 
 ## Lift values per project
+
 | project | `n_phases` | `seed` | `total_caught` | `total_inject` | `total_leaked` |
 |---|---|---|---|---|---|
 | airflow | 190 | 1 | 640 | 7271 | 6631 |
@@ -54,6 +60,7 @@ Cell: **universal** &middot; `verdict`: CONFIRM (gap -100.00) &middot; `verdict_
 _(showing first 5 of 7 metrics; full data in `paper/outputs/lifts.csv`)_
 
 ## Source
+
 - SD model: `paper/sd.py::defmap()`
 - Audit row: `paper/outputs/full_audit.csv` (line for `defmap`)
 - Lift Rmd: `sci4seng/lifts/vignettes/lift_defmap.Rmd`
