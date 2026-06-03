@@ -10,6 +10,9 @@ permissions:
   pages: write
   id-token: write
 
+env:                       # opt into Node 24 now (deprecation 2026-06-16)
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 concurrency:                # cancel old in-progress runs
   group: pages
   cancel-in-progress: true
