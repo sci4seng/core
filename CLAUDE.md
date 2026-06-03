@@ -2,7 +2,7 @@
 
 ## Code style
 - 2-space indent, 85-char lines, minimum LOC, maximum readability
-- Python: `i` for self, `the` for config (Menzies house style)
+- Python: `i` for self, `the` for config (lead house style)
 - R: kaiaulu function-naming style (verb_noun, snake_case)
 - Use `data.table` in R (not tibble/dplyr)
 - Use `%>%` from magrittr (kaiaulu does), not the base `|>`
@@ -20,7 +20,7 @@
 The `.Rmd` is for the analysis flow. The companion `.R` holds reusable
 functions in kaiaulu's library style (with roxygen comments).
 
-Carlos will branch each delivered notebook into kaiaulu as a PR. Treat
+SME will branch each delivered notebook into kaiaulu as a PR. Treat
 each `.Rmd` as something a student would submit for code review.
 
 ## Tool installs (SME's URLs)
@@ -65,5 +65,5 @@ mentioning the underlying tool. If it works, the wiring is correct.
 
 ## Project status flag
 This project is in a handoff state from Claude (web) to Claude Code.
-Tim drives. Carlos reviews each delivered `.Rmd` as a PR into kaiaulu.
-Rick and Umar are downstream collaborators.
+coder drives. SME reviews each delivered `.Rmd` as a PR into kaiaulu.
+DBmang and intern are downstream collaborators.

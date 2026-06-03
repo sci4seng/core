@@ -1,7 +1,7 @@
 # Project state — SE compartmental models, falsification + Helix calibration
 
 ## Intent
-A methodology paper (Menzies/Kazman + Umar; Carlos on tooling) on
+A methodology paper (lead/Kazman + intern; SME on tooling) on
 falsification-based testing of SE system-dynamics models, paired with
 real-data calibration via kaiaulu on Apache Helix.
 
@@ -25,7 +25,7 @@ coordn2, successful).
 
 **Helix data extract** — git_repo (1875+ commits), JIRA (797 issues
 fully extracted), GitHub commits/issues/PRs, 116 mbox files from
-2012-10 onwards. Carlos uploaded a cleaned version to Drive — see
+2012-10 onwards. SME uploaded a cleaned version to Drive — see
 `data/README.md`. Understand binary outputs are absent (license-gated).
 
 **Radio silence smell — WORKING.** `smells/radio_silence.py` ports
@@ -71,13 +71,13 @@ code-and-bug-tracker signal but not for these five categories.
    into kaiaulu as a PR and code-reviews. See `lifts/` for templates.
 2. **GoF detection is back** — pattern4.jar wrapper exists in kaiaulu;
    only blocker was setup. Replaces our Arcan plan for archpat's
-   Patterned partition (closer to Ric's original semantics).
+   Patterned partition (closer to architect's original semantics).
 3. **5 tool URLs to enable** — Perceval, Depends, scc, RefactoringMiner,
    pattern4.jar. All loosely-coupled system calls in kaiaulu. See
    `CLAUDE.md` for the install list.
 4. **Helix data cleaned** — re-fetch from his Drive folder; the
    existing /home/claude/helix copy is the pre-cleanup version.
-5. **Carlos + Rick want view-mode access to the Claude project.**
+5. **SME + DBmang want view-mode access to the Claude project.**
 
 ## Next sequence (in priority order)
 
@@ -91,11 +91,11 @@ code-and-bug-tracker signal but not for these five categories.
 4. Build `lift_brooks.Rmd` end-to-end — the cleanest of the 10
    informable models, no tooling dependencies beyond git+identity.
 5. Build `lift_archpat.Rmd` using pattern4.jar for the GoF partition
-   (Ric's original semantics; Arcan stays as a fallback).
+   (architect's original semantics; Arcan stays as a fallback).
 6. Build `lift_bugs.Rmd` and `lift_learn.Rmd` — the other two
    tool-free informables.
-7. Send Rick a status update; loop in Umar; offer view-mode access
-   to Carlos and Rick.
+7. Send DBmang a status update; loop in intern; offer view-mode access
+   to SME and DBmang.
 
 ## Worked example trio for the paper
 
@@ -215,7 +215,7 @@ Both gates (audit_staleness.py, check_pages.py) pass after the change.
 
 ## Update 2026-05-25 (later) — congruence_motif model + 3-script bug fix
 
-**New model: `congruence_motif`** added per Carlos GH issue #3.
+**New model: `congruence_motif`** added per SME GH issue #3.
 Motif-based socio-technical congruence (Mauerer et al. 2022, IEEE TSE
 48(8); kaiaulu R/motif.R lineage). Companion to the existing
 smells-based `congruence`. Same SE thesis, different mathematical

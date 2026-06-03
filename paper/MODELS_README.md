@@ -146,7 +146,7 @@ is documented there.
 ## Caveats worth keeping
 
 - `archpat.pat_strength` is in `init` but unused in `step()`. Open
-  question for Rick whether it should drive the step equation.
+  question for DBmang whether it should drive the step equation.
 - `aidebt` has a regime crossover at `tmax ≈ 26` with default params.
   Default `rq()` reports REFUTE at `tmax=20`; CONFIRM at `tmax≥30`.
 - `archpat` leverage parameters from prior sensitivity sweep:

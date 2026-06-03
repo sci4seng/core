@@ -31,7 +31,7 @@ S11 write lift.Rmd · S12 run lift → outputs/lift_<m>_<proj>.csv
 
 Future steps S13–S20 (param plausibility, boundary adq, calibrated
 rq rerun, behavior reprod/pred, family-member, verdict write-up,
-Carlos PR review).
+SME PR review).
 
 **Update 2026-05-24 (late eve)**: **8 projects unzipped from
 SME's Drive bundle**, S16 now spans 8 projects:
@@ -232,7 +232,7 @@ bugs** (needs JIRA dump from SME's Drive).
    methodological-case write-up (paper section on "framework
    expresses; no data calibrates") is *uncounted* and will take
    real time.
-6. **Carlos PR review (would-be S20)** is *uncounted* and will
+6. **SME PR review (would-be S20)** is *uncounted* and will
    dominate the non-coding cost once lifts start landing as kaiaulu
    PRs.
 7. **Hour-vs-insight ratio misleads.** A 0.5h lift might produce a

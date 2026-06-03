@@ -29,8 +29,12 @@ import argparse, csv, re, shutil, subprocess, sys
 from pathlib import Path
 
 ROOT     = Path(__file__).resolve().parents[1]
-DROPZONE = ROOT / "data" / "dropzone"
-DATA     = ROOT / "data"
+# data/ is a SIBLING repo under sci4seng/. Default to ../data; override
+# with SCI4SENG_DATA env var if the sibling repo lives elsewhere.
+import os
+_DATA_DEFAULT = ROOT.parent / "data"
+DATA     = Path(os.environ.get("SCI4SENG_DATA", _DATA_DEFAULT))
+DROPZONE = DATA / "dropzone"
 OUTPUTS  = ROOT / "paper" / "outputs"
 
 LIFT_RE = re.compile(r"^lift_([a-z_]+)_([a-z0-9]+)\.csv$")
@@ -45,9 +49,11 @@ PIPELINE = [
     ("calibrate",       ["python3", "calibrate.py"],                ROOT / "paper", False),
     ("cross_project",   ["python3", "cross_project.py"],            ROOT / "paper", False),
     ("full_audit",      ["python3", "full_audit.py"],               ROOT / "paper", False),
-    ("gen_rich",        ["python3", "docs/scripts/gen_rich.py"],    ROOT, False),
-    ("audit_staleness", ["python3", "paper/scripts/audit_staleness.py"], ROOT, False),
-    ("check_pages",     ["python3", "docs/scripts/check_pages.py"], ROOT, False),
+    ("gen_md",          ["python3", "docs/scripts/gen_md.py"],      ROOT, False),
+    # audit_staleness.py removed: was for the old HTML site (checked cell
+    # labels in docs/index.html). MD site is auto-regenerated from CSVs
+    # by gen_md.py so no drift is possible. verify-live (in Makefile)
+    # replaces it for the new site.
 ]
 
 
@@ -67,12 +73,32 @@ def snapshot_audit():
             for r in csv.DictReader(p.open())}
 
 
+def unzip_in_place(zip_path: Path):
+    """Unzip a project bundle into DROPZONE; return the new subdir path."""
+    import zipfile
+    target = DROPZONE / zip_path.stem
+    if target.exists():
+        print(f"  [skip] {zip_path.name} — {target.name}/ already in dropzone")
+        return None
+    print(f"  unzip: {zip_path.name} → {target.name}/")
+    target.mkdir()
+    with zipfile.ZipFile(zip_path) as zf:
+        zf.extractall(target)
+    return target
+
+
 def scan_dropzone():
-    """Return (lift_csvs, project_subdirs) found under data/dropzone/."""
+    """Return (lift_csvs, project_subdirs) found under data/dropzone/.
+    Auto-unzips any *.zip first so the subdir is picked up."""
+    # First pass: unzip any zip bundles
+    for entry in sorted(DROPZONE.iterdir()):
+        if entry.is_file() and entry.suffix == ".zip":
+            unzip_in_place(entry)
+    # Second pass: classify
     lift_csvs = []
     project_dirs = []
     for entry in sorted(DROPZONE.iterdir()):
-        if entry.name in ("README.md", ".DS_Store"):
+        if entry.name in ("README.md", ".DS_Store") or entry.suffix == ".zip":
             continue
         if entry.is_file() and entry.suffix == ".csv":
             if LIFT_RE.match(entry.name):

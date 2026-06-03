@@ -75,10 +75,55 @@ publish: refresh ## refresh + git add -A + commit + push + wait + open live URL
 	@printf "\033[1;32m  opening $(Live)\033[0m\n"
 	@$(OPEN) $(Live)
 
-verify-live: ## curl $(Live) and check K1–K3 (title, findings, typology)
+verify: verify-k-idx verify-k-mod verify-k-anon ## run all scriptable K-* checks
+	@printf "\n\033[1;32m  all verify-* targets passed\033[0m\n"
+
+verify-k-mod: ## K11-K20: probe 5 sample model pages
+	$(call need,curl,verify-k-mod)
+	@printf "Checking model pages on %s ...\n\n" "$(strip $(Live))"
+	@U="$(strip $(Live))"; pass=0; fail=0; \
+	probe() { local label="$$1" url="$$2" pat="$$3"; \
+	  local body=$$(curl -sL --max-time 15 "$$url"); \
+	  if [ -z "$$body" ]; then printf "  \033[31m✗\033[0m %-32s 0 bytes / unreachable (%s)\n" "$$label" "$$url"; fail=$$((fail+1)); return; fi; \
+	  if echo "$$body" | grep -qE "$$pat"; then \
+	    printf "  \033[32m✓\033[0m %-32s matched: %s\n" "$$label" "$$pat"; pass=$$((pass+1)); \
+	  else \
+	    printf "  \033[31m✗\033[0m %-32s MISSING: %s   (%s)\n" "$$label" "$$pat" "$$url"; fail=$$((fail+1)); \
+	  fi; }; \
+	for m in brooks archpat aiwork congruence_motif diapers; do \
+	  probe "K11 $$m loads"     "$$U/models/$$m.html"  "scorecard|Tier|cell|Verdict"; \
+	  probe "K15 $$m scorecard" "$$U/models/$$m.html"  "Tier 1"; \
+	  probe "K16 $$m data-tier" "$$U/models/$$m.html"  "Tier 2"; \
+	done; \
+	printf "\nResult: \033[32m%d pass\033[0m / \033[31m%d fail\033[0m\n" "$$pass" "$$fail"; \
+	[ "$$fail" -eq 0 ]
+
+verify-k-anon: ## K29-K30: grep sweep for residual identity leaks
+	@printf "Sweeping for identity leaks across sci4seng/{core,lifts,data} ...\n\n"
+	@bad=0; \
+	for term in 'Tim' 'Carlos' 'Rick' 'Umar' 'Menzies' 'github.com/timm'; do \
+	  hits=$$(grep -rIln "\b$$term\b" \
+	    /Users/timm/gits/sci4seng/core \
+	    /Users/timm/gits/sci4seng/lifts \
+	    /Users/timm/gits/sci4seng/data \
+	    --include="*.md" --include="*.py" --include="*.R" \
+	    --include="*.Rmd" --include="*.html" --include="*.yml" \
+	    2>/dev/null | grep -v "/\.git/\|/_site/\|/\.jekyll-cache/\|/vendor/" | head -5); \
+	  if [ -n "$$hits" ]; then \
+	    printf "  \033[31m✗\033[0m %-12s leaked in:\n" "$$term"; \
+	    echo "$$hits" | sed 's|^|      |'; bad=$$((bad+1)); \
+	  else \
+	    printf "  \033[32m✓\033[0m %-12s no leaks\n" "$$term"; \
+	  fi; done; \
+	if [ "$$bad" -eq 0 ]; then printf "\n\033[1;32m  clean — anonymisation passes\033[0m\n"; \
+	else printf "\n\033[1;31m  %d leak(s) found\033[0m\n" "$$bad"; exit 1; fi
+
+verify-k-idx: verify-live ## alias for verify-live (K1-K10 index page probes)
+
+verify-live: ## K1-K10: curl $(Live) and check title, findings, typology, models
 	$(call need,curl,verify-live)
 	@printf "Checking %s ...\n\n" "$(Live)"
-	@U="$(Live)"; pass=0; fail=0; \
+	@U="$(strip $(Live))"; pass=0; fail=0; \
 	probe() { local label="$$1" url="$$2" pat="$$3"; \
 	  local body=$$(curl -sL --max-time 15 "$$url"); \
 	  if [ -z "$$body" ]; then printf "  \033[31m✗\033[0m %-30s 0 bytes / unreachable\n" "$$label"; fail=$$((fail+1)); return; fi; \
@@ -87,16 +132,16 @@ verify-live: ## curl $(Live) and check K1–K3 (title, findings, typology)
 	  else \
 	    printf "  \033[31m✗\033[0m %-30s MISSING: %s   (at %s)\n" "$$label" "$$pat" "$$url"; fail=$$((fail+1)); \
 	  fi; }; \
-	probe "K1 title"          "$$U/"            "MYTHS"; \
-	probe "K1 subtitle"       "$$U/"            "Models Yielding Testable Hypotheses"; \
-	probe "K2 findings F0"    "$$U/findings/"   "F0"; \
-	probe "K2 findings F3"    "$$U/findings/"   "F3"; \
-	probe "K3 typology univ"  "$$U/typology/"   "universal"; \
-	probe "K3 typology proc"  "$$U/typology/"   "process-conditional"; \
-	probe "K3 typology frag"  "$$U/typology/"   "fragile"; \
-	probe "K3 typology world" "$$U/typology/"   "world-conditional"; \
-	probe "Models index"      "$$U/models/"     "brooks"; \
-	probe "Model: brooks"     "$$U/models/brooks/" "fragile"; \
+	probe "K1 title"          "$$U/"                       "MYTHS"; \
+	probe "K1 subtitle"       "$$U/"                       "Models Yielding Testable Hypotheses"; \
+	probe "K2 findings F0"    "$$U/findings.html"          "F0"; \
+	probe "K2 findings F3"    "$$U/findings.html"          "F3"; \
+	probe "K3 typology univ"  "$$U/typology.html"          "universal"; \
+	probe "K3 typology proc"  "$$U/typology.html"          "process-conditional"; \
+	probe "K3 typology frag"  "$$U/typology.html"          "fragile"; \
+	probe "K3 typology world" "$$U/typology.html"          "world-conditional"; \
+	probe "Models index"      "$$U/models/"                "brooks"; \
+	probe "Model: brooks"     "$$U/models/brooks.html"     "fragile"; \
 	printf "\nResult: \033[32m%d pass\033[0m / \033[31m%d fail\033[0m\n" "$$pass" "$$fail"; \
 	[ "$$fail" -eq 0 ]
 

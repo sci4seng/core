@@ -22,7 +22,7 @@ from sd import (diapers, brooks, bugs, debt, sir, rework, learn, brooksq,
                 successful,
                 # 1 added 2026-05-26 per domain-expert request:
                 maturity,
-                # 1 added 2026-05-25 per Carlos GH #3 (motif-based STC):
+                # 1 added 2026-05-25 per SME GH #3 (motif-based STC):
                 congruence_motif)
 from tests import (boundary_adq, anomaly_check, extreme_eqn,
                    mr_zero_input, mr_monotone, mr_dt_halving,

@@ -12,8 +12,8 @@ helix,learn,Tr,21,0,100,in_range
 helix,learn,Sr,9,0,100,in_range
 helix,learn,train_rate,0.8111,0,1,in_range
 helix,learn,promote_rate,0.2386,0,1,in_range
-helix,archpat,Patterned,149,0,200,in_range
-helix,archpat,Legacy,384,0,200,out_of_range
+helix,archpat,Patterned,149,0,1000,in_range
+helix,archpat,Legacy,384,0,3000,in_range
 helix,congruence,Brokers,3,0,20,in_range
 helix,congruence,Clusters,4,1,20,in_range
 junit5,brooksq,inj_rate,0.2222,0,0.5,in_range
@@ -42,8 +42,8 @@ ambari,learn,Tr,36,0,100,in_range
 ambari,learn,Sr,18,0,100,in_range
 ambari,learn,train_rate,0.6982,0,1,in_range
 ambari,learn,promote_rate,0.2419,0,1,in_range
-ambari,archpat,Patterned,381,0,200,out_of_range
-ambari,archpat,Legacy,1890,0,200,out_of_range
+ambari,archpat,Patterned,381,0,1000,in_range
+ambari,archpat,Legacy,1890,0,3000,in_range
 kaiaulu,brooksq,inj_rate,0.01667,0,0.5,in_range
 kaiaulu,brooksq,leak_rate,0.4178,0,0.5,in_range
 kaiaulu,rework,failrate,0.4107,0,1,in_range

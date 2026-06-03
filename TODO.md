@@ -1,6 +1,6 @@
 # TODO.md — handoff for next session (post-compaction)
 
-Snapshot 2026-05-25. Repo `github.com/timm/icse27theories` @ `main`.
+Snapshot 2026-05-25. Repo `github.com/sci4seng/icse27theories` @ `main`.
 
 ## DECIDED
 
@@ -90,18 +90,18 @@ Snapshot 2026-05-25. Repo `github.com/timm/icse27theories` @ `main`.
 
 ### Data
 - `~/Downloads/helix/` (pre-cleanup) + `data/helix_clean/`
-  (Carlos cleaned, from his Drive bundle). radio_silence reproduces
+  (SME cleaned, from his Drive bundle). radio_silence reproduces
   identically on both — cleaning didn't affect comm graph.
 - 6 dataset zips extracted from `/Users/timm/tmp/Claude SE Models-…zip`.
 
 ## LEFT (priority order)
 
 ### High value, low effort
-1. **Send Rick/Umar status email** — draft in
+1. **Send DBmang/intern status email** — draft in
    `diary/2026-05-25_status_to_rick_umar.md`. coder's action.
-2. **Ping Rick on `archpat.pat_strength`** — declared in init but
+2. **Ping DBmang on `archpat.pat_strength`** — declared in init but
    unused in `step()`. Dead code or missing equation?
-3. **Anonymous mirror for submission**: `github.com/timm/...` URL
+3. **Anonymous mirror for submission**: `github.com/sci4seng/...` URL
    reveals identity. Use anonymous.4open.science or zip `docs/` as
    supplementary material.
 
@@ -142,7 +142,7 @@ XX. **Hyperlink scorecard terms to definitions** (deferred 2026-05-25).
       Bake into `gen_rich.py` for regenerated pages; one-shot patch
       for `brooks.html` (manual).
 
-### New model: motif-based congruence (Carlos GH #3, DONE 2026-05-25)
+### New model: motif-based congruence (SME GH #3, DONE 2026-05-25)
 
 UU. **DONE.** Shipped `congruence_motif()` SD model + `M[]` entry +
     `docs/models/congruence_motif.html` page + index card +
@@ -208,7 +208,7 @@ UU. **Add a second congruence model to the bucket — motif-based STC
     `congruence` derived metric in step(). Each gives a different y()
     if Bugs born differently. Could ship as one model with a
     `variant` param ∈ {1,2,3} ctrl switch, OR as 3 separate models.
-    Carlos preference TBD.
+    SME preference TBD.
 
     **Lift recipe** (confirmed against kaiaulu vignette
     `motif_analysis.html` fetched 2026-05-25):
@@ -260,7 +260,7 @@ UU. **Add a second congruence model to the bucket — motif-based STC
     reference Cataldo at all. Including the Cataldo variants
     means a second lift pipeline (task-dependency × people-task
     matrices, not igraph motifs). Could ship as a third model
-    `congruence_cataldo` distinct from `congruence_motif`. Carlos
+    `congruence_cataldo` distinct from `congruence_motif`. SME
     expectation needs clarification: does he want ONE model with
     formula switches, or THREE distinct models
     (smells / motif / cataldo)?
@@ -283,7 +283,7 @@ UU. **Add a second congruence model to the bucket — motif-based STC
           gap → defects), two different operationalizations, can the
           framework triage which is the better measurement target?
 
-    **Open questions for Carlos/Rick**:
+    **Open questions for SME/DBmang**:
     - One model with variant=1/2/3 ctrl, or 3 separate models?
     - Should the smells-based `congruence` be renamed
       `congruence_smells` for symmetry?
@@ -292,7 +292,7 @@ UU. **Add a second congruence model to the bucket — motif-based STC
 
     Big-ticket effort: estimate 1 day of paper-reading + 1 day of
     SD model drafting + 1 day of lift Rmd + audit pass. Wait for
-    Carlos prioritisation before starting.
+    SME prioritisation before starting.
 
 ### Model-derived findings re-validation (deferred 2026-05-25)
 
@@ -337,10 +337,10 @@ VV. **Re-validate the May 11 aidebt regime-crossover claim against
     a 6×6 sensitivity table for that pair. Re-derive against current
     sd.py to check numbers reproduce.
 
-### Vignette ↔ docs/models alignment (Carlos GH #1, deferred 2026-05-25)
+### Vignette ↔ docs/models alignment (SME GH #1, deferred 2026-05-25)
 
 SS. **Two related fixes for the Rmd-vignette ↔ docs/models drift
-    that Carlos flagged in GH issue #1**:
+    that SME flagged in GH issue #1**:
 
     **(a) Restructure `extract/lifts/` to match kaiaulu vignette
     naming convention**. Today our lifts are named
@@ -395,7 +395,7 @@ SS. **Two related fixes for the Rmd-vignette ↔ docs/models drift
     6. Run after each docs regen (or as a pre-commit hook).
 
     Open questions:
-    - Source of truth for vignette URLs: hard-code the Carlos
+    - Source of truth for vignette URLs: hard-code the SME
       fork URLs, OR have a `vignette_urls.yml` per model.
     - Conflict policy when vignette + manual M[] differ: prefer
       vignette, prefer M[], or interactive?
@@ -590,7 +590,7 @@ YY. **audit_staleness.py misses prose-embedded lift stats**.
    `learn.Jr hi 100→2000`,
    `congruence.Brokers hi 20→100`,
    `congruence.Clusters hi 20→100`.
-   (Wait for Tim/Ric nod before editing.)
+   (Wait for coder/architect nod before editing.)
 
    **7a. archpat sub-entry (added 2026-05-25)**: empirical anchor
    from `paper/outputs/boundary_check.csv`:
@@ -697,7 +697,7 @@ YY. **audit_staleness.py misses prose-embedded lift stats**.
     `data/helix_clean/`, `data/*/git_repo/`. If push ever fails on
     100MB again, run `scripts/fix_gh_push.sh` (uses git-filter-repo;
     destructive history rewrite — user must authorize).
-12. **Anonymous URL still reveals identity**: `github.com/timm/…`
+12. **Anonymous URL still reveals identity**: `github.com/sci4seng/…`
     contains username. Don't share the repo URL as supplementary
     material; use anonymous.4open.science mirror.
 13. **Congruence model defaults match Helix's measured values**
@@ -722,7 +722,7 @@ YY. **audit_staleness.py misses prose-embedded lift stats**.
 
 - `findings.md` — 5 F-findings, paper-prose.
 - `TIMETABLE.md` — per-model wall-clock log, S0–S20 schema.
-- `sanity.md` — per-cell bug-count + identity-bridge status (Carlos §1+§2).
+- `sanity.md` — per-cell bug-count + identity-bridge status (SME §1+§2).
 - `STATE.md` — original framing + 2026-05-24/25 session update.
 - `NOTES.md` — coder's personal session diary (don't auto-edit).
 - `diary/` — emails, prompts, status drafts.

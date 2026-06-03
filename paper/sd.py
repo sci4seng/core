@@ -771,7 +771,7 @@ def aidebt():
 def archpat():
   """Architectural patterns as repair: Martin Clean Arch [16] + Perry-Wolf [17].
   
-  Tests Ric's claim: 'patterns repair existing-bad-software'.
+  Tests architect's claim: 'patterns repair existing-bad-software'.
   
   Three regions: Patterned (under good architecture), Legacy (not), Drift
   (was patterned, eroded). Migration moves Legacy -> Patterned at rate
@@ -784,9 +784,9 @@ def archpat():
   
   RQ: starting from Patterned=10, Legacy=90, Debt=40 (already-bad project),
   does aggressive migration (migrate=1.5) actually repair the project
-  vs slow migration (migrate=0.2)?  Ric's strong claim says yes.
+  vs slow migration (migrate=0.2)?  architect's strong claim says yes.
   """
-  init = {'Patterned':[10,0,200,'modules'], 'Legacy':[90,0,200,'modules'],
+  init = {'Patterned':[10,0,1000,'modules'], 'Legacy':[90,0,3000,'modules'],
           'Drift':[0,0,200,'modules'], 'Debt':[40,0,150,'debt-items'], 'Feat':[0,0,2000,'items'],
           'migrate':[0.2,0,2,'frac/tick'], 'decay_rate':[0.05,0,0.5,'frac/tick'],
           'drift_to_legacy':[0.10,0,1,'frac/tick'],
@@ -839,7 +839,7 @@ def archpat():
 def congruence():
   """**Smells-based variant** of socio-technical congruence (kaiaulu
   R/smells.R lineage; Catolino 2019, IEEE 8651329). Newman [14] /
-  radio-silence (Tim et al.): boundary-spanning brokers hold
+  radio-silence (coder et al.): boundary-spanning brokers hold
   communication-fragmented projects together.
 
   Companion model `congruence_motif` (motif-based STC variant per

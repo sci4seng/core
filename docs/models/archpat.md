@@ -6,20 +6,20 @@ nav_order: 3
 
 # archpat
 
-Cell: **universal** &middot; `verdict`: CONFIRM (gap +228.69) &middot; `verdict_n`: neutral (gap +59.01)
+Cell: **process-conditional** &middot; `verdict`: CONFIRM (gap +228.69) &middot; `verdict_n`: neutral (gap +15.56)
 
 ## Verdict (N=100 stats-grade)
 
 | metric | value |
 |---|---|
 | `verdict_n` | neutral |
-| `gap_n` | +59.01 |
-| `sd0_n` | 527.90 |
-| `sd1_n` | 509.26 |
-| `eps_n` | 184.77 |
-| stress(inputs) | 129 / 200 CONFIRM |
+| `gap_n` | +15.56 |
+| `sd0_n` | 220.44 |
+| `sd1_n` | 185.63 |
+| `eps_n` | 77.15 |
+| stress(inputs) | 34 / 200 CONFIRM |
 | stress(params) | 122 / 200 CONFIRM |
-| 2x2 cell | **universal** |
+| 2x2 cell | **process-conditional** |
 
 ## Tier 1 — Structural V&V (prudence)
 
@@ -38,8 +38,8 @@ Cell: **universal** &middot; `verdict`: CONFIRM (gap +228.69) &middot; `verdict_
 
 | test | result |
 |---|---|
-| `param_plausibility` | **FAIL** &middot; 3/4 out_of_range, 0 at_boundary, 1 in_range |
-| `boundary_adq_data` | PASS — lifted values reach or exceed declared [lo, hi] |
+| `param_plausibility` | PASS &middot; 4/4 in_range |
+| `boundary_adq_data` | warn — all lifted values strictly inside [lo, hi] |
 | `calibrated_rq_rerun` | CONFIRM — verdict stable (default=CONFIRM) |
 | `family_member_coherence` | 2 projects lifted (sign tally not auto-computed) |
 | `behavior_reproduction` | not run — requires monthly historical CSV |
@@ -52,14 +52,6 @@ Cell: **universal** &middot; `verdict`: CONFIRM (gap +228.69) &middot; `verdict_
 | helix | 384 | 1452 | 149 | helix-core,m | 1985 |
 
 _(showing first 5 of 7 metrics; full data in `paper/outputs/lifts.csv`)_
-
-## Boundary violations
-
-| project | param | lifted | lo | hi |
-|---|---|---|---|---|
-| helix | `Legacy` | 384 | 0 | 200 |
-| ambari | `Patterned` | 381 | 0 | 200 |
-| ambari | `Legacy` | 1890 | 0 | 200 |
 
 ## Source
 

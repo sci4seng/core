@@ -11,10 +11,9 @@ has_children: true
 
 ## Active models, grouped by 2x2 cell
 
-### universal (23)
+### universal (22)
 
 - [aiwork](aiwork.md) &middot; `verdict_n`: neutral &middot; `inp_cnt`: 188/200, `par_cnt`: 170/200
-- [archpat](archpat.md) &middot; `verdict_n`: neutral &middot; `inp_cnt`: 129/200, `par_cnt`: 122/200
 - [bugs](bugs.md) &middot; `verdict_n`: CONFIRM &middot; `inp_cnt`: 130/200, `par_cnt`: 200/200
 - [burnout](burnout.md) &middot; `verdict_n`: neutral &middot; `inp_cnt`: 105/200, `par_cnt`: 200/200
 - [congruence](congruence.md) &middot; `verdict_n`: CONFIRM &middot; `inp_cnt`: 196/200, `par_cnt`: 196/200
@@ -37,8 +36,9 @@ has_children: true
 - [sir](sir.md) &middot; `verdict_n`: CONFIRM &middot; `inp_cnt`: 200/200, `par_cnt`: 165/200
 - [teamtopo](teamtopo.md) &middot; `verdict_n`: CONFIRM &middot; `inp_cnt`: 200/200, `par_cnt`: 145/200
 
-### process-conditional (7)
+### process-conditional (8)
 
+- [archpat](archpat.md) &middot; `verdict_n`: neutral &middot; `inp_cnt`: 34/200, `par_cnt`: 122/200
 - [diapers](diapers.md) &middot; `verdict_n`: neutral &middot; `inp_cnt`: 84/200, `par_cnt`: 200/200
 - [limits](limits.md) &middot; `verdict_n`: neutral &middot; `inp_cnt`: 36/200, `par_cnt`: 181/200
 - [maturity](maturity.md) &middot; `verdict_n`: neutral &middot; `inp_cnt`: 73/200, `par_cnt`: 200/200
