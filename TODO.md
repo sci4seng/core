@@ -555,10 +555,51 @@ TT (original spec). **Add inline WHY comments to every function in
 
 ### Model documentation (deferred 2026-05-25)
 
-WW. **Ensure all 34 models in `paper/sd.py` are commented to the
-    same standard.** Today most model defs carry only a 1-line
-    docstring (citation + RQ). Inline mechanism comments are absent
-    on the vast majority. `aiwork` got the canonical treatment
+WW. **DONE 2026-06-03.** All 34 models in `paper/sd.py` now meet the
+    aiwork standard:
+    - extended docstring (citation + stocks + control + RQ + hypothesis
+      basis)
+    - inline unit comments on non-obvious init params
+    - WHY comments per non-obvious line in step()
+    - comment on y() choice
+    - comment on rq() control-arm semantics
+
+    Before/after density (comment lines per model in `paper/sd.py`):
+
+    | model | before | after |
+    |---|---|---|
+    | brooks    | 0  | 17 |
+    | brooksq   | 0  | 15 |
+    | bugs      | 0  |  8 |
+    | debt      | 0  | 10 |
+    | sir       | 0  |  8 |
+    | rework    | 0  |  7 |
+    | learn     | 0  |  8 |
+    | defmap    | 0  | 10 |
+    | flaky     | 0  |  7 |
+    | dora      | 0  | 11 |
+    | micro     | 0  |  8 |
+    | teamtopo  | 0  |  6 |
+    | burnout   | 0  |  7 |
+    | aidebt    | 0  |  9 |
+    | congruence| 2  | 13 |
+
+    Models that already met the standard (left untouched): aiwork (10),
+    congruence_motif (14), deprot (10), and the 13 buildable-today
+    candidates each with 3-5 inline comments that already explain their
+    nontrivial mechanisms. Diapers (toy) skipped per CLAUDE.md "don't
+    over-comment trivial code" rule.
+
+    Smoke-checks: `python3 paper/full_audit.py` runs to completion
+    against the modified models; pre-existing prudence FAILs unchanged.
+    Pyright pre-existing warnings unchanged.
+
+    Original deferral spec preserved below for reference.
+
+WW (original spec). **Ensure all 34 models in `paper/sd.py` are
+    commented to the same standard.** Today most model defs carry only
+    a 1-line docstring (citation + RQ). Inline mechanism comments are
+    absent on the vast majority. `aiwork` got the canonical treatment
     on 2026-05-25 as the reference pattern: extended docstring
     (citation + stocks + control + RQ + hypothesis basis), inline
     `# unit comment` per init param explaining the meaning, brief

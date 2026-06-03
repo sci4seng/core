@@ -266,28 +266,57 @@ def diapers():
 
 
 def brooks():
-  """Brooks [1]: late hires hurt.  RQ: boost=10 newcomers @t=10 hurt y."""
-  init = {'Vet':[10,0,100,'devs'], 'New':[0,0,100,'devs'], 'Done':[0,0,500,'items'],
-          'Todo':[500,0,500,'items'], 'boost':[0,0,100,'devs'],
-          'comm_coef':[0.005,0,0.05,'frac/pair'], 'train_coef':[0.2,0,1,'frac/newhire'],
-          'prod_rate':[5,0.1,20,'items/vet/tick'], 'mature_rate':[0.1,0,1,'frac/tick']}
+  """Brooks [1] Mythical Man-Month: adding people to a late project
+  makes it later. Two compounding effects: (1) quadratic communication
+  overhead n*(n-1)/2 grows fast as team size grows; (2) each newcomer
+  drains a fraction of veteran capacity for training until they mature.
+
+  Stocks: Vet, New, Todo, Done. Done is the success measure.
+  Control: boost (size of mid-project late-hire shock).
+  RQ: a boost=10 cohort at t=10 reduces net progress vs boost=0.
+  Hypothesis basis: comm + train terms together can swamp prod_rate when
+  Vet is already busy; the model expresses Brooks's claim mechanistically."""
+  init = {'Vet':[10,0,100,'devs'], 'New':[0,0,100,'devs'],
+          'Done':[0,0,500,'items'], 'Todo':[500,0,500,'items'],
+          # ctrl: late-hire shock size injected at t=10
+          'boost':[0,0,100,'devs'],
+          # Communication coefficient per dev-pair (Brooks: 0.005 = 0.5% drag/pair)
+          'comm_coef':[0.005,0,0.05,'frac/pair'],
+          # Training drag per newcomer on veteran capacity
+          'train_coef':[0.2,0,1,'frac/newhire'],
+          'prod_rate':[5,0.1,20,'items/vet/tick'],
+          # New -> Vet maturation rate (per-tick fraction of New cohort)
+          'mature_rate':[0.1,0,1,'frac/tick']}
 
   def step(dt, t, u, v):
+    # Quadratic communication overhead: n*(n-1)/2 pairs * per-pair drag.
+    # This is the term Brooks called out: linear growth in headcount
+    # gives quadratic growth in coordination cost.
     comm  = u.Vet * (u.Vet - 1) / 2 * u.comm_coef
+    # Training drag: each newcomer takes a fraction of veteran time.
     train = u.New * u.train_coef
+    # Effective productivity = veterans * remaining capacity * base rate.
     prod  = u.Vet * (1 - comm - train) * u.prod_rate
+    # max(0, prod) clamps: comm + train can exceed 1.0 with large teams,
+    # which would otherwise produce NEGATIVE Done. The clamp is the model
+    # expressing "team produces nothing" rather than "team un-produces."
     v.Todo = u.Todo - dt * max(0, prod)
     v.Done = u.Done + dt * max(0, prod)
+    # New decays into Vet at mature_rate; boost injects at t=10 only.
     v.New  = u.New - dt * u.mature_rate * u.New + (u.boost if t == 10 else 0)
     v.Vet  = u.Vet + dt * u.mature_rate * u.New
     for p in ('boost','comm_coef','train_coef','prod_rate','mature_rate'):
       setattr(v, p, getattr(u, p))
 
   def y(out):
+    # Success = net progress (Done - remaining Todo). Penalises slack.
     end = out[-1][1]
     return end.Done - end.Todo
 
   def rq(bg=None):
+    # Two-arm: boost=0 (no late hire) vs boost=10 (10 newcomers at t=10).
+    # 'down' expected: the boost increases comm + train drag faster than
+    # the eventual maturation of the newcomers can pay back.
     bi = init if bg is None else bg
     return verdict("boost=10 hurts net progress",
                    y(run({**bi, 'boost':[0,0,100,'devs']}, step)),
@@ -297,12 +326,27 @@ def brooks():
 
 
 def bugs():
-  """Goel-Okumoto [2]: exponential reliability growth.
-  RQ: 2x initial Latent -> ~2x eventual Fixed (linearity of recovery)."""
-  init = {'Latent':[100,0,200,'bugs'], 'Found':[0,0,200,'bugs'], 'Fixed':[0,0,200,'bugs'],
-          'find_rate':[0.15,0.01,0.5,'frac/tick'], 'fix_rate':[0.5,0.05,1,'frac/tick']}
+  """Goel-Okumoto [2]: classical software reliability growth model.
+  An unknown pool of latent defects is discovered at a rate proportional
+  to the remaining latent stock — yielding the canonical exponential
+  N(t) = a*(1 - e^(-bt)). Found bugs then feed a fix pipeline.
+
+  Stocks: Latent -> Found -> Fixed. Fixed is the success measure.
+  Control: Latent (initial pool size — the model's input distribution).
+  RQ: doubling Latent at t=0 doubles mid-curve Fixed (linearity probe).
+  Hypothesis basis: the integral is linear in Latent by construction,
+  so the test catches the linearity — exactly the model's reason to exist."""
+  init = {'Latent':[100,0,200,'bugs'], 'Found':[0,0,200,'bugs'],
+          'Fixed':[0,0,200,'bugs'],
+          # Discovery rate (Goel-Okumoto 'b' parameter): fraction of
+          # Latent found per tick.
+          'find_rate':[0.15,0.01,0.5,'frac/tick'],
+          # Fix rate: fraction of Found resolved per tick.
+          'fix_rate':[0.5,0.05,1,'frac/tick']}
 
   def step(dt, t, u, v):
+    # Two coupled exponentials: each rate consumes its source stock at
+    # a fixed per-tick fraction.
     find = u.Latent * u.find_rate
     fix  = u.Found  * u.fix_rate
     v.Latent = u.Latent - dt * find
@@ -317,6 +361,9 @@ def bugs():
     return out[mid_idx][1].Fixed
 
   def rq(bg=None):
+    # Doubling initial Latent: y should scale linearly. 'up' = treated
+    # arm (Latent=100) HIGHER than baseline (Latent=50). The PASS here
+    # IS the linearity claim — see mr_scale interaction in tests.py.
     bi = init if bg is None else bg
     return verdict("2x initial Latent -> ~2x mid-curve Fixed",
                    y(run({**bi, 'Latent':[50,0,200,'bugs']}, step)),
@@ -326,29 +373,49 @@ def bugs():
 
 
 def debt():
-  """Cunningham [3]: shipping fast incurs debt; debt slows shipping.
-  RQ: starting Debt=50 hurts net feature delivery."""
-  init = {'Feat':[1,0,200,'items'], 'Debt':[0,0,100,'debt-items'], 'Vel':[10,0,20,'items/tick'],
-          'born_rate':[0.3,0,1,'debt/tick'], 'intr_rate':[0.10,0,0.5,'frac/tick'],
+  """Cunningham [3] technical-debt metaphor: shipping fast incurs debt;
+  debt slows future shipping; debt compounds (intr_rate) until paid down.
+
+  Stocks: Feat (shipped features), Debt (accumulated debt), Vel
+  (instantaneous velocity readout). y combines high Feat with low Debt.
+  Control: starting Debt level (the legacy-codebase scenario).
+  RQ: starting Debt=50 reduces net delivery vs starting Debt=0.
+  Hypothesis basis: speed = 1 - Debt/100 creates a debt-velocity
+  feedback loop; whether Debt dominates depends on pay_rate vs
+  (born_rate + intr_rate)."""
+  init = {'Feat':[1,0,200,'items'], 'Debt':[0,0,100,'debt-items'],
+          'Vel':[10,0,20,'items/tick'],
+          # Debt accrual per item shipped (born_rate * ship)
+          'born_rate':[0.3,0,1,'debt/tick'],
+          # Compound interest on outstanding debt
+          'intr_rate':[0.10,0,0.5,'frac/tick'],
+          # Debt repayment rate (refactoring share of effort)
           'pay_rate':[0.15,0,1,'frac/tick']}
 
   def step(dt, t, u, v):
+    # Velocity choked by debt linearly; floor at 0 to avoid negative ship.
     speed = max(0, 1 - u.Debt / 100)
+    # ship grows with feature stock (1 + Feat*0.1 = compound benefit
+    # of past delivery) but is gated by current speed.
     ship  = (1 + u.Feat * 0.1) * speed
-    born  = ship * u.born_rate
-    intr  = u.Debt * u.intr_rate
-    pay   = u.Debt * u.pay_rate
+    born  = ship * u.born_rate           # new debt per unit shipped
+    intr  = u.Debt * u.intr_rate         # compound interest
+    pay   = u.Debt * u.pay_rate          # refactoring repayment
     v.Feat = u.Feat + dt * ship
     v.Debt = u.Debt + dt * (born + intr - pay)
     v.Vel  = 10 * speed
     v.born_rate, v.intr_rate, v.pay_rate = u.born_rate, u.intr_rate, u.pay_rate
 
   def y(out):
+    # Trade-off measure: end-state features minus mean Debt over the run.
+    # Mean (not end) Debt penalises trajectories that pile up debt early.
     end = out[-1][1]
     md = sum(r.Debt for _, r in out) / len(out)
     return end.Feat - md
 
   def rq(bg=None):
+    # 'down' = treated (Debt=50) WORSE than baseline (Debt=0).
+    # The hypothesis is the legacy-codebase penalty.
     bi = init if bg is None else bg
     return verdict("starting Debt=50 slows delivery",
                    y(run({**bi, 'Debt':[0,0,100,'debt-items']}, step)),
@@ -358,13 +425,27 @@ def debt():
 
 
 def sir():
-  """Kermack-McKendrick [4]: bad-pattern spread.
-  RQ: 3x initial I raises peak (-y drops)."""
-  init = {'S':[90,0,100,'modules'], 'I':[10,0,100,'modules'], 'R':[0,0,100,'modules'],
-          'beta':[0.0051,0,0.05,'frac/contact'], 'gamma':[0.15,0,1,'frac/tick']}
+  """Kermack-McKendrick [4] SIR model applied to bad-pattern spread.
+  Each module is Susceptible, Infected (carries the anti-pattern), or
+  Recovered (refactored, immune). Infection spreads on contact;
+  recovery happens at a fixed rate.
+
+  Stocks: S, I, R (sum conserved). y = -max(I) — peak epidemic size
+  (negated so that LOWER peak = HIGHER y, matching the down-good convention).
+  Control: I (initial infected count — the seed-bug-count scenario).
+  RQ: tripling I raises peak; y becomes more negative.
+  Hypothesis basis: standard SIR has a quadratic infection term
+  beta*S*I so initial-condition variation propagates supra-linearly."""
+  init = {'S':[90,0,100,'modules'], 'I':[10,0,100,'modules'],
+          'R':[0,0,100,'modules'],
+          # Per-contact transmission probability (Kermack: 0.0051 chosen
+          # so R0 ≈ 3 at the default scale — moderate outbreak regime)
+          'beta':[0.0051,0,0.05,'frac/contact'],
+          # Per-tick recovery probability (refactoring rate)
+          'gamma':[0.15,0,1,'frac/tick']}
 
   def step(dt, t, u, v):
-    inf = u.beta  * u.S * u.I
+    inf = u.beta  * u.S * u.I   # mass-action infection (quadratic in S,I)
     rec = u.gamma * u.I
     v.S = u.S - dt * inf
     v.I = u.I + dt * (inf - rec)
@@ -372,9 +453,14 @@ def sir():
     v.beta, v.gamma = u.beta, u.gamma
 
   def y(out):
+    # Peak Infected is the policy-relevant metric (hospitalisation,
+    # in the public-health analogue). Negate so the down-good convention
+    # holds: lower peak = better outcome = higher y.
     return -max(r.I for _, r in out)
 
   def rq(bg=None):
+    # 'down' = treated (I=30) WORSE (i.e. y more negative due to higher
+    # peak). Tests the SIR nonlinearity sensitivity to initial conditions.
     bi = init if bg is None else bg
     return verdict("3x initial I raises peak",
                    y(run({**bi, 'I':[10,0,100,'modules']}, step)),
@@ -384,20 +470,34 @@ def sir():
 
 
 def rework():
-  """Abdel-Hamid & Madnick [5]: hidden rework cycle.
-  RQ: failrate 0.1 -> 0.7 lets rework dominate."""
-  init = {'Req':[100,0,100,'items'], 'Dev':[0,0,100,'items'], 'Test':[0,0,100,'items'],
-          'Rew':[0,0,100,'items'], 'Done':[0,0,100,'items'],
-          'code_rate':[0.2,0,1,'frac/tick'], 'qa_rate':[0.5,0,1,'frac/tick'],
-          'fix_rate':[0.5,0,1,'frac/tick'], 'failrate':[0.4,0,1,'frac']}
+  """Abdel-Hamid & Madnick [5] hidden rework cycle: failed test items
+  flow back to Rew, where fixes feed back into Dev. The cycle is "hidden"
+  because it inflates Dev volume invisibly to the requirements pipeline.
+
+  Stocks: Req -> Dev -> Test -> {Done, Rew} -> Dev. Done is the goal;
+  WIP (Dev + Test + Rew) is the cost.
+  Control: failrate (probability a Test item fails and gets reworked).
+  RQ: failrate 0.7 collapses net Done by feeding too much back through Rew.
+  Hypothesis basis: at high failrate, the Test -> Rew -> Dev loop
+  dominates the Test -> Done flow, eventually starving Done growth."""
+  init = {'Req':[100,0,100,'items'], 'Dev':[0,0,100,'items'],
+          'Test':[0,0,100,'items'], 'Rew':[0,0,100,'items'],
+          'Done':[0,0,100,'items'],
+          'code_rate':[0.2,0,1,'frac/tick'],
+          'qa_rate':[0.5,0,1,'frac/tick'],
+          'fix_rate':[0.5,0,1,'frac/tick'],
+          # ctrl: share of Test items that fail (and feed Rew)
+          'failrate':[0.4,0,1,'frac']}
 
   def step(dt, t, u, v):
     code = u.Req  * u.code_rate
     qa   = u.Dev  * u.qa_rate
+    # Split Test outflow: fail goes to Rew (hidden loop), pas goes to Done.
     fail = u.Test * u.failrate
     pas  = u.Test * (1 - u.failrate)
-    fix  = u.Rew  * u.fix_rate
+    fix  = u.Rew  * u.fix_rate            # Rew -> Dev (rework returns)
     v.Req  = u.Req  - dt * code
+    # Dev gains both new code AND fixed rework — the hidden inflow.
     v.Dev  = u.Dev  + dt * (code - qa + fix)
     v.Test = u.Test + dt * (qa - fail - pas)
     v.Rew  = u.Rew  + dt * (fail - fix)
@@ -406,11 +506,15 @@ def rework():
       setattr(v, p, getattr(u, p))
 
   def y(out):
+    # Reward Done, penalise mean WIP (the cost of carrying half-done work).
+    # 0.5x weight matches "WIP is half as bad as not-Done".
     end = out[-1][1].Done
     wip = sum(r.Dev + r.Test + r.Rew for _, r in out) / len(out)
     return end - 0.5 * wip
 
   def rq(bg=None):
+    # 'down' = failrate=0.7 collapses y vs failrate=0.1 (the rework
+    # loop runs away).
     bi = init if bg is None else bg
     return verdict("failrate 0.7 -> hidden rework dominates",
                    y(run({**bi, 'failrate':[0.1,0,1,'frac']}, step)),
@@ -420,15 +524,28 @@ def rework():
 
 
 def learn():
-  """Sterman [6]: jr -> tr -> sr workforce flow.
-  RQ: removing seniors (Sr=0) starves training."""
-  init = {'Jr':[20,0,100,'devs'], 'Tr':[5,0,100,'devs'], 'Sr':[5,0,100,'devs'], 'Ment':[0,0,100,'mentor-slots'],
-          'train_rate':[0.10,0,1,'frac/tick'], 'promote_rate':[0.05,0,1,'frac/tick'],
+  """Sterman [6] workforce-pipeline model. Jr (junior) -> Tr (trainee) ->
+  Sr (senior). Seniors mentor incoming Jr cohorts; the loop depends on
+  having seniors AT ALL to seed the next generation.
+
+  Stocks: Jr, Tr, Sr, Ment (cumulative mentor-time delivered).
+  Control: Sr (initial senior count — the pipeline-seed scenario).
+  RQ: removing seniors (Sr=0) starves training; future Sr+Ment lags.
+  Hypothesis basis: Sr * mentor_rate IS the only inflow back into Jr;
+  set Sr=0 and the Jr -> Tr -> Sr conveyor empties without refill."""
+  init = {'Jr':[20,0,100,'devs'], 'Tr':[5,0,100,'devs'],
+          'Sr':[5,0,100,'devs'], 'Ment':[0,0,100,'mentor-slots'],
+          'train_rate':[0.10,0,1,'frac/tick'],
+          'promote_rate':[0.05,0,1,'frac/tick'],
+          # Mentor capacity: junior recruits per senior per tick.
+          # Closes the loop back to Jr.
           'mentor_rate':[0.02,0,1,'items/sr/tick']}
 
   def step(dt, t, u, v):
     train   = u.Jr * u.train_rate
     promote = u.Tr * u.promote_rate
+    # mentor flow returns seniors' mentor-capacity to Jr (recruiting).
+    # Same scalar is added to Ment to track cumulative mentor-effort.
     mentor  = u.Sr * u.mentor_rate
     v.Jr   = u.Jr   - dt * train + dt * mentor
     v.Tr   = u.Tr   + dt * (train - promote)
@@ -438,10 +555,14 @@ def learn():
       setattr(v, p, getattr(u, p))
 
   def y(out):
+    # Pipeline health = final senior count + cumulative mentor output.
+    # Sr alone would miss the early-mentor contribution.
     end = out[-1][1]
     return end.Sr + end.Ment
 
   def rq(bg=None):
+    # 'down' = treated (Sr=0) WORSE than baseline (Sr=5). With Sr=0,
+    # the mentor loop is open at the inflow, draining Jr without refill.
     bi = init if bg is None else bg
     return verdict("Sr=0 starves training pipeline",
                    y(run({**bi, 'Sr':[5,0,100,'devs']}, step)),
@@ -452,19 +573,43 @@ def learn():
 
 def brooksq():
   """Brooks [1] + Madachy [7]: late hires hurt quality-adjusted progress.
-  RQ: boost=10 hurts y = Done - 5*Esc."""
-  init = {'Vet':[10,0,100,'devs'], 'New':[0,0,100,'devs'], 'Done':[0,0,500,'items'],
-          'Todo':[500,0,500,'items'], 'Bugs':[0,0,100,'bugs'], 'Esc':[0,0,100,'bugs'],
+  The velocity-only brooks model misses Brooks's quality claim: new
+  hires both work slower (training drag) AND inject more bugs that leak
+  to the field. This model adds two stocks (Bugs, Esc) and two rate
+  params (inj_rate, leak_rate) on top of brooks's structure.
+
+  Stocks: Vet, New, Done, Todo, Bugs, Esc. y = Done - 5*Esc (escaped
+  bugs are 5x worse than open work).
+  Control: boost (size of late-hire shock at t=10).
+  RQ: a boost=10 cohort reduces y vs boost=0 — the compound velocity +
+  quality drag is the brooksq claim that brooks alone can't express."""
+  init = {'Vet':[10,0,100,'devs'], 'New':[0,0,100,'devs'],
+          'Done':[0,0,500,'items'], 'Todo':[500,0,500,'items'],
+          'Bugs':[0,0,100,'bugs'], 'Esc':[0,0,100,'bugs'],
+          # ctrl: late-hire shock at t=10
           'boost':[0,0,100,'devs'],
-          'comm_coef':[0.005,0,0.05,'frac/pair'], 'train_coef':[0.2,0,1,'frac/newhire'],
-          'prod_rate':[5,0.1,20,'items/vet/tick'], 'inj_rate':[0.05,0,0.5,'bugs/item'],
-          'leak_rate':[0.10,0,0.5,'frac'], 'mature_rate':[0.1,0,1,'frac/tick']}
+          # Same comm + train coefficients as brooks
+          'comm_coef':[0.005,0,0.05,'frac/pair'],
+          'train_coef':[0.2,0,1,'frac/newhire'],
+          'prod_rate':[5,0.1,20,'items/vet/tick'],
+          # Bug injection per item shipped — quality side of brooksq
+          'inj_rate':[0.05,0,0.5,'bugs/item'],
+          # Fraction of Bugs that escape to Esc per tick (NOT caught
+          # in review). hi=0.5 is the published bound — known F1
+          # boundary violation: real OSS projects exceed this.
+          'leak_rate':[0.10,0,0.5,'frac'],
+          'mature_rate':[0.1,0,1,'frac/tick']}
 
   def step(dt, t, u, v):
+    # Same comm + train + prod as brooks (see that model for derivation).
     comm  = u.Vet * (u.Vet - 1) / 2 * u.comm_coef
     train = u.New * u.train_coef
     prod  = u.Vet * (1 - comm - train) * u.prod_rate
+    # Bugs are injected per item shipped (clamp prod >=0 first so that
+    # NEGATIVE productivity does not paradoxically *remove* bugs).
     inj   = max(0, prod) * u.inj_rate
+    # Bugs in-flight either get caught (drop off Bugs implicitly) or
+    # leak to Esc (escape to field). leak_rate is the unhappy share.
     leak  = u.Bugs * u.leak_rate
     v.Todo = u.Todo - dt * max(0, prod)
     v.Done = u.Done + dt * max(0, prod)
@@ -477,10 +622,14 @@ def brooksq():
       setattr(v, p, getattr(u, p))
 
   def y(out):
+    # Quality-adjusted progress: escaped bugs are 5x worse than open work.
+    # The 5x weighting is what makes brooksq differ from brooks in spirit.
     end = out[-1][1]
     return end.Done - 5 * end.Esc
 
   def rq(bg=None):
+    # Two-arm boost=0 vs boost=10. 'down' = boost reduces y. Compound
+    # mechanism: more comm overhead + train drag + injected bugs.
     bi = init if bg is None else bg
     return verdict("boost=10 hurts quality-adjusted progress",
                    y(run({**bi, 'boost':[0,0,100,'devs']}, step)),
@@ -490,17 +639,36 @@ def brooksq():
 
 
 def defmap():
-  """Abdel-Hamid & Madnick [5] defect submodel.
-  RQ: tst 2.5 -> 0.5 balloons operational defects."""
-  init = {'Cmplx':[20,0,100,'complexity'], 'Dsn':[20,0,100,'design-units'], 'Use':[35,0,100,'usage-units'],
+  """Abdel-Hamid & Madnick [5] defect submodel: bugs flow from
+  Injected -> Caught (testing finds them) or Injected -> Latent
+  (testing misses them) -> Prod (operational failure).
+
+  Stocks: Injected, Caught, Latent, Prod. Production failures (Prod)
+  are the worst outcome; Latent is the in-the-wild backlog.
+  Control: tst (testing intensity multiplier).
+  RQ: dropping tst from 2.5 to 0.5 (less testing) balloons Prod.
+  Hypothesis basis: leak = Injected * (1 - tst*detect_coef); halving
+  tst shifts the catch/leak split toward leak, which feeds Latent
+  and then Prod via the failure rate."""
+  init = {'Cmplx':[20,0,100,'complexity'], 'Dsn':[20,0,100,'design-units'],
+          'Use':[35,0,100,'usage-units'],
           'Injected':[2.43,0,100,'bugs'], 'Caught':[0,0,100,'bugs'],
           'Latent':[0,0,100,'bugs'], 'Prod':[0,0,100,'items'],
-          'tst':[2.5,0,10,'frac'], 'intro_c':[0.3,0,1,'bugs/complexity'], 'intro_d':[0.2,0,1,'bugs/design'],
-          'detect_coef':[0.4,0,1,'frac/tst'], 'fail_coef':[0.15,0,1,'frac/latent']}
+          # ctrl: testing intensity (higher = more bugs caught, fewer leaked)
+          'tst':[2.5,0,10,'frac'],
+          'intro_c':[0.3,0,1,'bugs/complexity'],
+          'intro_d':[0.2,0,1,'bugs/design'],
+          'detect_coef':[0.4,0,1,'frac/tst'],
+          'fail_coef':[0.15,0,1,'frac/latent']}
 
   def step(dt, t, u, v):
+    # Bug injection has TWO sources with opposite signs: complexity
+    # introduces bugs (+), design effort prevents them (-).
     intro  = u.Cmplx * u.intro_c - u.Dsn * u.intro_d
     detect = u.tst * u.Injected * u.detect_coef
+    # leak = Injected NOT caught — modeled as a fraction (NOT
+    # Injected - detect) so detect_coef and leak share the same
+    # arithmetic basis.
     leak   = u.Injected * (1 - u.tst * u.detect_coef)
     fail   = u.Latent * u.Use * u.fail_coef
     v.Injected = u.Injected + dt * intro
@@ -512,10 +680,14 @@ def defmap():
       setattr(v, p, getattr(u, p))
 
   def y(out):
+    # Both Prod (released defects) and Latent (lurking) hurt y, with
+    # Latent at half the weight (not yet harmful, but a future risk).
     end = out[-1][1]
     return -end.Prod - 0.5 * end.Latent
 
   def rq(bg=None):
+    # 'down' = treated (tst=0.5) WORSE than baseline (tst=2.5).
+    # Reduced testing means more leaks -> more Latent -> more Prod.
     bi = init if bg is None else bg
     return verdict("tst=0.5 increases operational defects",
                    y(run({**bi, 'tst':[2.5,0,10,'frac']}, step)),
@@ -582,17 +754,33 @@ def aiwork():
 
 
 def flaky():
-  """Luo et al. [11]: flaky tests erode trust -> erode coverage.
-  RQ: high flake_rate erodes useful coverage."""
-  init = {'Tests':[100,0,500,'tests'], 'Flakes':[5,0,500,'tests'], 'Bugs':[0,0,500,'bugs'],
-          'flake_rate':[0.02,0,0.2,'frac/tick'], 'invest_base':[5,0,20,'frac/tick'],
-          'fix_coef':[0.15,0,1,'frac/flake'], 'leak_coef':[3,0,10,'frac/flake']}
+  """Luo et al. [11]: flaky tests erode trust which erodes coverage.
+  When tests flake, devs stop writing new tests AND stop trusting
+  existing ones. Bugs leak through the resulting coverage gap.
+
+  Stocks: Tests (reliable), Flakes (unreliable), Bugs (leaked).
+  Control: flake_rate (per-tick probability a test becomes flaky).
+  RQ: flake_rate 0.10 (vs 0.02) erodes useful coverage.
+  Hypothesis basis: cover = Tests/(Tests+Flakes) gates BOTH new test
+  investment (positive feedback dies) and flake-fixing — high flake_rate
+  spirals the system toward the all-Flakes attractor."""
+  init = {'Tests':[100,0,500,'tests'], 'Flakes':[5,0,500,'tests'],
+          'Bugs':[0,0,500,'bugs'],
+          # ctrl: per-tick probability a reliable test goes flaky
+          'flake_rate':[0.02,0,0.2,'frac/tick'],
+          'invest_base':[5,0,20,'frac/tick'],
+          'fix_coef':[0.15,0,1,'frac/flake'],
+          'leak_coef':[3,0,10,'frac/flake']}
 
   def step(dt, t, u, v):
+    # Coverage health = share of reliable tests. Drives both new test
+    # investment (positive feedback) AND flake-fixing throughput.
     cover = u.Tests / max(1, u.Tests + u.Flakes)
     add   = u.invest_base * cover
     flake = u.Tests * u.flake_rate
     fix   = u.Flakes * u.fix_coef * cover
+    # Leak = share of unreliable tests * coefficient. Higher Flake share
+    # means more bugs slip past testing.
     leak  = u.Flakes / max(1, u.Tests + u.Flakes) * u.leak_coef
     v.Tests = u.Tests + dt * (add - flake)
     v.Flakes = u.Flakes + dt * (flake - fix)
@@ -601,10 +789,12 @@ def flaky():
       setattr(v, p, getattr(u, p))
 
   def y(out):
+    # Useful coverage net of damage = reliable tests minus bugs leaked.
     end = out[-1][1]
     return end.Tests - end.Bugs
 
   def rq(bg=None):
+    # 'down' = treated (flake_rate=0.10) WORSE; coverage erodes faster.
     bi = init if bg is None else bg
     return verdict("high flake_rate erodes useful coverage",
                    y(run({**bi, 'flake_rate':[0.02,0,0.2,'frac/tick']}, step)),
@@ -614,19 +804,39 @@ def flaky():
 
 
 def dora():
-  """Forsgren, Humble, Kim [12]: large batches -> CFR up.
-  RQ: batch_size 5 -> 50 hurts net deploys."""
+  """Forsgren, Humble, Kim [12] DORA four keys: deploy frequency,
+  lead time, change-fail rate (CFR), mean-time-to-recovery (MTTR).
+  Large batches inflate CFR; incidents drain recovery capacity which
+  in turn caps future deploys.
+
+  Stocks: Wip, Deploys (cumulative), Incidents, Recovery (in-flight
+  recovery cost).
+  Control: batch_size (items per release).
+  RQ: batch_size 50 (vs 5) reduces net deploys (penalised by incidents).
+  Hypothesis basis: large batches -> high CFR -> Recovery accumulates
+  -> capacity term `1 - Recovery/50` drops -> fewer deploys possible."""
   init = {'Wip':[100,0,500,'items'], 'Deploys':[0,0,200,'deploys'],
-          'Incidents':[0,0,100,'incidents'], 'Recovery':[0,0,200,'ticks'],
-          'batch_size':[10,1,100,'items/release'], 'cfr_coef':[0.005,0,0.1,'frac/batch'],
-          'arrival_rate':[8,0,50,'items/tick'], 'rec_rate':[0.3,0,1,'frac/tick']}
+          'Incidents':[0,0,100,'incidents'],
+          'Recovery':[0,0,200,'ticks'],
+          # ctrl: items per release
+          'batch_size':[10,1,100,'items/release'],
+          'cfr_coef':[0.005,0,0.1,'frac/batch'],
+          'arrival_rate':[8,0,50,'items/tick'],
+          'rec_rate':[0.3,0,1,'frac/tick']}
 
   def step(dt, t, u, v):
+    # CFR ~ batch_size (DORA's central finding) clamped at 50%.
     cfr     = min(0.5, u.batch_size * u.cfr_coef)
+    # Capacity drops as outstanding Recovery work piles up. Floor 0.1
+    # so a team that's drowning still ships SOMETHING.
     cap     = max(0.1, 1 - u.Recovery / 50)
+    # Deploys = batches available, capped at 5/tick (throughput ceiling)
+    # and scaled by remaining capacity.
     deploys = min(u.Wip / max(1, u.batch_size), 5) * cap
     new_inc = deploys * cfr
     rec     = u.Incidents * u.rec_rate
+    # Recovery accrues 2 units per incident (asymmetric cost) and
+    # decays at 40%/tick once underway.
     v.Wip       = u.Wip - dt * deploys * u.batch_size + dt * u.arrival_rate
     v.Deploys   = u.Deploys + dt * deploys
     v.Incidents = u.Incidents + dt * (new_inc - rec)
@@ -635,10 +845,13 @@ def dora():
       setattr(v, p, getattr(u, p))
 
   def y(out):
+    # Net deploys minus 2x incident cost (incidents twice as bad as
+    # an extra deploy is good — captures DORA's outage premium).
     end = out[-1][1]
     return end.Deploys - 2 * end.Incidents
 
   def rq(bg=None):
+    # 'down' = treated (batch_size=50) WORSE; CFR up, capacity down.
     bi = init if bg is None else bg
     return verdict("batch_size=50 hurts net deploys",
                    y(run({**bi, 'batch_size':[5,1,100,'items/release']}, step)),
@@ -648,15 +861,31 @@ def dora():
 
 
 def micro():
-  """Newman [14]: services linear, deps quadratic.
-  RQ: high coupling_rate erodes throughput."""
-  init = {'Services':[5,1,100,'services'], 'Deps':[5,0,500,'deps'], 'Feat':[0,0,500,'items'],
-          'coupling_rate':[1.5,0,5,'deps/svc/tick'], 'svc_growth':[0.5,0,5,'svcs/tick']}
+  """Newman [14]: services grow linearly but dependencies grow
+  quadratically (each new service can talk to all existing ones).
+  Past a coupling threshold, integration cost eats throughput.
+
+  Stocks: Services, Deps, Feat (shipped features).
+  Control: coupling_rate (new deps per new service).
+  RQ: high coupling_rate (3.0 vs 0.5) erodes throughput.
+  Hypothesis basis: density = Deps/Services^2; fps drops as density
+  rises, even though Services keeps growing — Newman's "monolith with
+  HTTP" warning."""
+  init = {'Services':[5,1,100,'services'], 'Deps':[5,0,500,'deps'],
+          'Feat':[0,0,500,'items'],
+          # ctrl: dependencies created per new service per tick
+          'coupling_rate':[1.5,0,5,'deps/svc/tick'],
+          'svc_growth':[0.5,0,5,'svcs/tick']}
 
   def step(dt, t, u, v):
     new_svc  = u.svc_growth
+    # New deps scale with existing service count (Services/5 keeps the
+    # default scale around 1.0 — each new svc roughly couples to
+    # all the existing ones).
     new_deps = new_svc * u.coupling_rate * (u.Services / 5)
+    # Density = deps per (svc-pair). At density=0.5, throughput halves.
     density  = u.Deps / max(1, u.Services * u.Services)
+    # Floor 0.1 prevents total collapse (the team still ships SOMETHING).
     fps      = max(0.1, u.Services * (1 - 2 * density))
     v.Services = u.Services + dt * new_svc
     v.Deps     = u.Deps + dt * new_deps
@@ -667,6 +896,8 @@ def micro():
     return out[-1][1].Feat
 
   def rq(bg=None):
+    # 'down' = treated (coupling_rate=3.0) WORSE; deps grow fast
+    # enough to dominate the service-count benefit.
     bi = init if bg is None else bg
     return verdict("high coupling_rate erodes throughput",
                    y(run({**bi, 'coupling_rate':[0.5,0,5,'deps/svc/tick']}, step)),
@@ -676,14 +907,28 @@ def micro():
 
 
 def teamtopo():
-  """Skelton & Pais [13]: cognitive load = Domain / team.
-  RQ: oversized Domain (per team) collapses delivery."""
-  init = {'Domain':[5,0,50,'domain-units'], 'Delivered':[0,0,500,'items'],
-          'team':[7,1,20,'devs'], 'load_thresh':[1.5,0.1,5,'items/team'],
-          'domain_growth':[0.3,0,2,'domain/tick'], 'collapse_coef':[0.8,0,2,'frac/overload']}
+  """Skelton & Pais [13]: cognitive load per team determines delivery
+  capacity. load = Domain/team; past load_thresh the team's throughput
+  starts collapsing.
+
+  Stocks: Domain (size grows on its own), Delivered.
+  Control: Domain (initial domain scope assigned to the team).
+  RQ: oversized initial Domain (20 vs 5) collapses delivery.
+  Hypothesis basis: thr drops as (load - load_thresh) grows; collapse
+  is gated by collapse_coef so the regime boundary is sharp."""
+  init = {'Domain':[5,0,50,'domain-units'],
+          'Delivered':[0,0,500,'items'],
+          'team':[7,1,20,'devs'],
+          # Past load_thresh items per team, cognitive load begins
+          # collapsing throughput (Skelton & Pais "team-as-bottleneck").
+          'load_thresh':[1.5,0.1,5,'items/team'],
+          'domain_growth':[0.3,0,2,'domain/tick'],
+          'collapse_coef':[0.8,0,2,'frac/overload']}
 
   def step(dt, t, u, v):
     load = u.Domain / max(1, u.team)
+    # Throughput = team headcount * remaining capacity, where capacity
+    # falls linearly with overload past load_thresh and floors at 0.
     thr  = u.team * max(0, 1 - max(0, load - u.load_thresh) * u.collapse_coef)
     v.Domain    = u.Domain + dt * u.domain_growth
     v.Delivered = u.Delivered + dt * thr
@@ -694,6 +939,8 @@ def teamtopo():
     return out[-1][1].Delivered
 
   def rq(bg=None):
+    # 'down' = treated (Domain=20) WORSE; load past threshold, capacity
+    # collapses faster than headcount can absorb.
     bi = init if bg is None else bg
     return verdict("oversized Domain collapses delivery",
                    y(run({**bi, 'Domain':[5,0,50,'domain-units']}, step)),
@@ -703,16 +950,33 @@ def teamtopo():
 
 
 def burnout():
-  """DORA wellbeing [15]: chronic overload erodes capacity.
-  RQ: workload 60 (vs 40) erodes net delivery."""
-  init = {'Capacity':[40,10,50,'h/dev'], 'Stress':[0,0,100,'stress-units'], 'Delivered':[0,0,2000,'items'],
-          'workload':[40,0,100,'h/dev/tick'], 'stress_coef':[1.0,0,5,'stress/h'],
-          'recover_coef':[0.05,0,1,'frac/tick'], 'erode_coef':[0.05,0,1,'frac/stress']}
+  """DORA wellbeing [15]: chronic overload erodes capacity. Workload
+  past capacity raises Stress; Stress erodes Capacity. The compound
+  feedback can spiral into reduced delivery even at steady workload.
+
+  Stocks: Capacity, Stress, Delivered.
+  Control: workload (sustained hours/dev/tick demanded of the team).
+  RQ: workload=60 (vs 40) erodes net delivery.
+  Hypothesis basis: excess = workload - Capacity > 0 raises Stress;
+  Stress feeds back through erode_coef to drop Capacity; the loop
+  closes only via recover_coef (slow Stress decay)."""
+  init = {'Capacity':[40,10,50,'h/dev'],
+          'Stress':[0,0,100,'stress-units'],
+          'Delivered':[0,0,2000,'items'],
+          # ctrl: weekly hours demanded per dev
+          'workload':[40,0,100,'h/dev/tick'],
+          'stress_coef':[1.0,0,5,'stress/h'],
+          'recover_coef':[0.05,0,1,'frac/tick'],
+          'erode_coef':[0.05,0,1,'frac/stress']}
 
   def step(dt, t, u, v):
+    # Actual work delivered is capped at Capacity; any excess
+    # accumulates as Stress (the unhappy share of demand).
     actual  = min(u.workload, u.Capacity)
     excess  = max(0, u.workload - u.Capacity)
     d_stress = excess * u.stress_coef - u.Stress * u.recover_coef
+    # Capacity erodes under Stress AND recovers toward 40h baseline.
+    # The (40 - Capacity)*0.1 term is mean-reverting healing when stress is low.
     d_cap    = -u.Stress * u.erode_coef + max(0, 40 - u.Capacity) * 0.1
     v.Capacity  = u.Capacity + dt * d_cap
     v.Stress    = u.Stress + dt * d_stress
@@ -724,6 +988,8 @@ def burnout():
     return out[-1][1].Delivered
 
   def rq(bg=None):
+    # 'down' = treated (workload=60) WORSE; chronic excess builds
+    # Stress -> erodes Capacity -> actual work falls below baseline.
     bi = init if bg is None else bg
     return verdict("workload=60 erodes net delivery",
                    y(run({**bi, 'workload':[40,0,100,'h/dev/tick']}, step)),
@@ -733,16 +999,40 @@ def burnout():
 
 
 def aidebt():
-  """Cunningham [3] + GitClear [8]: AI-coded features carry more debt.
-  RQ: ai=1 raises debt enough to depress net (Feat - mean(Debt))."""
-  init = {'Feat':[1,0,200,'items'], 'Debt':[0,0,100,'debt-items'], 'Vel':[10,0,20,'items/tick'],
-          'ai':[0,0,1,'frac'], 'born_base':[0.3,0,1,'debt/tick'], 'born_ai_mult':[1.5,0,5,'frac/ai'],
-          'gen_ai_mult':[0.3,0,2,'frac/ai'], 'intr_rate':[0.10,0,0.5,'frac/tick'],
+  """Cunningham [3] + GitClear [8]: AI-coded features carry more debt
+  per unit shipped, even when AI speeds up gen. The model layers an
+  AI multiplier on debt's born_rate over top of the debt() structure.
+
+  Stocks: Feat, Debt, Vel (same as debt). Control: ai in [0,1].
+  RQ: ai=1 raises Debt enough to depress y = Feat - mean(Debt).
+  Hypothesis basis: born_rate = born_base*(1+born_ai_mult*ai); even
+  with gen_ai_mult acceleration, the per-item debt cost can grow faster.
+
+  Findings (VV 2026-06-03 grid sweep): the May 11 ~1.5x leverage-ratio
+  crossover claim does NOT reproduce. Regime is TEMPORAL — REFUTE
+  dominates at tmax 10-30 (AI helps); CONFIRM 99% at tmax 50-80 (AI
+  hurts). See `paper/outputs/grid_aidebt_*.csv`."""
+  init = {'Feat':[1,0,200,'items'], 'Debt':[0,0,100,'debt-items'],
+          'Vel':[10,0,20,'items/tick'],
+          # ctrl: AI adoption fraction
+          'ai':[0,0,1,'frac'],
+          # Baseline debt per unit shipped (no-AI)
+          'born_base':[0.3,0,1,'debt/tick'],
+          # AI debt multiplier — May 11 claim was 1.5x = "AI doubles debt"
+          'born_ai_mult':[1.5,0,5,'frac/ai'],
+          # AI gen-rate multiplier — speeds shipping
+          'gen_ai_mult':[0.3,0,2,'frac/ai'],
+          'intr_rate':[0.10,0,0.5,'frac/tick'],
           'pay_rate':[0.15,0,1,'frac/tick']}
 
   def step(dt, t, u, v):
+    # debt's debt-velocity feedback, plus AI gen speedup as a third
+    # multiplicative factor on ship.
     speed = max(0, 1 - u.Debt / 100)
     ship  = (1 + u.Feat * 0.1) * speed * (1 + u.gen_ai_mult * u.ai)
+    # rate = born_base * (1 + born_ai_mult * ai) — AI inflates the
+    # per-shipped-unit debt accrual. This is the gear that turns the
+    # leverage-ratio claim.
     rate  = u.born_base * (1 + u.born_ai_mult * u.ai)
     born  = ship * rate
     intr  = u.Debt * u.intr_rate
@@ -847,20 +1137,37 @@ def congruence():
   in `TODO.md`. Together they form the methodology paper's
   same-thesis / different-operationalization pair.
 
-  RQ: broker_loss=0.3 (per step) hurts net coherent work."""
-  init = {'Clusters':[5,1,20,'clusters'], 'Brokers':[3,0,20,'devs'], 'Cohesion':[0,0,500,'cohesion'],
-          'broker_loss':[0,0,1,'frac/tick'], 'broker_form':[0.05,0,0.5,'frac/tick'],
-          'fragment_rate':[0.05,0,0.5,'frac/tick'], 'merge_rate':[0.1,0,0.5,'frac/tick'],
+  Stocks: Clusters (sub-communities), Brokers (devs spanning them),
+  Cohesion (cumulative coherent work).
+  Control: broker_loss (per-tick attrition of brokers).
+  RQ: broker_loss=0.3 (vs 0) fragments project, hurts cohesion.
+  Hypothesis basis: brokers cap Cluster fragmentation; lose them and
+  the fragmentation feedback runs away."""
+  init = {'Clusters':[5,1,20,'clusters'], 'Brokers':[3,0,20,'devs'],
+          'Cohesion':[0,0,500,'cohesion'],
+          # ctrl: per-tick fraction of brokers lost
+          'broker_loss':[0,0,1,'frac/tick'],
+          'broker_form':[0.05,0,0.5,'frac/tick'],
+          # Fragmentation rate, only active when Clusters > Brokers
+          # (brokers can't span enough; new clusters split off)
+          'fragment_rate':[0.05,0,0.5,'frac/tick'],
+          'merge_rate':[0.1,0,0.5,'frac/tick'],
           'work_rate':[5,0,20,'cohesion/broker/tick']}
 
   def step(dt, t, u, v):
     # Brokers form proportional to inter-cluster gradient, drain by ctrl.
     form  = u.broker_form * u.Clusters
     drain = u.broker_loss * u.Brokers
+    # Fragmentation only kicks in when there are MORE clusters than
+    # brokers — i.e. brokers ARE the cap on community splintering.
     frag  = u.fragment_rate * max(0, u.Clusters - u.Brokers)
     merge = u.merge_rate * u.Brokers
-    # Cohesion accrues at work_rate, attenuated by fragmentation.
+    # Cohesion gain scales with broker coverage per cluster — a project
+    # with 5 clusters and 5 brokers still works; 5 clusters / 1 broker
+    # doesn't.
     coh_gain = u.work_rate * (u.Brokers / max(1, u.Clusters))
+    # max(0, ...) and max(1, ...) clamps: prevent negative Brokers and
+    # zero Clusters (zero would div-by-zero on the next tick).
     v.Brokers  = max(0, u.Brokers  + dt * (form - drain))
     v.Clusters = max(1, u.Clusters + dt * (frag - merge))
     v.Cohesion = u.Cohesion + dt * coh_gain
@@ -869,10 +1176,15 @@ def congruence():
       setattr(v, p, getattr(u, p))
 
   def y(out):
+    # Reward final Cohesion, penalise fragmentation (5x per cluster).
+    # 5x weight: cluster count is small but each new cluster is a big
+    # coordination cost.
     end = out[-1][1]
     return end.Cohesion - 5 * end.Clusters
 
   def rq(bg=None):
+    # 'down' = treated (broker_loss=0.3) WORSE; without brokers the
+    # cluster count grows unchecked, draining per-cluster broker cover.
     bi = init if bg is None else bg
     return verdict("broker_loss=0.3 fragments project, hurts cohesion",
                    y(run({**bi, 'broker_loss':[0.0,0,1,'frac/tick']}, step)),
