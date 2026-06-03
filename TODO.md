@@ -122,25 +122,38 @@ Snapshot 2026-05-25. Repo `github.com/sci4seng/core` @ `main`.
 
 ### Site / docs UX
 
-XX. **Hyperlink scorecard terms to definitions** (deferred 2026-05-25).
-    Bare `<code>extreme_eqn</code>`, `mr_*`, `boundary_adq`,
-    `anomaly_check`, `stress_matrix cell`, `rq()`, `rq_n`,
-    `verdict_n`, `gap_n`, `Cliff's δ / KS` etc. in all 34
-    scorecard panels have no link. Do:
-    - **A. Build `docs/glossary.html`** — one anchor per term;
-      content = formal def + Sterman/F&S/Chen citation + link to
-      `paper/tests.py` def line. Single source of truth.
-    - **B. Add `<abbr title="…">` tooltips** for hover preview on
-      each term in scorecard tables; click goes to glossary anchor.
-    - Scope: 8 structural tests + verdict/stress family
-      (`rq`, `rq_n`, `verdict`, `verdict_n`, `stress(inputs)`,
-      `stress(params)`, `stress_matrix cell`) + stats primitives
-      (`Cliff's δ`, `KS`, `median ε`, `gap`, `gap_n`,
-      `inp_cnt`, `par_cnt`).
-    - Rollout: write rewriter that finds `<code>NAME</code>` in
-      `docs/models/*.html` scorecard panels, wraps with `<a>`+`<abbr>`.
-      Bake into `gen_rich.py` for regenerated pages; one-shot patch
-      for `brooks.html` (manual).
+XX. **DONE 2026-06-02.** Hyperlink scorecard terms to definitions.
+    Shipped under the Jekyll Markdown site (not the old icse27theories
+    HTML rollout):
+    - `docs/glossary.md` — 32 anchors covering 8 F&S/Chen tests,
+      rq/verdict family, stress/cell typology, stats primitives
+      (Cliff's δ / KS / median ε), 5 data-tier checks. Each entry:
+      one-line def + literature citation + line-link into
+      `paper/tests.py` / `paper/sd.py` / `paper/stats.py`.
+    - `docs/scripts/gen_md.py` — added `GLOSS` dict + `gloss()` helper;
+      `render_model()` wraps 14 scorecard terms with markdown links
+      `[term](../glossary.md#anchor "tooltip")`. Just-the-Docs renders
+      the tooltip as a hover title.
+    - `render_glossary()` emits `docs/glossary.md` (nav_order=6).
+    - Verified: each model page has 22 glossary links; `make regen`
+      runs clean; `make verify-k-anon` clean.
+
+XX-jira. **DONE 2026-06-02.** Jira lift for Helix + Camel.
+    - `../lifts/conf/camel.yml`: added `issue_tracker.jira` block
+      (helix.yml already had it).
+    - `../lifts/R/functions.R`: appended `lift_project_jira()` helper
+      that stages `*.json` into a tempdir before calling
+      `kaiaulu::parse_jira` (the installed pkg crashes on `.DS_Store`).
+    - `../lifts/vignettes/lift_jira.Rmd`: new vignette; knits cleanly.
+      Extracts helix (97 issues, 152 comments) and camel (500 issues,
+      2142 comments). Outputs written to
+      `paper/outputs/lift_jira_{helix,camel}_{issues,comments}.csv`.
+    - `../lifts/kaiaulu_notes/known_bugs.md`: documented three new
+      `parse_jira()` gotchas — installed-vs-source signature mismatch
+      (DIRECTORY vs FILE), base_info/ext_info → JIRA REST `[["issues"]]`
+      schema shift, `.DS_Store` crash. The metric.R `"Closed"/"Resolved"`
+      filter matches nothing under the installed schema — use
+      `issue_status == "Done"`.
 
 ### New model: motif-based congruence (SME GH #3, DONE 2026-05-25)
 
@@ -342,13 +355,13 @@ VV. **Re-validate the May 11 aidebt regime-crossover claim against
 SS. **Two related fixes for the Rmd-vignette ↔ docs/models drift
     that SME flagged in GH issue #1**:
 
-    **(a) Restructure `extract/lifts/` to match kaiaulu vignette
+    **(a) Restructure `../lifts/vignettes/` to match kaiaulu vignette
     naming convention**. Today our lifts are named
     `lift_<model>.Rmd`. Kaiaulu's vignettes are named
     `<topic>_<method>.Rmd` (descriptive, kaiaulu's house style).
     SME's PR fork already renames them. Proposed map:
 
-    | current name (extract/lifts/) | kaiaulu vignette name (SME's fork) |
+    | current name (../lifts/vignettes/) | kaiaulu vignette name (SME's fork) |
     |---|---|
     | `lift_archpat.Rmd` | `archpat_gof_pattern_partition.Rmd` |
     | `lift_brooks.Rmd` | `brooks_late_hire_velocity.Rmd` |
@@ -361,19 +374,19 @@ SS. **Two related fixes for the Rmd-vignette ↔ docs/models drift
     | `lift_learn.Rmd` | `learn_cohort_transitions.Rmd` |
     | `lift_rework.Rmd` | `rework_failrate_estimation.Rmd` |
 
-    Need git mv to preserve history. Cross-link to TODO ZZ
-    (data drop-zone) since ingest tool needs to know the canonical
-    Rmd locations. Also need to update `paper/Makefile`'s `render`
-    target (line 96) to find the renamed files.
+    Need git mv to preserve history (in the sibling `sci4seng/lifts`
+    repo). Cross-link to TODO ZZ (data drop-zone) since ingest tool
+    needs to know the canonical Rmd locations.
 
     **(b) Build `docs/scripts/sync_vignettes.py` to extract Rmd
-    content into gen_rich.py M[] fields.** Pattern proven on
+    content into `gen_md.py` per-model fields.** Pattern proven on
     archpat 2026-05-25 by hand-editing M["archpat"] to mirror
     SME's vignette: 6-step method outline, flow diagram,
     pattern4 invocation gotcha, Verdict-on-Helix prose,
     family-comparison table, expanded refs (Gamma, Tsantalis 2006,
-    Arcan, MacCormack). Result: docs/models/archpat.html now
-    matches kaiaulu vignette content density.
+    Arcan, MacCormack). The icse27theories implementation lived in
+    `gen_rich.py` against HTML output; sci4seng's equivalent target
+    is `gen_md.py` against Markdown (`docs/models/<name>.md`).
 
     Generalise the manual archpat exercise into a script:
     1. For each model in {archpat, brooks, brooksq, bugs,
@@ -383,7 +396,7 @@ SS. **Two related fixes for the Rmd-vignette ↔ docs/models drift
     3. Parse Rmd sections: YAML header → metadata; `#` headers →
        sub-sections; ```{r}``` blocks → code chunks; prose
        between chunks → narrative.
-    4. Auto-update gen_rich.py M[<name>] fields:
+    4. Auto-update gen_md.py per-model fields:
        - `lift_intro` ← Intro section + method outline
        - `attrs_table` ← derived from code chunks' fread/parse calls
        - `tools_table` ← detected from require() + system() calls
@@ -409,13 +422,16 @@ SS. **Two related fixes for the Rmd-vignette ↔ docs/models drift
 ### Lift function documentation (deferred 2026-05-25)
 
 TT. **Add inline WHY comments to every function in
-    `extract/lifts/functions.R`.** Today each function carries a
+    `../lifts/R/functions.R`.** Today each function carries a
     roxygen header (param/return/export) but the function BODY has
     no inline comments explaining the mechanism. Reader can see
     WHAT each line does from the code, but not WHY.
 
+    (Distinct from `TT-jira` above — that's a different lift task
+    redefined under the same code on 2026-06-02.)
+
     Reference pattern: `detect_late_hires()` lines 31-46
-    (`extract/lifts/functions.R`). Roxygen header is sufficient.
+    (`../lifts/R/functions.R`). Roxygen header is sufficient.
     Body would benefit from comments like:
     - on `first_commits` line: "first commit per identity =
       individual's join date"
@@ -424,9 +440,10 @@ TT. **Add inline WHY comments to every function in
     - on filter line: "drop founders + early hires; keep only late
       arrivals whose first commit is >365 days after birth"
 
-    833 lines, ~12 exported functions. Per coder's instruction
-    2026-05-25 (review of `lift_congruence.html`): "there are no
-    comments in the lift functions. these need to be added."
+    Per coder's instruction 2026-05-25 (review of the rendered
+    `lift_congruence` notebook): "there are no comments in the lift
+    functions. these need to be added." File is ~900 lines after
+    2026-06-02 jira-helper append; ~13 exported functions.
 
     **Scope**: every `# ---- <Section> ----` block in functions.R.
     Highest priority (consumed by most lifts):
