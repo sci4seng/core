@@ -74,9 +74,45 @@ _(showing first 5 of 10 metrics; full data in `paper/outputs/lifts.csv`)_
 | camel | `inj_rate` | 0.5222 | 0 | 0.5 |
 | camel | `leak_rate` | 0.7121 | 0 | 0.5 |
 
+## Lift methodology (from vignette)
+
+The `brooksq` model extends Brooks with quality tracking: a late-hire
+boost slows veteran velocity AND raises the bug injection rate, so
+quality-adjusted progress `y = Done - 5*Esc` is hurt twice over. The
+sd.py model declares `boost` as its `ctrl` variable; the thesis says
+y drops when boost increases.
+
+This notebook lifts the quality side of `brooksq` from Apache Helix
+using B-SZZ output (PyDriller). The Brooks side (`brooks_tax`) is
+reused from `lift_brooks.Rmd`.
+
+Calibration outputs:
+
+| sd.py param   | source                                           |
+|---------------|--------------------------------------------------|
+| `brooks_tax`  | veteran velocity drop in post-hire window        |
+| `inj_rate`    | bug-introducing commits per day, pre-hire window |
+| `inj_rate'`   | same, post-hire — the boost-driven increase      |
+| `leak_rate`   | fraction of bugs unfixed past a latency threshold|
+
+## Sanity checks
+
+SME's two-part check:
+
+**(1) Bug-count dependency**: this lift DOES depend on bug attribution.
+We use the JIRA-key-in-commit-message heuristic to identify bug-fix
+commits (see `scripts/szz_helix.py`). Datasets without JIRA keys in
+commit messages — pure-GitHub-issue projects — would need a different
+seed mechanism (e.g. linked PR closes).
+
+**(2) Identity bridging**: the brooksq lift uses identity_match on
+git only. SZZ pairs are joined on `commit_hash`, not on developer.
+GitHub would still need an extra alias source if we extended this
+to author-attributed injection rates.
+
 ## Source
 
 - SD model: `paper/sd.py::brooksq()`
 - Audit row: `paper/outputs/full_audit.csv` (line for `brooksq`)
-- Lift Rmd: `sci4seng/lifts/vignettes/lift_brooksq.Rmd`
+- Lift Rmd: `sci4seng/lifts/vignettes/brooksq_injection_leak.Rmd`
 

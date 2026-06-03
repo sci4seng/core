@@ -57,9 +57,24 @@ Cell: [`universal`](../glossary.md#universal "Both inputs and params CONFIRM") &
 | openssl | 0.0805659082 | 0.0705505279 | 112 | 1 | 90 |
 | tomcat | 0.1935612146 | 0.1794258373 | 59 | 1 | 90 |
 
+## Lift methodology (from vignette)
+
+The `rework` model (Abdel-Hamid & Madnick 1991) expresses the hidden
+rework cycle: Req → Dev → Test → (pass | Rew → Dev again). Its `ctrl`
+parameter is `failrate`. Thesis: `failrate` 0.1 → 0.7 lets rework
+dominate, killing net Done output.
+
+This notebook lifts `failrate` from Apache Helix as the share of
+commits in each window that the SZZ pass marks as bug-introducing.
+
+## Lift verdict on the project
+
+`rework`'s thesis predicts net `Done` drops when `failrate` crosses
+the 0.5 mark. Compare Helix's median `failrate` to that threshold.
+
 ## Source
 
 - SD model: `paper/sd.py::rework()`
 - Audit row: `paper/outputs/full_audit.csv` (line for `rework`)
-- Lift Rmd: `sci4seng/lifts/vignettes/lift_rework.Rmd`
+- Lift Rmd: `sci4seng/lifts/vignettes/rework_failrate_estimation.Rmd`
 

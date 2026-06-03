@@ -101,7 +101,7 @@ clean-inference: ## remove generated inference CSVs (keep lifts.csv)
 
 ## render (extract-side Rmd notebooks) ----------------------------
 
-RmdFiles := $(wildcard ../extract/lifts/*.Rmd) $(wildcard ../extract/feasibility/*.Rmd) $(wildcard ../extract/smells/*.Rmd)
+RmdFiles := $(wildcard ../../lifts/vignettes/*.Rmd)
 HtmlFiles := $(RmdFiles:.Rmd=.html)
 
 render: $(HtmlFiles) ## render all .Rmd -> .html

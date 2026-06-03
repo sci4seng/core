@@ -56,9 +56,39 @@ Cell: [`universal`](../glossary.md#universal "Both inputs and params CONFIRM") &
 
 _(showing first 5 of 8 metrics; full data in `paper/outputs/lifts.csv`)_
 
+## Lift methodology (from vignette)
+
+The `debt` model (Cunningham 1992) expresses the thesis that shipping
+fast accrues technical debt, which then slows future shipping. The SD
+form has stocks `Feat` (cumulative features), `Debt` (current debt),
+`Vel` (velocity); parameters `born_rate` (debt born per ship),
+`intr_rate` (compounding interest on existing debt), `pay_rate` (debt
+paid by refactoring).
+
+This notebook lifts `debt` from Apache Helix using:
+
+| sd.py param  | source                                            |
+|--------------|---------------------------------------------------|
+| `pay_rate`   | RefactoringMiner: refactor commits / total commits|
+| `born_rate`  | gitlog: share of "big" multi-file commits         |
+| `intr_rate`  | proxy: bug-touch revisit rate on prior-changed files (TODO) |
+
+`intr_rate` remains imperfect from git-alone; either accept fitting via
+`sd.opt()` or refine later using SZZ pairs joined to gitlog churn.
+
+## Sanity checks
+
+**(1) Bug-count dependency**: this lift does NOT depend on bug-count,
+so JIRA/GitHub/mbox choice is irrelevant. The lift would work on any
+Java-or-similar project with a git history.
+
+**(2) Identity bridging**: `debt` is whole-project, not per-developer.
+`identity_match` is not required for the lift, though it would be for
+any extension that breaks pay_rate by developer cohort.
+
 ## Source
 
 - SD model: `paper/sd.py::debt()`
 - Audit row: `paper/outputs/full_audit.csv` (line for `debt`)
-- Lift Rmd: `sci4seng/lifts/vignettes/lift_debt.Rmd`
+- Lift Rmd: `sci4seng/lifts/vignettes/debt_refactoring_pay_rate.Rmd`
 

@@ -57,9 +57,74 @@ Cell: [`fragile`](../glossary.md#fragile "Neither axis CONFIRMs in majority") &m
 | openssl | 0.0930948058 | 0.1464646464 | 1019 | 1 | 90 |
 | tomcat | 0.0232660259 | 0.0551530533 | 50 | 1 | 90 |
 
+## Lift methodology (from vignette)
+
+The Brooks model expresses the central thesis of *The Mythical
+Man-Month* (Brooks 1975): adding people to a late project makes it
+later. In SD form, two stocks track personnel — veteran developers
+(`Vet`) and new hires (`New`) — and a productivity tax falls on
+veterans whenever newcomers join (training cost + intra-team
+communication overhead). The SD model is in `models/sd.py:brooks()`.
+
+This notebook lifts the model's productivity-tax parameter from
+Apache Helix's git history. We need only the git log and kaiaulu's
+`identity_match` (no proprietary tooling).
+
+**Lift output**: a calibrated value of `brooks_tax` =
+`(pre_velocity - post_velocity) / pre_velocity`, where the velocities
+are veteran commit rates in symmetric windows before and after each
+late-hire event. A positive median supports Brooks; a negative or
+near-zero median is itself a useful falsification — late hires
+*accelerated* veterans on this project.
+
+**Method outline**:
+1. Parse git log via `parse_gitlog(perceval, repo)`.
+2. Resolve developer aliases via `identity_match(...)`.
+3. Detect late-hire events (first-commit ≥ 365 days after project
+   start) with `detect_late_hires()`.
+4. For each late hire, compute pre/post veteran commit rates with
+   `compute_velocity_changes()`.
+5. Aggregate `brooks_tax` median + mean.
+
+The two helper functions are in `lifts/functions.R`; both are
+candidates for upstream contribution into `kaiaulu/R/`.
+
+## Lift verdict on the project
+
+The median `brooks_tax` (final cell, below) is **positive on Helix**
+(≈ 0.11). Veterans lose roughly 11% of their commit velocity in the
+90 days after a new committer joins. The size is modest but the
+direction matches Brooks's claim. Family-member tests on 7 more
+projects (in `findings.md` F3) show the same sign for 5 of them, with
+magnitudes 0.03 → 0.31 — large project-to-project variance suggests
+team-size and mentoring practices modulate the effect heavily.
+
+## Sanity checks
+
+SME's two-part check:
+
+**(1) Bug-count dependency**: this lift does NOT use bug count, so
+the choice of communication source (mbox/github/jira) is irrelevant.
+The lift would work on any git-only project.
+
+**(2) Identity bridging**: we used identity_match on a single source
+(git). The lift does not require comms-to-code bridging. If the
+brooks model were later extended to discriminate bug-introducing
+late-hires from feature-introducing late-hires, JIRA + git
+identity_match would be required, and GitHub would need an extra
+alias source.
+
+## References
+
+- Brooks, F. P. (1975). *The Mythical Man-Month*. Addison-Wesley.
+- coder's SD-framework `models/sd.py:brooks()` (this repo) — encodes
+- the thesis as a `Model(init, step, y, rq, ctrl)` namedtuple.
+- Replication: re-run this notebook on a different Apache project
+- by swapping `../conf/helix.yml` for `../conf/<project>.yml`.
+
 ## Source
 
 - SD model: `paper/sd.py::brooks()`
 - Audit row: `paper/outputs/full_audit.csv` (line for `brooks`)
-- Lift Rmd: `sci4seng/lifts/vignettes/lift_brooks.Rmd`
+- Lift Rmd: `sci4seng/lifts/vignettes/brooks_late_hire_velocity.Rmd`
 

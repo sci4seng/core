@@ -38,6 +38,12 @@ def load_candidates():
     if cur: out.append(cur)
     return out
 
+# Canonical kaiaulu vignette filenames per model + the structured
+# extractor. Both live in sync_vignettes.py so SS(a)+SS(b) share one
+# source of truth.
+sys.path.insert(0, str(HERE.parent))  # docs/scripts/ on path
+from sync_vignettes import MODEL_TO_VIGNETTE, extract_one, VIG
+
 AUDIT   = {r["model"]: r for r in csv.DictReader((OUTPUTS / "full_audit.csv").open())}
 BOUNDS  = defaultdict(list)
 for r in csv.DictReader((OUTPUTS / "boundary_check.csv").open()):
@@ -233,12 +239,34 @@ def render_model(name, audit, idx):
                        f"{r['lo']} | {r['hi']} |\n")
         out.append("\n")
 
+    # --- Vignette excerpt (auto-synced from kaiaulu-style Rmd) ---
+    vname = MODEL_TO_VIGNETTE.get(name)
+    if vname:
+        rmd = VIG / f"{vname}.Rmd"
+        if rmd.exists():
+            ex = extract_one(rmd)
+            if ex["intro"]:
+                out.append("## Lift methodology (from vignette)\n\n")
+                out.append(ex["intro"] + "\n\n")
+            if ex["verdict"]:
+                out.append("## Lift verdict on the project\n\n")
+                out.append(ex["verdict"] + "\n\n")
+            if ex["discussion"]:
+                out.append("## Sanity checks\n\n")
+                out.append(ex["discussion"] + "\n\n")
+            if ex["refs"]:
+                out.append("## References\n\n")
+                for r in ex["refs"]:
+                    out.append(f"- {r}\n")
+                out.append("\n")
+
     # --- Pointers ---
     out.append("## Source\n\n")
     out.append(f"- SD model: `paper/sd.py::{name}()`\n")
     out.append(f"- Audit row: `paper/outputs/full_audit.csv` (line for `{name}`)\n")
     if lf:
-        out.append(f"- Lift Rmd: `sci4seng/lifts/vignettes/lift_{name}.Rmd`\n")
+        vname2 = MODEL_TO_VIGNETTE.get(name, f"lift_{name}")
+        out.append(f"- Lift Rmd: `sci4seng/lifts/vignettes/{vname2}.Rmd`\n")
     out.append("\n")
     return "".join(out)
 

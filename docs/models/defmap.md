@@ -59,9 +59,18 @@ Cell: [`universal`](../glossary.md#universal "Both inputs and params CONFIRM") &
 
 _(showing first 5 of 7 metrics; full data in `paper/outputs/lifts.csv`)_
 
+## Lift methodology (from vignette)
+
+The `defmap` model (Abdel-Hamid & Madnick 1991 defect submodel) tracks
+Injected / Caught / Latent / Prod stocks. `ctrl` is `tst` (testing
+intensity). Thesis: `tst` 2.5 → 0.5 increases operational defects.
+
+This notebook lifts the model's defect-flow stocks across Helix
+release-tag phases. Each phase = (tag_i, tag_{i+1}].
+
 ## Source
 
 - SD model: `paper/sd.py::defmap()`
 - Audit row: `paper/outputs/full_audit.csv` (line for `defmap`)
-- Lift Rmd: `sci4seng/lifts/vignettes/lift_defmap.Rmd`
+- Lift Rmd: `sci4seng/lifts/vignettes/defmap_bug_caught_ratio.Rmd`
 

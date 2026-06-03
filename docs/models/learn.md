@@ -67,9 +67,62 @@ _(showing first 5 of 8 metrics; full data in `paper/outputs/lifts.csv`)_
 | airflow | `Jr` | 1221 | 0 | 100 |
 | openssl | `Jr` | 854 | 0 | 100 |
 
+## Lift methodology (from vignette)
+
+The `learn` model (Sterman 2000, ch. 18) tracks the workforce-flow
+pipeline that develops engineering capability over time:
+
+```
+Jr ──train──> Tr ──promote──> Sr ──mentor──> Ment(or)
+```
+
+The SD form is in `models/sd.py:learn()`. `ctrl` = `Sr` (the senior
+stock). Thesis: removing seniors (`Sr = 0`) starves the training
+pipeline because juniors and trainees have no mentors to graduate
+toward; the cumulative `Sr + Ment` output collapses.
+
+This notebook lifts the stocks and transition rates from a project's
+git history alone. We require only `parse_gitlog` and
+`identity_match` — no JIRA or mbox.
+
+**Method outline**:
+1. Parse git log; merge developer aliases via `identity_match`.
+2. For each developer, compute tenure = last_commit − first_commit.
+3. Bucket: tenure < 365d = Jr, 365d ≤ tenure < 1095d = Tr,
+   tenure ≥ 1095d = Sr. (Ment is not directly observable from git
+   alone; it represents a mentor *role* not a tenure bucket.)
+4. Estimate transition rates by sliding 90-day windows through the
+   history and counting Jr→Tr and Tr→Sr identity transitions per
+   slice. Annualise by multiplying by 365/90.
+
+A previous methodology mistake: using 365-day slices with a 365-day
+Jr cutoff forced every surviving Jr to graduate per slice (saturating
+train_rate at 1.0). The 90-day slice fixes this and gives realistic
+0.7–0.9 train_rates across 8 OSS projects (see `findings.md` F0
+methodology note).
+
+## Lift verdict on the project
+
+Helix's cohort distribution is **top-heavy junior** (Jr=43, Tr=21,
+Sr=9). The train_rate ≈ 0.81 — most surviving Jrs graduate within a
+year. The Sr stock is small relative to Jr (9 vs 43 = 21%).
+
+Running `models/sd.py:learn.rq(bg=helix_calib)` (via
+`scripts/calibrate.py`) re-runs the thesis test with these stocks
+fixed. Baseline gap (Sr=5 → Sr=0) is −5.28; with Helix's Jr=43
+calibration it widens to −6.54 — more juniors means more starvation
+when seniors leave. Thesis CONFIRM in both cases.
+
+## References
+
+- Sterman, J. (2000). *Business Dynamics*, ch. 18 (workforce flow).
+- `models/sd.py:learn()` — the SD model under test.
+- Replication: swap `../conf/helix.yml` for any of the 8 project
+- configs in `../conf/` and re-knit.
+
 ## Source
 
 - SD model: `paper/sd.py::learn()`
 - Audit row: `paper/outputs/full_audit.csv` (line for `learn`)
-- Lift Rmd: `sci4seng/lifts/vignettes/lift_learn.Rmd`
+- Lift Rmd: `sci4seng/lifts/vignettes/learn_cohort_transitions.Rmd`
 

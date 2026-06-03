@@ -389,8 +389,41 @@ VV (original spec). **Re-validate the May 11 aidebt regime-crossover
 
 ### Vignette ↔ docs/models alignment (SME GH #1, deferred 2026-05-25)
 
-SS. **Two related fixes for the Rmd-vignette ↔ docs/models drift
-    that SME flagged in GH issue #1**:
+SS. **DONE 2026-06-03.** Both parts shipped.
+
+    **(a) DONE** — renamed 10 vignettes to canonical kaiaulu
+    `<topic>_<method>.Rmd` naming via `git mv` in
+    `sci4seng/lifts/vignettes/`. Downstream refs updated:
+    - `core/paper/Makefile` RmdFiles wildcard now points at
+      `../../lifts/vignettes/*.Rmd` (was `../extract/lifts/`).
+    - `core/docs/scripts/gen_md.py` resolves the canonical name via
+      `MODEL_TO_VIGNETTE`, falling back to `lift_<name>` for models
+      without a SME-blessed kaiaulu name (currently:
+      `congruence_motif`, `jira`).
+
+    **(b) DONE** — built `core/docs/scripts/sync_vignettes.py` and
+    wired it into `gen_md.py`. The extractor reads each canonical
+    `<topic>_<method>.Rmd`, parses the YAML header, strips R chunks,
+    and pulls Introduction / Verdict / Sanity Checks / References
+    sections by header-name match. Outputs two artifacts on each run:
+    - `core/docs/_data/vignette_extracts.yml` (one block per model;
+      stable target for future Jekyll Liquid templates if needed).
+    - At regen time, `gen_md.py` imports `extract_one()` from
+      `sync_vignettes.py` and inlines four new sections into every
+      model page that has a kaiaulu-mapped vignette: "Lift
+      methodology", "Lift verdict on the project", "Sanity checks",
+      and "References". 10 model pages now carry vignette excerpts.
+
+    Diff policy: each `make regen` rewrites the model pages, so
+    `git diff docs/models/*.md` is the standard review path. No
+    interactive prompt. Conflict policy is "vignette wins" — manual
+    edits to the four inlined sections survive only if also added to
+    the upstream Rmd.
+
+    Original deferral spec preserved below for reference.
+
+SS (original spec). **Two related fixes for the Rmd-vignette ↔
+    docs/models drift that SME flagged in GH issue #1**:
 
     **(a) Restructure `../lifts/vignettes/` to match kaiaulu vignette
     naming convention**. Today our lifts are named

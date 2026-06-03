@@ -59,9 +59,27 @@ Cell: [`universal`](../glossary.md#universal "Both inputs and params CONFIRM") &
 
 _(showing first 5 of 7 metrics; full data in `paper/outputs/lifts.csv`)_
 
+## Lift methodology (from vignette)
+
+The `dora` model (Forsgren, Humble, Kim 2018) tracks Wip / Deploys /
+Incidents / Recovery stocks. `ctrl` is `batch_size`. Thesis: large
+batches drive change-failure rate (CFR) up, hurting net deploys.
+
+This notebook lifts four DORA metrics from Apache Helix:
+- `batch_size`: mean commits between consecutive release tags
+- `cfr`: bug-fix commits / total commits
+- `arrival_rate`: commits per day
+- `rec_rate`: 1 / median bug-fix latency (days)
+
+## Lift verdict on the project
+
+`dora` predicts `batch_size = 50` hurts net deploys vs `batch_size =
+5`. Helix's measured `batch_size` value here is the operating point;
+plug into `sd.opt(dora, ...)` then `verdict()`.
+
 ## Source
 
 - SD model: `paper/sd.py::dora()`
 - Audit row: `paper/outputs/full_audit.csv` (line for `dora`)
-- Lift Rmd: `sci4seng/lifts/vignettes/lift_dora.Rmd`
+- Lift Rmd: `sci4seng/lifts/vignettes/dora_four_keys_lift.Rmd`
 
