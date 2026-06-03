@@ -1,0 +1,17 @@
+# build artifacts
+__pycache__/
+*.pyc
+.DS_Store
+__MACOSX/
+
+# Jekyll
+docs/_site/
+docs/.jekyll-cache/
+docs/.bundle/
+docs/vendor/
+
+# misc
+*.bak
+*.tmp
+*.zip
+.venv/
