@@ -148,23 +148,43 @@ B6. **Inventory + cleanup of the existing Drive bundle** — pair
    lift is ~4-8h of kaiaulu-vignette work, so the deferred
    inventory below is roughly 60-100h of follow-up.
 
-   **In-focus follow-ups (2026-06-03 status)**:
+   **In-focus follow-ups (2026-06-03 status, deepened pass)**:
    - **aiwork** lift PROTOTYPE shipped (`paper/scripts/lift_aiwork.py`)
-     -> helix/tomcat/camel CSVs in `outputs/lift_aiwork_<proj>.csv`.
-     `churn_base` observed 0.01-0.03 across the three (model
-     default 0.05). Calibrated rq stays CONFIRM on all three, but
-     gap weakens 25% on camel (low churn_base -> AI penalty
-     harder to detect). Python prototype, not the kaiaulu .Rmd
-     convention — wrap as a vignette in a follow-up.
-   - **brooks** lift already at 8 projects, 5 metrics
-     (`brooks_tax_mean`, `brooks_tax_median`, `n_hires`,
-     `window_days`, `seed`). Saturated for now — no obvious
-     next column without an SME request.
-   - **archpat** lift at 2 projects (ambari, helix). Next Java
-     target = tomcat, BUT ant isn't installed and tomcat's build
-     uses build.xml not Maven. Expansion blocked until ant is
-     installed or tomcat is built upstream. junit5 + camel
-     already blocked (TODO blocked 11 + 12).
+     -> helix/tomcat/camel CSVs. `churn_base` observed 0.01-0.03
+     (model default 0.05). Now ALSO wired into
+     `paper/calibrate.py` as `calibrate_aiwork()`: helix-lifted
+     `churn_base` + `mature_rate` shrink the rq gap from -51.7 to
+     -1.52 (97% drop, verdict stays CONFIRM but right at the
+     neutral threshold). Methodology paper finding: AI-quality
+     concern nearly disappears once the no-AI baseline is
+     ground-truthed. Also wrapped as kaiaulu-style .Rmd:
+     `../lifts/vignettes/aiwork_churn_baseline.Rmd` +
+     `detect_churn_commits()` / `compute_author_span_rate()` in
+     `../lifts/R/functions.R`. PR-ready for kaiaulu.
+   - **brooks** lift already at 8 projects, 5 metrics. Saturated
+     for now — no obvious next column without an SME request.
+     `calibrate_brooks` notes that brooks_tax_median is a derived
+     metric and the model's comm_coef / train_coef stay at
+     defaults; an inverse-fit would need item 8 sd.opt() style
+     search over those.
+   - **archpat** lift extended on helix with two new metrics
+     (`paper/scripts/lift_archpat_rates.py`):
+     `gen_pat_proxy = 7.69` commits/patterned-module/month vs
+     `gen_leg_proxy = 0.47` for the legacy region — ratio ~16.4x.
+     The model's default ratio was 2.5x; under the lifted helix
+     values archpat's CONFIRM verdict FLIPS to **neutral**
+     (gap +229 -> -1.41). Patterned regions already ship so fast
+     on helix that aggressive migration adds little. `sd.py`
+     `gen_pat` hi widened 3 -> 10 to absorb the observed value
+     (lift was clipping at 3; same shape as the 7/7a F0/F1
+     boundary widens). Ambari rate lift skipped — git_repo not
+     on disk (B5). Tomcat / camel: NOT archpat targets per the
+     current lifts.csv coverage, would need a pattern4 build
+     first.
+     `pat_strength` dead-param finding (declared in init,
+     propagated, never read in step()) confirmed — recommend
+     deletion from init + setattr loop. Concrete info for
+     user-side item 2 ping to DBmang.
 
    **Out-of-focus but already shipped (out-of-band on 2026-06-03)**:
    - `ownership` lift on helix/tomcat/camel —

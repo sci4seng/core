@@ -30,8 +30,14 @@ archpat,ambari,seed,1
 archpat,helix,Legacy_n,384
 archpat,helix,Other_n,1452
 archpat,helix,Patterned_n,149
+archpat,helix,gen_leg_proxy,0.4690
+archpat,helix,gen_pat_leg_ratio,16.3929
+archpat,helix,gen_pat_proxy,7.6882
 archpat,helix,modules,"helix-core,metadata-store-directory-common,zookeeper-api"
+archpat,helix,months_seen,124
 archpat,helix,n_files,1985
+archpat,helix,n_leg_modules,58
+archpat,helix,n_pat_modules,3
 archpat,helix,n_patterned_input,149
 archpat,helix,seed,1
 brooks,airflow,brooks_tax_mean,0.311696850788895

@@ -1136,7 +1136,11 @@ def archpat():
           'Drift':[0,0,200,'modules'], 'Debt':[40,0,150,'debt-items'], 'Feat':[0,0,2000,'items'],
           'migrate':[0.2,0,2,'frac/tick'], 'decay_rate':[0.05,0,0.5,'frac/tick'],
           'drift_to_legacy':[0.10,0,1,'frac/tick'],
-          'gen_pat':[1.0,0.1,3,'items/pat/tick'], 'gen_leg':[0.4,0.1,3,'items/leg/tick'],
+          # gen_pat hi widened 3 -> 10 on 2026-06-03 after lifting
+          # helix's per-module monthly commit rate at 7.69 (above the
+          # old hi). Same shape as the 7/7a F0/F1 boundary widens.
+          'gen_pat':[1.0,0.1,10,'items/pat/tick'],
+          'gen_leg':[0.4,0.1,3,'items/leg/tick'],
           'born_pat':[0.05,0,1,'debt/pat/tick'], 'born_leg':[0.20,0,1,'debt/leg/tick'],
           'intr_rate':[0.08,0,0.5,'frac/tick'], 'pay_rate':[0.15,0,1,'frac/tick'],
           'pat_strength':[4,1,10,'frac']}

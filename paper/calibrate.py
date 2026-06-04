@@ -22,7 +22,7 @@ OUTPUTS = HERE / "outputs"
 LIFTS   = OUTPUTS / "lifts.csv"
 sys.path.insert(0, str(HERE))
 from sd import (brooks, brooksq, debt, rework, defmap, dora, learn,
-                archpat, congruence)
+                archpat, congruence, aiwork)
 
 
 def _clip(v, lo, hi):
@@ -160,14 +160,47 @@ def calibrate_learn(csv_row):
 
 def calibrate_archpat(csv_row):
     """archpat.init has Patterned, Legacy, Drift stocks + many rate
-    params. Lift gives stock counts. ctrl is migrate, so bg override
-    is moot for the rq comparison, but stocks shape baseline."""
+    params. Lift gives stock counts plus (since 2026-06-03) the
+    per-region commit-volume rates gen_pat_proxy / gen_leg_proxy,
+    which calibrate the gen_pat / gen_leg model params. ctrl is
+    migrate, so bg override is moot for the rq comparison
+    endpoints, but stocks + per-region rates shape the baseline."""
     m = archpat()
     overrides = {
         'Patterned': float(csv_row['Patterned_n']),
         'Legacy':    float(csv_row['Legacy_n']),
     }
-    notes = ["Drift = NA (no recent-churn data); rate params not lifted"]
+    notes = ["Drift = NA (no recent-churn data)"]
+    if 'gen_pat_proxy' in csv_row:
+        overrides['gen_pat'] = float(csv_row['gen_pat_proxy'])
+        overrides['gen_leg'] = float(csv_row['gen_leg_proxy'])
+        notes.append(f"gen_pat / gen_leg lifted from monthly "
+                     f"commit-per-module volumes "
+                     f"(ratio {csv_row['gen_pat_leg_ratio']})")
+    else:
+        notes.append("gen_pat / gen_leg not yet lifted")
+    bg = _override_init(m.init, overrides, notes)
+    return m.rq(), m.rq(bg=bg), notes
+
+
+def calibrate_aiwork(csv_row):
+    """aiwork.init has churn_base + mature_rate as non-AI baselines.
+    Lift gives both directly from gitlog (churn_base = fraction of
+    revert/rollback subject lines; mature_rate = inverse mean
+    per-author commit span in days). ctrl is `ai` so bg override
+    doesn't change rq's ctrl-flip endpoints, but shifts the
+    no-AI baseline the thesis compares against.
+
+    gen_boost, churn_mult, verify_drag stay at literature priors —
+    they're per-unit-AI coefficients, structurally unliftable from
+    OSS without AI-usage telemetry (see TODO blocked item 14)."""
+    m = aiwork()
+    overrides = {
+        'churn_base':  float(csv_row['churn_base']),
+        'mature_rate': float(csv_row['mature_rate']),
+    }
+    notes = ["gen_boost / churn_mult / verify_drag = literature priors "
+             "(no AI-usage data on OSS)"]
     bg = _override_init(m.init, overrides, notes)
     return m.rq(), m.rq(bg=bg), notes
 
@@ -196,6 +229,7 @@ MODELS = [
     ('learn',      calibrate_learn),
     ('archpat',    calibrate_archpat),
     ('congruence', calibrate_congruence),
+    ('aiwork',     calibrate_aiwork),
 ]
 
 
