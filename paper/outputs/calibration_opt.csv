@@ -15,7 +15,7 @@ micro,+132.14,+500.00,+278.4,CONFIRM,-67.01,neutral,+0.00,True,Deps+0.56;Feat+0.
 teamtopo,+139.84,+500.00,+257.6,CONFIRM,-139.84,CONFIRM,-133.40,False,Delivered+0.57;domain_growth+0.22;team+0.22
 burnout,+800.00,+1808.90,+126.1,CONFIRM,-384.38,neutral,-1.26,True,Delivered+0.79;Stress+0.42;recover_coef+0.34
 aidebt,+52.79,+193.15,+265.9,REFUTE,+6.50,CONFIRM,-21.36,True,pay_rate+0.47;Debt+0.28;Feat+0.20
-archpat,+545.41,+1888.01,+246.2,CONFIRM,+228.69,neutral,+4.14,True,pay_rate+0.59;Patterned+0.51;Drift+0.50
+archpat,+545.41,+1884.05,+245.4,CONFIRM,+228.69,neutral,-0.09,True,pay_rate+0.59;Patterned+0.51;Drift+0.50
 congruence,+305.24,+495.00,+62.2,CONFIRM,-314.85,neutral,+0.00,True,Brokers+0.54;Cohesion+0.51;work_rate+0.29
 congruence_motif,+57.32,+500.00,+772.3,CONFIRM,-68.78,neutral,+0.00,True,Files+0.55;Bugs+0.51;bug_pay_rate+0.42
 little,+100.00,+4348.31,+4248.3,CONFIRM,-32.98,CONFIRM,-230.85,False,Done+0.78;WIP+0.48;Arrival+0.24

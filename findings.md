@@ -222,6 +222,90 @@ That all 4 cells of the 2x2 are populated is itself a methodology
 robustness signal. congruence (new this session) lands in the most
 robust cell.
 
+### F9. **aiwork CONFIRM gap shrinks 97% under empirical no-AI baseline**
+
+Captured 2026-06-03 after wiring `calibrate_aiwork()` into
+`paper/calibrate.py`. The GitClear / METR `aiwork` model carries
+three per-unit-AI coefficients (`gen_boost`, `churn_mult`,
+`verify_drag`) plus a non-AI baseline `churn_base` defaulted at
+0.05 (model author's literature prior). Gitlog-only lift over
+helix / tomcat / camel measures the share of commits whose
+subject signals revert / rollback / hotfix / amend behaviour:
+
+| project | churn_base | mature_rate | n_commits |
+|---------|----------:|-----------:|----------:|
+| helix   | 0.0295    | 0.00227    | 4,545     |
+| tomcat  | 0.0303    | 0.00077    | 64,857    |
+| camel   | 0.0095    | 0.00221    | 81,341    |
+
+All three sit below the model's default 0.05. At helix-lifted
+params the calibrated `rq()` gap shrinks from -51.69 to -1.52 —
+a 97% drop. Verdict stays CONFIRM but sits right at the neutral
+threshold (5%-of-y0 boundary).
+
+**Methodology implication**: the AI-coding-quality concern is
+load-bearing on the no-AI baseline assumed by the modeller. A
+team with low pre-AI churn shows much less AI penalty than the
+GitClear / METR priors imply. The `ai` ctrl coefficients are
+structurally unliftable on OSS (no per-commit AI authorship), so
+the methodology paper must frame aiwork as a *partial-data
+calibration*: baseline empirically grounded, coefficients
+literature-prior.
+
+Lift script: `paper/scripts/lift_aiwork.py`. Kaiaulu-style
+vignette + helpers: `sci4seng/lifts/vignettes/aiwork_churn_baseline.Rmd`
+and `R/functions.R` (`detect_churn_commits` +
+`compute_author_span_rate`).
+
+### F10. **archpat verdict FLIPS CONFIRM -> neutral under empirical per-region commit rates**
+
+Captured 2026-06-03 after extending the archpat lift with two
+gitlog-only rate metrics
+(`paper/scripts/lift_archpat_rates.py`):
+
+  * `gen_pat_proxy`: mean commits per patterned-module per month
+  * `gen_leg_proxy`: same for the legacy region (everything not in
+    the patterned module set listed by the existing archpat lift)
+
+On helix:
+  * patterned modules (3): `helix-core`,
+    `metadata-store-directory-common`, `zookeeper-api`
+  * legacy modules (58): everything else
+  * months_seen: 124
+
+| metric          | value  |
+|-----------------|-------:|
+| gen_pat_proxy   | 7.69   |
+| gen_leg_proxy   | 0.47   |
+| ratio           | 16.4x  |
+
+The model's defaults are `gen_pat = 1.0`, `gen_leg = 0.4` —
+ratio 2.5x. Helix's empirically observed ratio is **6.5x the
+declared default**. After plugging both into `calibrate_archpat()`:
+
+  * **default verdict**: CONFIRM, gap +228.69 — "aggressive
+    migration repairs already-bad project" holds strongly.
+  * **calibrated verdict**: **neutral**, gap -1.41 — the
+    verdict flips. Patterned regions on helix already ship so
+    fast per-module that aggressive migration adds essentially
+    nothing.
+
+**Methodology implication**: Martin (Clean Arch) + Perry & Wolf's
+claim that patterns repair existing-bad-software does NOT
+survive contact with a project where patterned regions are
+already the active-development core. The thesis as authored
+implicitly assumes patterned and legacy regions ship at
+comparable rates; helix violates that.
+
+`sd.py archpat.gen_pat` hi was widened 3 -> 10 in the same pass
+because the lifted 7.69 was clipping at 3 — same shape as the
+prior F0 / F1 boundary widens.
+
+Family-member replication (lift on ambari, tomcat, camel) needs
+B5 Drive bundles or an upstream pattern4 build first; on
+2026-06-03 only helix has both the archpat lift AND the
+git_repo on disk.
+
 ## Methodology footnotes
 
 - **pattern4.jar IS CLI-callable** despite GUI-default manifest.
