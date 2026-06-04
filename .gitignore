@@ -15,3 +15,9 @@ docs/vendor/
 *.tmp
 *.zip
 .venv/
+
+# Large per-project JIRA dumps — regenerable via
+# lifts/vignettes/lift_jira.Rmd. ~1.5MB total; calibrate.py
+# expects them, so re-run lift_jira before recalibrating
+# after a fresh clone.
+paper/outputs/lift_jira_*.csv
