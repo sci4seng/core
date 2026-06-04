@@ -11,12 +11,12 @@ has_children: true
 
 ## Active models, grouped by 2x2 cell
 
-### universal (22)
+### universal (21)
 
 - [aiwork](aiwork.md) &middot; `verdict_n`: neutral &middot; `inp_cnt`: 188/200, `par_cnt`: 170/200
 - [bugs](bugs.md) &middot; `verdict_n`: CONFIRM &middot; `inp_cnt`: 130/200, `par_cnt`: 200/200
 - [burnout](burnout.md) &middot; `verdict_n`: neutral &middot; `inp_cnt`: 105/200, `par_cnt`: 200/200
-- [congruence](congruence.md) &middot; `verdict_n`: CONFIRM &middot; `inp_cnt`: 196/200, `par_cnt`: 196/200
+- [congruence](congruence.md) &middot; `verdict_n`: CONFIRM &middot; `inp_cnt`: 177/200, `par_cnt`: 196/200
 - [congruence_motif](congruence_motif.md) &middot; `verdict_n`: neutral &middot; `inp_cnt`: 174/200, `par_cnt`: 154/200
 - [costchange](costchange.md) &middot; `verdict_n`: CONFIRM &middot; `inp_cnt`: 183/200, `par_cnt`: 200/200
 - [ctxswitch](ctxswitch.md) &middot; `verdict_n`: CONFIRM &middot; `inp_cnt`: 156/200, `par_cnt`: 200/200
@@ -26,7 +26,6 @@ has_children: true
 - [dora](dora.md) &middot; `verdict_n`: CONFIRM &middot; `inp_cnt`: 200/200, `par_cnt`: 200/200
 - [entropy](entropy.md) &middot; `verdict_n`: CONFIRM &middot; `inp_cnt`: 197/200, `par_cnt`: 200/200
 - [flaky](flaky.md) &middot; `verdict_n`: CONFIRM &middot; `inp_cnt`: 200/200, `par_cnt`: 200/200
-- [learn](learn.md) &middot; `verdict_n`: neutral &middot; `inp_cnt`: 159/200, `par_cnt`: 198/200
 - [linus](linus.md) &middot; `verdict_n`: neutral &middot; `inp_cnt`: 111/200, `par_cnt`: 200/200
 - [little](little.md) &middot; `verdict_n`: neutral &middot; `inp_cnt`: 145/200, `par_cnt`: 200/200
 - [mirroring](mirroring.md) &middot; `verdict_n`: neutral &middot; `inp_cnt`: 121/200, `par_cnt`: 200/200
@@ -36,10 +35,11 @@ has_children: true
 - [sir](sir.md) &middot; `verdict_n`: CONFIRM &middot; `inp_cnt`: 200/200, `par_cnt`: 165/200
 - [teamtopo](teamtopo.md) &middot; `verdict_n`: CONFIRM &middot; `inp_cnt`: 200/200, `par_cnt`: 145/200
 
-### process-conditional (8)
+### process-conditional (9)
 
 - [archpat](archpat.md) &middot; `verdict_n`: neutral &middot; `inp_cnt`: 34/200, `par_cnt`: 122/200
 - [diapers](diapers.md) &middot; `verdict_n`: neutral &middot; `inp_cnt`: 84/200, `par_cnt`: 200/200
+- [learn](learn.md) &middot; `verdict_n`: neutral &middot; `inp_cnt`: 13/200, `par_cnt`: 198/200
 - [limits](limits.md) &middot; `verdict_n`: neutral &middot; `inp_cnt`: 36/200, `par_cnt`: 181/200
 - [maturity](maturity.md) &middot; `verdict_n`: neutral &middot; `inp_cnt`: 73/200, `par_cnt`: 200/200
 - [micro](micro.md) &middot; `verdict_n`: neutral &middot; `inp_cnt`: 63/200, `par_cnt`: 186/200
@@ -50,7 +50,7 @@ has_children: true
 ### fragile (4)
 
 - [brooks](brooks.md) &middot; `verdict_n`: neutral &middot; `inp_cnt`: 12/200, `par_cnt`: 68/200
-- [brooksq](brooksq.md) &middot; `verdict_n`: neutral &middot; `inp_cnt`: 6/200, `par_cnt`: 80/200
+- [brooksq](brooksq.md) &middot; `verdict_n`: neutral &middot; `inp_cnt`: 6/200, `par_cnt`: 79/200
 - [coordn2](coordn2.md) &middot; `verdict_n`: neutral &middot; `inp_cnt`: 0/200, `par_cnt`: 91/200
 - [scope](scope.md) &middot; `verdict_n`: neutral &middot; `inp_cnt`: 25/200, `par_cnt`: 28/200
 

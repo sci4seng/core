@@ -533,7 +533,9 @@ def learn():
   RQ: removing seniors (Sr=0) starves training; future Sr+Ment lags.
   Hypothesis basis: Sr * mentor_rate IS the only inflow back into Jr;
   set Sr=0 and the Jr -> Tr -> Sr conveyor empties without refill."""
-  init = {'Jr':[20,0,100,'devs'], 'Tr':[5,0,100,'devs'],
+  # 7a 2026-06-03: Jr hi widened 100 -> 2000 to cover mature OSS
+  # projects whose junior cohort routinely exceeds 100.
+  init = {'Jr':[20,0,2000,'devs'], 'Tr':[5,0,100,'devs'],
           'Sr':[5,0,100,'devs'], 'Ment':[0,0,100,'mentor-slots'],
           'train_rate':[0.10,0,1,'frac/tick'],
           'promote_rate':[0.05,0,1,'frac/tick'],
@@ -592,12 +594,15 @@ def brooksq():
           'comm_coef':[0.005,0,0.05,'frac/pair'],
           'train_coef':[0.2,0,1,'frac/newhire'],
           'prod_rate':[5,0.1,20,'items/vet/tick'],
-          # Bug injection per item shipped — quality side of brooksq
-          'inj_rate':[0.05,0,0.5,'bugs/item'],
+          # Bug injection per item shipped — quality side of brooksq.
+          # 7a 2026-06-03: hi widened 0.5 -> 5.0 to cover OSS lifts that
+          # routinely show >0.5 (small-project bound was too tight).
+          'inj_rate':[0.05,0,5.0,'bugs/item'],
           # Fraction of Bugs that escape to Esc per tick (NOT caught
-          # in review). hi=0.5 is the published bound — known F1
-          # boundary violation: real OSS projects exceed this.
-          'leak_rate':[0.10,0,0.5,'frac'],
+          # in review). 7a 2026-06-03: hi widened 0.5 -> 1.0 — F1
+          # boundary violation showed 7/8 projects above the old hi
+          # with median ≈ 0.71 (see findings.md F1).
+          'leak_rate':[0.10,0,1.0,'frac'],
           'mature_rate':[0.1,0,1,'frac/tick']}
 
   def step(dt, t, u, v):
@@ -1143,7 +1148,10 @@ def congruence():
   RQ: broker_loss=0.3 (vs 0) fragments project, hurts cohesion.
   Hypothesis basis: brokers cap Cluster fragmentation; lose them and
   the fragmentation feedback runs away."""
-  init = {'Clusters':[5,1,20,'clusters'], 'Brokers':[3,0,20,'devs'],
+  # 7a 2026-06-03: Clusters + Brokers hi widened 20 -> 100. tomcat's
+  # mbox-derived graph already exceeds 20 on both axes (39 brokers,
+  # 33 clusters); the old hi was small-project scale.
+  init = {'Clusters':[5,1,100,'clusters'], 'Brokers':[3,0,100,'devs'],
           'Cohesion':[0,0,500,'cohesion'],
           # ctrl: per-tick fraction of brokers lost
           'broker_loss':[0,0,1,'frac/tick'],

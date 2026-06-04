@@ -767,15 +767,32 @@ YY (original spec). **audit_staleness.py misses prose-embedded lift
     that reference lift quantities (sign, threshold, magnitude).
 
 ### Methodology gaps
-7. **Widen `models/sd.py` bounds** per F0:
-   `brooksq.leak_rate hi 0.5→1.0`,
-   `brooksq.inj_rate hi 0.5→5.0`,
-   `archpat.Patterned hi 200→1000`,
-   `archpat.Legacy hi 200→3000`,
-   `learn.Jr hi 100→2000`,
-   `congruence.Brokers hi 20→100`,
-   `congruence.Clusters hi 20→100`.
-   (Wait for coder/architect nod before editing.)
+7. **DONE 2026-06-03.** All bounds widened per the recipe:
+   - `brooksq.leak_rate hi 0.5 -> 1.0` ✓
+   - `brooksq.inj_rate hi 0.5 -> 5.0` ✓
+   - `archpat.Patterned hi 200 -> 1000` ✓ (previously applied)
+   - `archpat.Legacy hi 200 -> 3000` ✓ (previously applied)
+   - `learn.Jr hi 100 -> 2000` ✓
+   - `congruence.Brokers hi 20 -> 100` ✓
+   - `congruence.Clusters hi 20 -> 100` ✓
+
+   F0 boundary violations resolved: **0 out_of_range** across all
+   lifted cells (was 17 before). 7 at_boundary, 98 in_range across
+   105 total.
+
+   **Side effects**:
+   - brooksq: cell stable (fragile); minor inp_cnt drift 6 -> 6.
+   - **learn: cell flipped `universal -> process-conditional`**
+     (inp_cnt 159 -> 13). Widening Jr to 2000 expanded the input
+     sampling space far past the small Sr/Tr defaults; the thesis
+     does not survive realistic-scale workforce perturbation. This
+     is a publishable methodology finding: small-project bounds
+     were inflating the input axis CONFIRM count.
+   - congruence: cell stable (universal); inp_cnt 196 -> 177.
+   - archpat: unchanged (already widened).
+
+   Pipeline reran clean: full_audit + boundary_check + calibrate +
+   cross_project + gen_md + audit_staleness + verify-k-anon.
 
    **7a. archpat sub-entry (added 2026-05-25)**: empirical anchor
    from `paper/outputs/boundary_check.csv`:

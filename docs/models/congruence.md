@@ -6,18 +6,18 @@ nav_order: 8
 
 # congruence
 
-Cell: [`universal`](../glossary.md#universal "Both inputs and params CONFIRM") &middot; [`verdict`](../glossary.md#verdict "CONFIRM / REFUTE / neutral on (y0, y1)"): CONFIRM ([`gap`](../glossary.md#gap "signed y1 - y0 from single-shot rq()") -314.85) &middot; [`verdict_n`](../glossary.md#verdict_n "N-shot verdict via stats.same"): CONFIRM ([`gap_n`](../glossary.md#gap_n "pooled-mean y1 - y0 from rq_n") -202.19)
+Cell: [`universal`](../glossary.md#universal "Both inputs and params CONFIRM") &middot; [`verdict`](../glossary.md#verdict "CONFIRM / REFUTE / neutral on (y0, y1)"): CONFIRM ([`gap`](../glossary.md#gap "signed y1 - y0 from single-shot rq()") -314.85) &middot; [`verdict_n`](../glossary.md#verdict_n "N-shot verdict via stats.same"): CONFIRM ([`gap_n`](../glossary.md#gap_n "pooled-mean y1 - y0 from rq_n") -268.68)
 
 ## Verdict (N=100 stats-grade)
 
 | metric | value |
 |---|---|
 | [`verdict_n`](../glossary.md#verdict_n "N-shot verdict via stats.same") | CONFIRM |
-| [`gap_n`](../glossary.md#gap_n "pooled-mean y1 - y0 from rq_n") | -202.19 |
-| [`sd0_n`](../glossary.md#sd0_n "stddev of y0 samples in rq_n") | 68.11 |
-| [`sd1_n`](../glossary.md#sd1_n "stddev of y1 samples in rq_n") | 175.55 |
-| [`eps_n`](../glossary.md#eps_n "0.35 * sd(y0): same-list tolerance") | 23.84 |
-| [`stress(inputs)`](../glossary.md#stress_inputs "200 perturbed UPPER-input backgrounds") | 196 / 200 CONFIRM |
+| [`gap_n`](../glossary.md#gap_n "pooled-mean y1 - y0 from rq_n") | -268.68 |
+| [`sd0_n`](../glossary.md#sd0_n "stddev of y0 samples in rq_n") | 54.18 |
+| [`sd1_n`](../glossary.md#sd1_n "stddev of y1 samples in rq_n") | 309.78 |
+| [`eps_n`](../glossary.md#eps_n "0.35 * sd(y0): same-list tolerance") | 18.96 |
+| [`stress(inputs)`](../glossary.md#stress_inputs "200 perturbed UPPER-input backgrounds") | 177 / 200 CONFIRM |
 | [`stress(params)`](../glossary.md#stress_params "200 perturbed lower-param backgrounds") | 196 / 200 CONFIRM |
 | [`2x2 cell`](../glossary.md#cell "{universal, process, world, fragile} from (inp_cnt, par_cnt)") | [`universal`](../glossary.md#universal "Both inputs and params CONFIRM") |
 
@@ -39,8 +39,8 @@ Cell: [`universal`](../glossary.md#universal "Both inputs and params CONFIRM") &
 
 | test | result |
 |---|---|
-| [`param_plausibility`](../glossary.md#param_plausibility "in_range/at_boundary/out_of_range from boundary_check.csv") | **FAIL** &middot; 2/6 out_of_range, 0 at_boundary, 4 in_range |
-| [`boundary_adq_data`](../glossary.md#boundary_adq_data "Lifted value reaches or exceeds declared [lo, hi]") | PASS — lifted values reach or exceed declared [lo, hi] |
+| [`param_plausibility`](../glossary.md#param_plausibility "in_range/at_boundary/out_of_range from boundary_check.csv") | PASS &middot; 6/6 in_range |
+| [`boundary_adq_data`](../glossary.md#boundary_adq_data "Lifted value reaches or exceeds declared [lo, hi]") | warn — all lifted values strictly inside [lo, hi] |
 | [`calibrated_rq_rerun`](../glossary.md#calibrated_rq_rerun "rq() under Helix-calibrated init") | CONFIRM — verdict stable (default=CONFIRM) |
 | [`family_member_coherence`](../glossary.md#family_member_coherence "Per-project sign agreement across the family") | 3 projects lifted (sign tally not auto-computed) |
 | [`behavior_reproduction`](../glossary.md#behavior_reproduction "Sim trajectory vs monthly historical CSV") | not run — requires monthly historical CSV |
@@ -54,13 +54,6 @@ Cell: [`universal`](../glossary.md#universal "Both inputs and params CONFIRM") &
 | tomcat | 39 | 33 | 1361 | 3435 | 3295 |
 
 _(showing first 5 of 9 metrics; full data in `paper/outputs/lifts.csv`)_
-
-## Boundary violations
-
-| project | param | lifted | lo | hi |
-|---|---|---|---|---|
-| tomcat | `Brokers` | 39 | 0 | 20 |
-| tomcat | `Clusters` | 33 | 1 | 20 |
 
 ## Lift methodology (from vignette)
 

@@ -6,19 +6,19 @@ nav_order: 5
 
 # brooksq
 
-Cell: [`fragile`](../glossary.md#fragile "Neither axis CONFIRMs in majority") &middot; [`verdict`](../glossary.md#verdict "CONFIRM / REFUTE / neutral on (y0, y1)"): CONFIRM ([`gap`](../glossary.md#gap "signed y1 - y0 from single-shot rq()") -45.91) &middot; [`verdict_n`](../glossary.md#verdict_n "N-shot verdict via stats.same"): neutral ([`gap_n`](../glossary.md#gap_n "pooled-mean y1 - y0 from rq_n") -0.38)
+Cell: [`fragile`](../glossary.md#fragile "Neither axis CONFIRMs in majority") &middot; [`verdict`](../glossary.md#verdict "CONFIRM / REFUTE / neutral on (y0, y1)"): CONFIRM ([`gap`](../glossary.md#gap "signed y1 - y0 from single-shot rq()") -45.91) &middot; [`verdict_n`](../glossary.md#verdict_n "N-shot verdict via stats.same"): neutral ([`gap_n`](../glossary.md#gap_n "pooled-mean y1 - y0 from rq_n") -0.14)
 
 ## Verdict (N=100 stats-grade)
 
 | metric | value |
 |---|---|
 | [`verdict_n`](../glossary.md#verdict_n "N-shot verdict via stats.same") | neutral |
-| [`gap_n`](../glossary.md#gap_n "pooled-mean y1 - y0 from rq_n") | -0.38 |
-| [`sd0_n`](../glossary.md#sd0_n "stddev of y0 samples in rq_n") | 191.46 |
-| [`sd1_n`](../glossary.md#sd1_n "stddev of y1 samples in rq_n") | 191.12 |
-| [`eps_n`](../glossary.md#eps_n "0.35 * sd(y0): same-list tolerance") | 67.01 |
+| [`gap_n`](../glossary.md#gap_n "pooled-mean y1 - y0 from rq_n") | -0.14 |
+| [`sd0_n`](../glossary.md#sd0_n "stddev of y0 samples in rq_n") | 191.33 |
+| [`sd1_n`](../glossary.md#sd1_n "stddev of y1 samples in rq_n") | 191.44 |
+| [`eps_n`](../glossary.md#eps_n "0.35 * sd(y0): same-list tolerance") | 66.96 |
 | [`stress(inputs)`](../glossary.md#stress_inputs "200 perturbed UPPER-input backgrounds") | 6 / 200 CONFIRM |
-| [`stress(params)`](../glossary.md#stress_params "200 perturbed lower-param backgrounds") | 80 / 200 CONFIRM |
+| [`stress(params)`](../glossary.md#stress_params "200 perturbed lower-param backgrounds") | 79 / 200 CONFIRM |
 | [`2x2 cell`](../glossary.md#cell "{universal, process, world, fragile} from (inp_cnt, par_cnt)") | [`fragile`](../glossary.md#fragile "Neither axis CONFIRMs in majority") |
 
 ## Tier 1 — Structural V&V (prudence)
@@ -39,8 +39,8 @@ Cell: [`fragile`](../glossary.md#fragile "Neither axis CONFIRMs in majority") &m
 
 | test | result |
 |---|---|
-| [`param_plausibility`](../glossary.md#param_plausibility "in_range/at_boundary/out_of_range from boundary_check.csv") | **FAIL** &middot; 10/16 out_of_range, 0 at_boundary, 6 in_range |
-| [`boundary_adq_data`](../glossary.md#boundary_adq_data "Lifted value reaches or exceeds declared [lo, hi]") | PASS — lifted values reach or exceed declared [lo, hi] |
+| [`param_plausibility`](../glossary.md#param_plausibility "in_range/at_boundary/out_of_range from boundary_check.csv") | PASS &middot; 16/16 in_range |
+| [`boundary_adq_data`](../glossary.md#boundary_adq_data "Lifted value reaches or exceeds declared [lo, hi]") | warn — all lifted values strictly inside [lo, hi] |
 | [`calibrated_rq_rerun`](../glossary.md#calibrated_rq_rerun "rq() under Helix-calibrated init") | CONFIRM — verdict stable (default=CONFIRM) |
 | [`family_member_coherence`](../glossary.md#family_member_coherence "Per-project sign agreement across the family") | 8 projects lifted (sign tally not auto-computed) |
 | [`behavior_reproduction`](../glossary.md#behavior_reproduction "Sim trajectory vs monthly historical CSV") | not run — requires monthly historical CSV |
@@ -59,21 +59,6 @@ Cell: [`fragile`](../glossary.md#fragile "Neither axis CONFIRMs in majority") &m
 | tomcat | 0.0551530533 | -0.033333333 | 0.2 | 0.2166666666 | 30 |
 
 _(showing first 5 of 10 metrics; full data in `paper/outputs/lifts.csv`)_
-
-## Boundary violations
-
-| project | param | lifted | lo | hi |
-|---|---|---|---|---|
-| helix | `leak_rate` | 0.5713 | 0 | 0.5 |
-| junit5 | `leak_rate` | 0.6044 | 0 | 0.5 |
-| ambari | `inj_rate` | 1.928 | 0 | 0.5 |
-| ambari | `leak_rate` | 0.6971 | 0 | 0.5 |
-| airflow | `inj_rate` | 1.444 | 0 | 0.5 |
-| airflow | `leak_rate` | 0.8253 | 0 | 0.5 |
-| openssl | `leak_rate` | 0.9307 | 0 | 0.5 |
-| tomcat | `leak_rate` | 0.8761 | 0 | 0.5 |
-| camel | `inj_rate` | 0.5222 | 0 | 0.5 |
-| camel | `leak_rate` | 0.7121 | 0 | 0.5 |
 
 ## Lift methodology (from vignette)
 

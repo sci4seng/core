@@ -13,7 +13,7 @@ Roughly 57% are stats-grade neutral — the single-shot CONFIRM is hiding noise 
 
 ## F0 — Boundary-adequacy violations
 
-15 `out_of_range`, 7 `at_boundary`, 83 `in_range` cells across all lifted (model × project) pairs.
+0 `out_of_range`, 7 `at_boundary`, 98 `in_range` cells across all lifted (model × project) pairs.
 
 Per-model breakdowns live on each [model page](models/).
 
