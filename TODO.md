@@ -344,6 +344,46 @@ VV. **DONE 2026-06-03 (claim REFUTED).** Re-validated the May 11
     prudence rows (the sign-flip is large; not a near-threshold
     call).
 
+    **VV step 6 DONE 2026-06-03 (second pass).** Root cause was a
+    framework-wide `tests.py` bug, not aidebt-specific:
+    `extreme_eqn` (L75) and `mr_scale` (L183) unpacked 3-tuples but
+    init specs became 4-tuples after the dim_check / S4 work (item 9
+    shipped today). Every model has hit `ERR:ValueError` on those
+    two rows since 9 landed; the failure was just most visible on
+    aidebt because the VV write-up highlighted it.
+
+    Fix: switched both rows + `mr_zero_input` (L105) + `mr_monotone`
+    (L129) to the index-based `spec[1], spec[2]` pattern that
+    `sd.py` already uses, preserving units (`spec[3]`) when
+    rebuilding test specs. After fix:
+    - aidebt `extreme_eqn=PASS`, `mr_scale=PASS`.
+    - aidebt `boundary_adq=FAIL` stays — that's the real VV
+      temporal-regime finding (t=20:REFUTE → t=80:CONFIRM); the
+      F&S test is correctly detecting the regime flip, not a bug.
+
+    **Side effect / new follow-up items.** Re-running full_audit
+    with the fix unmasked real model FAILs that were previously
+    hidden behind ERR. Pre-existing — not introduced today, just
+    newly visible:
+    - `mr_monotone=FAIL` on learn, defmap, coordn2, entropy,
+      costchange, pareto, linus, mirroring, burnout, ossfail,
+      deprot, maturity (y not monotone in ctrl across the 5-grid;
+      may be expected for some, suspect for others).
+    - `mr_bound_consist=FAIL` on diapers, brooks, brooksq, defmap
+      (clamping is load-bearing).
+    - `mr_scale=FAIL` on diapers, brooks (sign-flip / nonlinearity
+      large enough to trip the < 0 guard).
+    - `mr_scale=SKIP` on defmap (y=0 baseline).
+    - `anomaly_check=FAIL` on diapers, flaky (sign reversal under
+      stress).
+
+    Triage to a future session; the methodology paper's headline
+    18-model V&V table needs a refresh.
+
+    Outputs touched: `paper/tests.py`,
+    `paper/outputs/full_audit.csv`. `audit_staleness.py` reports
+    clean — site numbers in sync with the new audit.
+
     Original deferral spec preserved below for reference.
 
 VV (original spec). **Re-validate the May 11 aidebt regime-crossover

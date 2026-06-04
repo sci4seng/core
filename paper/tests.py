@@ -72,10 +72,12 @@ def extreme_eqn(model_factory):
   Flag NaN/inf in any output."""
   m = model_factory()
   fails = []
-  for k, (default, lo, hi) in m.init.items():
+  for k, spec in m.init.items():
     if not k[0].isupper(): continue
+    lo, hi = spec[1], spec[2]
+    units = spec[3] if len(spec) >= 4 else ''
     for label, val in [('lo', lo), ('hi', hi)]:
-      test_init = {**m.init, k: [val, lo, hi]}
+      test_init = {**m.init, k: [val, lo, hi, units]}
       try:
         out = sd.run(test_init, m.step)
         if out is None: continue
@@ -101,9 +103,11 @@ def mr_zero_input(model_factory):
   m = model_factory()
   if m.ctrl not in m.init:
     return {'test':'mr_zero_input','status':SKIP,'detail':'no ctrl'}
-  lo = m.init[m.ctrl][1]
-  bg1 = {**m.init, m.ctrl: [lo, lo, m.init[m.ctrl][2]]}
-  bg2 = {**m.init, m.ctrl: [lo, lo, m.init[m.ctrl][2]]}
+  spec = m.init[m.ctrl]
+  lo, hi = spec[1], spec[2]
+  units = spec[3] if len(spec) >= 4 else ''
+  bg1 = {**m.init, m.ctrl: [lo, lo, hi, units]}
+  bg2 = {**m.init, m.ctrl: [lo, lo, hi, units]}
   out1 = sd.run(bg1, m.step)
   out2 = sd.run(bg2, m.step)
   if out1 is None or out2 is None:
@@ -121,12 +125,14 @@ def mr_monotone(model_factory, n=5):
   m = model_factory()
   if m.ctrl not in m.init:
     return {'test':'mr_monotone','status':SKIP,'detail':'no ctrl'}
-  lo, hi = m.init[m.ctrl][1], m.init[m.ctrl][2]
+  spec = m.init[m.ctrl]
+  lo, hi = spec[1], spec[2]
+  units = spec[3] if len(spec) >= 4 else ''
   expect_down = (m.rq()['gap'] < 0)
   ys = []
   for i in range(n):
     val = lo + (hi - lo) * i / (n - 1)
-    bg = {**m.init, m.ctrl: [val, lo, hi]}
+    bg = {**m.init, m.ctrl: [val, lo, hi, units]}
     out = sd.run(bg, m.step)
     if out is None: return {'test':'mr_monotone','status':SKIP,'detail':'run failed'}
     ys.append(m.y(out))
@@ -180,11 +186,13 @@ def mr_scale(model_factory, factor=2.0):
   m = model_factory()
   base = sd.run(m.init, m.step)
   scaled_init = {}
-  for k, (d, lo, hi) in m.init.items():
+  for k, spec in m.init.items():
+    d, lo, hi = spec[0], spec[1], spec[2]
+    units = spec[3] if len(spec) >= 4 else ''
     if k[0].isupper():
-      scaled_init[k] = [d * factor, lo, hi * factor]
+      scaled_init[k] = [d * factor, lo, hi * factor, units]
     else:
-      scaled_init[k] = [d, lo, hi]
+      scaled_init[k] = [d, lo, hi, units]
   scaled = sd.run(scaled_init, m.step)
   if base is None or scaled is None:
     return {'test':'mr_scale','status':SKIP,'detail':'run failed'}
