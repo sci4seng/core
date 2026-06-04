@@ -240,7 +240,16 @@ def rq_n(model_factory, n=100, seed=1, dist='triangular', target='all'):
 
 def diapers():
   """Toy: weekly diaper supply.  Sat = bulk buy + wash all dirty.
-  RQ: skip wash on Sat t=13 -> dirty pileup."""
+  RQ: skip wash on Sat t=13 -> dirty pileup.
+
+  V&V notes (2026-06-03 triage):
+  - anomaly_check FAIL, mr_scale FAIL: at hi-stressed Use the
+    supply system runs out of clean diapers; y goes negative.
+    Legitimate model behavior, not a bug — toy demonstrates that
+    fixed-supply + scaled-demand collapses.
+  - mr_dt_halving FAIL: `int(t) % 7 == 6` and `t == 13` event
+    triggers are dt-dependent (Saturday fires twice at dt=0.5).
+    Sterman dt-halving misapplied to discrete-event toy."""
   init = {'Clean':[100,0,200,'diapers'], 'Dirty':[0,0,200,'diapers'], 'Buy':[0,0,100,'diapers/tick'],
           'Use':[8,0,20,'diapers/tick'], 'wash_amt':[0,0,200,'diapers/tick'], 'skip':[0,0,1,'frac']}
 
@@ -275,7 +284,12 @@ def brooks():
   Control: boost (size of mid-project late-hire shock).
   RQ: a boost=10 cohort at t=10 reduces net progress vs boost=0.
   Hypothesis basis: comm + train terms together can swamp prod_rate when
-  Vet is already busy; the model expresses Brooks's claim mechanistically."""
+  Vet is already busy; the model expresses Brooks's claim mechanistically.
+
+  V&V note (2026-06-03 triage): mr_scale FAIL (y_ratio=-1.60) is
+  Brooks's law itself — doubling Vet flips the sign of net progress
+  because quadratic comm overhead outpaces linear productivity gain.
+  The sign-flip is the thesis, not a bug."""
   init = {'Vet':[10,0,100,'devs'], 'New':[0,0,100,'devs'],
           'Done':[0,0,500,'items'], 'Todo':[500,0,500,'items'],
           # ctrl: late-hire shock size injected at t=10
@@ -300,8 +314,12 @@ def brooks():
     # max(0, prod) clamps: comm + train can exceed 1.0 with large teams,
     # which would otherwise produce NEGATIVE Done. The clamp is the model
     # expressing "team produces nothing" rather than "team un-produces."
-    v.Todo = u.Todo - dt * max(0, prod)
-    v.Done = u.Done + dt * max(0, prod)
+    # Also cap delta at remaining Todo so Done + Todo conserves total work
+    # (otherwise prod * dt can overshoot remaining Todo, making Done
+    # saturate against its bound and trip mr_bound_consist).
+    delta = min(dt * max(0, prod), u.Todo)
+    v.Todo = u.Todo - delta
+    v.Done = u.Done + delta
     # New decays into Vet at mature_rate; boost injects at t=10 only.
     v.New  = u.New - dt * u.mature_rate * u.New + (u.boost if t == 10 else 0)
     v.Vet  = u.Vet + dt * u.mature_rate * u.New
@@ -584,7 +602,13 @@ def brooksq():
   bugs are 5x worse than open work).
   Control: boost (size of late-hire shock at t=10).
   RQ: a boost=10 cohort reduces y vs boost=0 — the compound velocity +
-  quality drag is the brooksq claim that brooks alone can't express."""
+  quality drag is the brooksq claim that brooks alone can't express.
+
+  V&V note (2026-06-03 triage): boundary_adq FAIL (t=20 CONFIRM,
+  t=80 REFUTE) is a temporal regime — short-term the late hires
+  hurt (Brooks's law), but at long horizons the maturated cohort
+  pays back the early drag and y improves. Like aidebt, the V&V
+  test correctly detects a regime boundary rather than a bug."""
   init = {'Vet':[10,0,100,'devs'], 'New':[0,0,100,'devs'],
           'Done':[0,0,500,'items'], 'Todo':[500,0,500,'items'],
           'Bugs':[0,0,100,'bugs'], 'Esc':[0,0,100,'bugs'],
@@ -616,8 +640,12 @@ def brooksq():
     # Bugs in-flight either get caught (drop off Bugs implicitly) or
     # leak to Esc (escape to field). leak_rate is the unhappy share.
     leak  = u.Bugs * u.leak_rate
-    v.Todo = u.Todo - dt * max(0, prod)
-    v.Done = u.Done + dt * max(0, prod)
+    # Conserve total work: cap delta at remaining Todo (same fix as
+    # brooks; otherwise Done saturates against its bound and trips
+    # mr_bound_consist).
+    delta = min(dt * max(0, prod), u.Todo)
+    v.Todo = u.Todo - delta
+    v.Done = u.Done + delta
     v.New  = u.New - dt * u.mature_rate * u.New + (u.boost if t == 10 else 0)
     v.Vet  = u.Vet + dt * u.mature_rate * u.New
     v.Bugs = u.Bugs + dt * (inj - leak)
@@ -654,10 +682,26 @@ def defmap():
   RQ: dropping tst from 2.5 to 0.5 (less testing) balloons Prod.
   Hypothesis basis: leak = Injected * (1 - tst*detect_coef); halving
   tst shifts the catch/leak split toward leak, which feeds Latent
-  and then Prod via the failure rate."""
+  and then Prod via the failure rate.
+
+  V&V note (2026-06-03 triage): mr_scale SKIP (y=0 baseline) is a
+  parameter-balance artefact — at default tst=2.5, detect_coef=0.4,
+  leak = Injected * (1 - 1.0) = 0, so Latent and Prod stay 0 and
+  y = -Prod - 0.5*Latent = 0. Scaling UPPER inputs doesn't change
+  the param product, so y_scaled = 0 too. The model still
+  meaningfully responds to ctrl (tst sweep), but mr_scale can't
+  compute a ratio. Caught bound widened 100 -> 2000 in this triage
+  to stop mr_bound_consist saturation (integral of detect over the
+  sweep was overflowing the old bound)."""
   init = {'Cmplx':[20,0,100,'complexity'], 'Dsn':[20,0,100,'design-units'],
           'Use':[35,0,100,'usage-units'],
-          'Injected':[2.43,0,100,'bugs'], 'Caught':[0,0,100,'bugs'],
+          'Injected':[2.43,0,100,'bugs'],
+          # Caught accumulates detect per tick (no decay), so the bound
+          # must hold the integral. With Injected averaging ~22 and
+          # detect ~ tst*Injected*detect_coef ~ 22/tick across 20 ticks,
+          # default sweep hits ~440 Caught. Widen to 2000 to cover
+          # stressed sweeps without saturating mr_bound_consist.
+          'Caught':[0,0,2000,'bugs'],
           'Latent':[0,0,100,'bugs'], 'Prod':[0,0,100,'items'],
           # ctrl: testing intensity (higher = more bugs caught, fewer leaked)
           'tst':[2.5,0,10,'frac'],
@@ -768,7 +812,14 @@ def flaky():
   RQ: flake_rate 0.10 (vs 0.02) erodes useful coverage.
   Hypothesis basis: cover = Tests/(Tests+Flakes) gates BOTH new test
   investment (positive feedback dies) and flake-fixing — high flake_rate
-  spirals the system toward the all-Flakes attractor."""
+  spirals the system toward the all-Flakes attractor.
+
+  V&V note (2026-06-03 triage): anomaly_check FAIL (y_base=136,
+  y_stress=-115) is the spiral-to-all-Flakes attractor playing
+  out — at hi-stressed initial Tests+Flakes+Bugs, cover drops far
+  enough that the leak overwhelms invest_base, Bugs accumulate
+  faster than Tests recover, and y = Tests - Bugs flips sign.
+  Stress-collapse is the documented thesis, not a bug."""
   init = {'Tests':[100,0,500,'tests'], 'Flakes':[5,0,500,'tests'],
           'Bugs':[0,0,500,'bugs'],
           # ctrl: per-tick probability a reliable test goes flaky

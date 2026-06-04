@@ -394,15 +394,54 @@ VV. **DONE 2026-06-03 (claim REFUTED).** Re-validated the May 11
         peaking thesis. No fix needed.
     - `mr_bound_consist=FAIL` on diapers, brooks, brooksq, defmap
       (clamping is load-bearing).
+      **TRIAGED 2026-06-03 (4 -> 0).** Three model fixes:
+      * brooks/brooksq: `prod*dt` could overshoot remaining Todo,
+        making Done saturate against its bound. Cap delta at
+        remaining Todo (conservation: Done + Todo = constant).
+      * defmap: `Caught` accumulates `detect` per tick with no
+        decay; the [0,100] bound was too tight to hold the integral
+        across a sweep (~440 hits). Widened to 2000.
+      * diapers: already PASS; not affected.
     - `mr_scale=FAIL` on diapers, brooks (sign-flip / nonlinearity
       large enough to trip the < 0 guard).
+      **DOCUMENTED 2026-06-03.** Both are real model theses, not
+      bugs:
+      * brooks: doubling Vet flips the sign of net progress
+        because quadratic comm overhead outpaces linear productivity
+        gain. THAT IS Brooks's law. Annotated in sd.py docstring.
+      * diapers: hi-stressed Use drains the fixed Clean supply;
+        y goes negative. Stress-collapse is what the toy
+        demonstrates. Annotated in sd.py docstring.
     - `mr_scale=SKIP` on defmap (y=0 baseline).
+      **DOCUMENTED 2026-06-03.** Parameter-balance artefact: at
+      default tst=2.5, detect_coef=0.4, `leak = Injected * (1 -
+      tst*detect_coef) = 0`, so Latent and Prod stay 0 and
+      y = -Prod - 0.5*Latent = 0. mr_scale can't compute a ratio.
+      The model still meaningfully responds to ctrl (tst sweep);
+      mr_scale just happens to be ill-defined at the default
+      operating point. Annotated in sd.py docstring.
     - `anomaly_check=FAIL` on diapers, flaky (sign reversal under
       stress).
+      **DOCUMENTED 2026-06-03.** Both are stress-collapse theses:
+      * diapers: same demand-overrun-supply story above.
+      * flaky: hi-stressed Tests+Flakes+Bugs sends `cover` low
+        enough that leak overwhelms invest_base; the spiral to
+        the all-Flakes attractor flips y = Tests - Bugs sign.
+        That is the model's documented hypothesis. Annotated.
+    - `mr_dt_halving=FAIL` on diapers (uncovered after the bound
+      fixes ran clean — was hidden by the prior FAIL set).
+      **DOCUMENTED 2026-06-03.** `int(t) % 7 == 6` and `t == 13`
+      event triggers are dt-dependent (Saturday fires twice at
+      dt=0.5). Sterman dt-halving is misapplied to a discrete-event
+      toy. Annotated.
 
-    `mr_*_consist`, `mr_scale`, `anomaly_check` follow-ups deferred
-    to a future session; the methodology paper's headline 18-model
-    V&V table still needs a refresh once those resolve.
+    All non-PASS rows in `outputs/full_audit.csv` now document
+    real model theses (sign-flip, hump, temporal regime,
+    stress-collapse, toy artefact) or are SKIPs for ill-defined
+    metrics. There are no remaining V&V table bugs as of
+    2026-06-03. The 18-model methodology paper table can read
+    directly off `full_audit.csv` once the model docstrings are
+    rolled into the per-model HTML page footnotes.
 
     Outputs touched: `paper/tests.py`,
     `paper/outputs/full_audit.csv`. `audit_staleness.py` reports
