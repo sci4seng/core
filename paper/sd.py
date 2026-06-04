@@ -1351,10 +1351,13 @@ def coordn2():
     # Communication-pair count grows quadratically in team size.
     pairs = u.Devs * (u.Devs - 1) / 2
     # Per-dev tax = (pairs each dev participates in) * coefficient.
-    # Cap at 90% to prevent negative throughput at huge N.
-    tax   = min(0.9, u.comm_coef * pairs / max(1, u.Devs))
-    # Effective output: N devs each producing work_per_dev, minus tax.
-    v.Done = u.Done + dt * u.Devs * u.work_per_dev * (1 - tax)
+    # Floor the productivity factor at 0 (do NOT cap the tax) so
+    # throughput decays cleanly past the Brooks-inflection point. The
+    # earlier `min(0.9, tax)` cap created a non-physical back-end where
+    # output rose linearly with Devs once tax saturated — fails
+    # mr_monotone with a rise-fall-rise shape.
+    factor = max(0, 1 - u.comm_coef * pairs / max(1, u.Devs))
+    v.Done = u.Done + dt * u.Devs * u.work_per_dev * factor
     for p in ('Devs','work_per_dev','comm_coef'):
       setattr(v, p, getattr(u, p))
 

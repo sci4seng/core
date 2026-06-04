@@ -369,6 +369,29 @@ VV. **DONE 2026-06-03 (claim REFUTED).** Re-validated the May 11
       costchange, pareto, linus, mirroring, burnout, ossfail,
       deprot, maturity (y not monotone in ctrl across the 5-grid;
       may be expected for some, suspect for others).
+      **TRIAGED 2026-06-03 (12 -> 2).** Root cause was a second
+      tests.py bug: `mr_monotone` set `expect_down = (rq.gap < 0)`
+      but rq()s typically compare two named regime points (not
+      lo vs hi), so the sweep direction across the full [lo,hi]
+      doesn't agree with rq's signed gap. Fix: derive sweep
+      direction from the sweep endpoints themselves (Chen MR1:
+      output predictable in input). After fix, 10 of the 12 are
+      strictly monotone and now PASS. Remaining 2 are real
+      single-hump shapes:
+      * **coordn2** — was a model bug: `tax = min(0.9, ...)` cap
+        produced a non-physical back-end where output rose linearly
+        with Devs once tax saturated (rise-fall-rise). Replaced
+        with `factor = max(0, 1 - ...)` so throughput decays
+        cleanly past the Brooks-inflection point. New shape
+        [200, 5100, 100, 0, 0] = one peak — Brooks's law clean.
+        Still FAILs strict mr_monotone (hump), but the FAIL now
+        documents the model thesis, not a bug.
+      * **burnout** — legitimate hump: 0 work delivers 0; moderate
+        work optimal; chronic overload erodes Capacity via Stress.
+        rq() compares workload=40 vs 60 inside the past-peak
+        decline region, hence CONFIRM. mr_monotone over the full
+        [0,100] range crosses the inflection; FAIL documents the
+        peaking thesis. No fix needed.
     - `mr_bound_consist=FAIL` on diapers, brooks, brooksq, defmap
       (clamping is load-bearing).
     - `mr_scale=FAIL` on diapers, brooks (sign-flip / nonlinearity
@@ -377,8 +400,9 @@ VV. **DONE 2026-06-03 (claim REFUTED).** Re-validated the May 11
     - `anomaly_check=FAIL` on diapers, flaky (sign reversal under
       stress).
 
-    Triage to a future session; the methodology paper's headline
-    18-model V&V table needs a refresh.
+    `mr_*_consist`, `mr_scale`, `anomaly_check` follow-ups deferred
+    to a future session; the methodology paper's headline 18-model
+    V&V table still needs a refresh once those resolve.
 
     Outputs touched: `paper/tests.py`,
     `paper/outputs/full_audit.csv`. `audit_staleness.py` reports

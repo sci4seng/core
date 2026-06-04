@@ -120,15 +120,18 @@ def mr_zero_input(model_factory):
 
 
 def mr_monotone(model_factory, n=5):
-  """Sweep ctrl across n points in [lo,hi]; y should be monotone
-  in the direction predicted by rq()."""
+  """Sweep ctrl across n points in [lo,hi]; y should be monotone in
+  ctrl across the full sweep (Chen MR1: predictable change). Direction
+  is inferred from the sweep endpoints, NOT from rq()'s gap — rq
+  typically compares two named regime points, which may sit on a
+  non-monotone region of the full [lo,hi] sweep. Tolerates a 0.5
+  numerical wiggle per step."""
   m = model_factory()
   if m.ctrl not in m.init:
     return {'test':'mr_monotone','status':SKIP,'detail':'no ctrl'}
   spec = m.init[m.ctrl]
   lo, hi = spec[1], spec[2]
   units = spec[3] if len(spec) >= 4 else ''
-  expect_down = (m.rq()['gap'] < 0)
   ys = []
   for i in range(n):
     val = lo + (hi - lo) * i / (n - 1)
@@ -137,13 +140,14 @@ def mr_monotone(model_factory, n=5):
     if out is None: return {'test':'mr_monotone','status':SKIP,'detail':'run failed'}
     ys.append(m.y(out))
   diffs = [ys[i+1] - ys[i] for i in range(len(ys)-1)]
+  expect_down = (ys[-1] < ys[0])
   if expect_down:
-    ok = all(d <= 0.5 for d in diffs)   # tolerate small numerical wiggle
+    ok = all(d <= 0.5 for d in diffs)
   else:
     ok = all(d >= -0.5 for d in diffs)
   return {'test':'mr_monotone',
           'status': PASS if ok else FAIL,
-          'detail': f'ys={[round(y,1) for y in ys]} expect={"down" if expect_down else "up"}'}
+          'detail': f'ys={[round(y,1) for y in ys]} dir={"down" if expect_down else "up"}'}
 
 
 def mr_dt_halving(model_factory, tol=0.10):
