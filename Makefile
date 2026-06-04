@@ -57,6 +57,29 @@ clean-site: ## wipe Jekyll build artifacts
 	@rm -rf docs/_site docs/.jekyll-cache docs/.bundle docs/vendor; \
 	 echo "wiped docs/_site + caches"
 
+clean: clean-site ## clean: jekyll + python caches + sibling lifts/data clutter
+	@echo "core: clearing __pycache__ + *.pyc"
+	@find . -type d -name __pycache__ -prune -exec rm -rf {} + 2>/dev/null || true
+	@find . -type f -name "*.pyc" -delete 2>/dev/null || true
+	@if [ -d ../lifts/tools ]; then \
+	  sz=$$(du -sh ../lifts/tools 2>/dev/null | awk '{print $$1}'); \
+	  echo "lifts: removing tools/ ($$sz)"; rm -rf ../lifts/tools; \
+	fi
+	@if [ -d ../lifts/.venv ]; then \
+	  sz=$$(du -sh ../lifts/.venv 2>/dev/null | awk '{print $$1}'); \
+	  echo "lifts: removing .venv/ ($$sz)"; rm -rf ../lifts/.venv; \
+	fi
+	@if [ -d ../data/dropzone ]; then \
+	  cnt=$$(ls ../data/dropzone/*.zip 2>/dev/null | wc -l | tr -d ' '); \
+	  if [ "$$cnt" != "0" ]; then \
+	    sz=$$(du -ch ../data/dropzone/*.zip 2>/dev/null | tail -1 | awk '{print $$1}'); \
+	    echo "data: removing $$cnt dropzone zip(s) ($$sz)"; \
+	    rm -f ../data/dropzone/*.zip; \
+	  fi; \
+	  rm -rf ../data/dropzone/__MACOSX 2>/dev/null || true; \
+	fi
+	@echo "clean done. To restore: re-install tools per lifts/tools.yml, recreate .venv, re-download bundles from Drive."
+
 ## inference (delegate to paper/Makefile) -------------------------
 
 refresh: ## run paper pipeline + regen site
