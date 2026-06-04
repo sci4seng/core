@@ -941,8 +941,46 @@ YY (original spec). **audit_staleness.py misses prose-embedded lift
 
    (Sub-entries 7b–7e for the other 5 params follow the same
    recipe; not enumerated until authorization.)
-8. **`sd.opt()` calibration pass** — currently rq() reruns at default;
-   actual fitting of intr_rate etc not done.
+8. **DONE 2026-06-03.** sd.opt() calibration pass shipped as
+   `paper/scripts/calibrate_opt.py` ->
+   `paper/outputs/calibration_opt.csv`. Per model: freeze ctrl at
+   default, run `opt(n=1000, narrow=0.6)` over middle 60% of every
+   other param's declared [lo, hi], record (default_y, opt_best_y,
+   default_verdict, opt_verdict, top 3 fractional-shifted params).
+   Runs all 35 models in ~1.4s.
+
+   **Headline finding for the methodology paper.** Of 35 models:
+   - **16 retain verdict** at the opt-best parameterisation
+     (thesis robust across middle 60% of param space).
+   - **17 flip CONFIRM -> neutral**: at the opt-discovered max-y
+     parameterisation, the ctrl flip no longer separates y enough
+     for the 5%-of-y0 verdict threshold. The default-state CONFIRM
+     was parameter-sensitive.
+   - **aidebt** flips REFUTE -> CONFIRM: there exists a param
+     region (high pay_rate, etc.) where the AI-debt thesis DOES
+     confirm — consistent with the VV grid finding that the
+     thesis lives in a specific subregion, not the whole space.
+   - **coordn2** flips REFUTE -> neutral: post-cap-fix from the
+     V&V triage, opt finds settings where the Brooks superlinear
+     tax claim sits at the verdict threshold rather than the
+     declared default's REFUTE.
+
+   This is *forward-search* calibration (find params that maximise
+   the model's success metric, then test the thesis there) — NOT
+   inverse-fit calibration against project-level time-series data.
+   Inverse-fit needs monthly historical CSVs (see item 10,
+   blocked) and is a separate pass.
+
+   The `top_shifts` column flags the three params that moved the
+   most in proportion to their declared range — useful for the
+   paper's "which dial most controls each model" sidebar.
+
+   `audit_staleness` clean; `verify-k-anon` clean. ALL_MODELS in
+   sd.py widened from 34 to 35 to include `congruence_motif`
+   (it was already in full_audit's MODELS — drift fix).
+
+   Original deferral spec preserved: "currently rq() reruns at
+   default; actual fitting of intr_rate etc not done."
 9. **DONE 2026-06-03.** S4 dim_check built in `paper/tests.py` and
    wired into `paper/full_audit.py` ALL_TESTS + the scorecard via
    `docs/scripts/gen_md.py` + `docs/glossary.md`. Pragmatic

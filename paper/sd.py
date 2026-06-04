@@ -2081,7 +2081,7 @@ def maturity():
 
 ALL_MODELS = [diapers, brooks, bugs, debt, sir, rework, learn, brooksq,
               defmap, aiwork, flaky, dora, micro, teamtopo, burnout, aidebt,
-              archpat, congruence,
+              archpat, congruence, congruence_motif,
               # 15 added 2026-05-25 from docs/other.html buildable-today list:
               little, coordn2, entropy, costchange, pareto, linus, mirroring,
               orgchurn, ownership, ossfail, deprot, scope, ctxswitch, limits,
