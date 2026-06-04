@@ -115,16 +115,28 @@ def extract_refs(body):
     return items
 
 
-def yaml_quote(s):
-    """Quote a YAML scalar safely as a block-literal (`|`) when it
-    contains newlines or special chars."""
+def yaml_quote(s, list_item=False):
+    """Quote a YAML scalar safely.
+
+    - Plain string if no special chars or newlines.
+    - Double-quoted string for single-line strings that DO have
+      special chars but no newlines (cheaper + safer than a
+      block-literal at the wrong indent level).
+    - Block-literal '|' only for genuinely multi-line strings.
+      Continuation indent picks 4 or 6 spaces based on whether
+      the scalar is the value of a mapping key (`key: |`, indent
+      under the key) or a list item (`- |`, indent has to clear
+      the dash). list_item=True bumps the indent to 6.
+    """
     if s is None:
         return "~"
     s = str(s)
-    if "\n" not in s and not re.search(r"[:#&*!|>'%@`,?\[\]{}]", s):
-        return s
-    # Use block-literal preserving newlines, indent 4 spaces.
-    indented = "\n".join("    " + ln for ln in s.splitlines())
+    if "\n" not in s:
+        if not re.search(r"[:#&*!|>'%@`,?\[\]{}]", s):
+            return s
+        return '"' + s.replace("\\", "\\\\").replace('"', '\\"') + '"'
+    pad = "      " if list_item else "    "
+    indented = "\n".join(pad + ln for ln in s.splitlines())
     return "|\n" + indented
 
 
@@ -163,7 +175,7 @@ def write_yaml(by_model, out_path):
         if rec["refs"]:
             lines.append("  refs:")
             for r in rec["refs"]:
-                lines.append(f"    - {yaml_quote(r)}")
+                lines.append(f"    - {yaml_quote(r, list_item=True)}")
         else:
             lines.append("  refs:        []")
         lines.append("")

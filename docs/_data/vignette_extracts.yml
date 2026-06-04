@@ -58,24 +58,15 @@ aiwork:
     computation. Without identity_match, the mean span would be
     biased downward (each alias contributes its own short span).
   refs:
-    - |
-    GitClear (2024). *Coding on Copilot: 2023 Data Suggests Downward
-    - |
-    Pressure on Code Quality*.
-    - |
-    METR (2025). *Measuring the impact of early-2025 AI on
-    - |
-    experienced open-source developer productivity*.
-    - |
-    coder's SD-framework `models/sd.py:aiwork()` (this repo) —
-    - |
-    encodes the AI-quality tradeoff as a `Model(init, step, y, rq,
-    - |
-    ctrl)` namedtuple.
-    - |
-    Replication: re-run on a different Apache project by swapping
-    - |
-    `../conf/helix.yml` for `../conf/<project>.yml`.
+    - "GitClear (2024). *Coding on Copilot: 2023 Data Suggests Downward"
+    - "Pressure on Code Quality*."
+    - "METR (2025). *Measuring the impact of early-2025 AI on"
+    - "experienced open-source developer productivity*."
+    - "coder's SD-framework `models/sd.py:aiwork()` (this repo) —"
+    - "encodes the AI-quality tradeoff as a `Model(init, step, y, rq,"
+    - "ctrl)` namedtuple."
+    - "Replication: re-run on a different Apache project by swapping"
+    - "`../conf/helix.yml` for `../conf/<project>.yml`."
 
 archpat:
   title:       Lift — Archpat Model from Apache Helix (GoF + RefactoringMiner)
@@ -157,24 +148,15 @@ archpat:
     **(2) Identity bridging**: this lift uses git only, not comms. No
     cross-source identity_match required.
   refs:
-    - |
-    Martin, R. C. (2008). *Clean Architecture*.
-    - |
-    Perry, D. E. & Wolf, A. L. (1992). Foundations for the study of
-    - |
-    software architecture. *ACM SIGSOFT Software Engineering Notes*.
-    - |
-    Tsantalis, N. et al. — pattern4 GoF detector
-    - |
-    (https://users.encs.concordia.ca/~nikolaos/pattern_detection.html).
-    - |
-    Arcelli Fontana, F. et al. — Arcan smell detector
-    - |
-    (https://essere.disco.unimib.it/wiki/arcan/) — documented fallback.
-    - |
-    `models/sd.py:archpat()` — the SD model.
-    - |
-    `findings.md` F0 — multi-project boundary-violation summary.
+    - "Martin, R. C. (2008). *Clean Architecture*."
+    - "Perry, D. E. & Wolf, A. L. (1992). Foundations for the study of"
+    - "software architecture. *ACM SIGSOFT Software Engineering Notes*."
+    - "Tsantalis, N. et al. — pattern4 GoF detector"
+    - "(https://users.encs.concordia.ca/~nikolaos/pattern_detection.html)."
+    - "Arcelli Fontana, F. et al. — Arcan smell detector"
+    - "(https://essere.disco.unimib.it/wiki/arcan/) — documented fallback."
+    - "`models/sd.py:archpat()` — the SD model."
+    - "`findings.md` F0 — multi-project boundary-violation summary."
 
 brooks:
   title:       Lift — Brooks Model from Apache Helix
@@ -230,16 +212,11 @@ brooks:
     identity_match would be required, and GitHub would need an extra
     alias source.
   refs:
-    - |
-    Brooks, F. P. (1975). *The Mythical Man-Month*. Addison-Wesley.
-    - |
-    coder's SD-framework `models/sd.py:brooks()` (this repo) — encodes
-    - |
-    the thesis as a `Model(init, step, y, rq, ctrl)` namedtuple.
-    - |
-    Replication: re-run this notebook on a different Apache project
-    - |
-    by swapping `../conf/helix.yml` for `../conf/<project>.yml`.
+    - "Brooks, F. P. (1975). *The Mythical Man-Month*. Addison-Wesley."
+    - "coder's SD-framework `models/sd.py:brooks()` (this repo) — encodes"
+    - "the thesis as a `Model(init, step, y, rq, ctrl)` namedtuple."
+    - "Replication: re-run this notebook on a different Apache project"
+    - "by swapping `../conf/helix.yml` for `../conf/<project>.yml`."
 
 brooksq:
   title:       Lift — Brooksq Model from Apache Helix
@@ -324,15 +301,11 @@ bugs:
     bug arrivals) would be a better falsification target.
   discussion:  
   refs:
-    - |
-    Goel, A. L. & Okumoto, K. (1979). Time-dependent error-detection
+    - "Goel, A. L. & Okumoto, K. (1979). Time-dependent error-detection"
     - rate model for software reliability and other performance measures.
-    - |
-    IEEE Transactions on Reliability*, R-28(3), 206–211.
-    - |
-    `models/sd.py:bugs()` — the SD model.
-    - |
-    `scripts/lift_bugs_gh.py` + `scripts/lift_bugs_jira.py` — Python
+    - "IEEE Transactions on Reliability*, R-28(3), 206–211."
+    - "`models/sd.py:bugs()` — the SD model."
+    - "`scripts/lift_bugs_gh.py` + `scripts/lift_bugs_jira.py` — Python"
     - variants for the multi-project sweep that produced the family-
     - member table above.
 
@@ -392,19 +365,13 @@ congruence:
     run. See `findings.md` F4-related methodology note.
   discussion:  
   refs:
-    - |
-    Newman, M. E. J. (2015). Networks: An Introduction. Oxford UP.
-    - |
-    Blondel, V. D. et al. (2008). Fast unfolding of communities in
-    - |
-    large networks. *J. Stat. Mech.*.
-    - |
-    kaiaulu R/smells.R:207 — the original radio-silence smell.
-    - |
-    `smells/radio_silence.py` — earlier Python port (this .Rmd
+    - "Newman, M. E. J. (2015). Networks: An Introduction. Oxford UP."
+    - "Blondel, V. D. et al. (2008). Fast unfolding of communities in"
+    - "large networks. *J. Stat. Mech.*."
+    - "kaiaulu R/smells.R:207 — the original radio-silence smell."
+    - "`smells/radio_silence.py` — earlier Python port (this .Rmd"
     - supersedes it for paper deliverables).
-    - |
-    `models/sd.py:congruence()` — the SD model.
+    - "`models/sd.py:congruence()` — the SD model."
 
 debt:
   title:       Lift — Debt Model from Apache Helix
@@ -515,14 +482,10 @@ learn:
     when seniors leave. Thesis CONFIRM in both cases.
   discussion:  
   refs:
-    - |
-    Sterman, J. (2000). *Business Dynamics*, ch. 18 (workforce flow).
-    - |
-    `models/sd.py:learn()` — the SD model under test.
-    - |
-    Replication: swap `../conf/helix.yml` for any of the 8 project
-    - |
-    configs in `../conf/` and re-knit.
+    - "Sterman, J. (2000). *Business Dynamics*, ch. 18 (workforce flow)."
+    - "`models/sd.py:learn()` — the SD model under test."
+    - "Replication: swap `../conf/helix.yml` for any of the 8 project"
+    - "configs in `../conf/` and re-knit."
 
 rework:
   title:       Lift — Rework Model from Apache Helix
