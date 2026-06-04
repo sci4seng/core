@@ -115,5 +115,5 @@ bug arrivals) would be a better falsification target.
 
 - SD model: `paper/sd.py::bugs()`
 - Audit row: `paper/outputs/full_audit.csv` (line for `bugs`)
-- Lift Rmd: `sci4seng/lifts/vignettes/bugs_goel_okumoto_fit.Rmd`
+- Lift Rmd: [`bugs_goel_okumoto_fit.Rmd`](https://github.com/sci4seng/lifts/blob/main/vignettes/bugs_goel_okumoto_fit.Rmd)
 

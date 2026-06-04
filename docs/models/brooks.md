@@ -127,5 +127,5 @@ alias source.
 
 - SD model: `paper/sd.py::brooks()`
 - Audit row: `paper/outputs/full_audit.csv` (line for `brooks`)
-- Lift Rmd: `sci4seng/lifts/vignettes/brooks_late_hire_velocity.Rmd`
+- Lift Rmd: [`brooks_late_hire_velocity.Rmd`](https://github.com/sci4seng/lifts/blob/main/vignettes/brooks_late_hire_velocity.Rmd)
 

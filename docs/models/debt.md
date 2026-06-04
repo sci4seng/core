@@ -91,5 +91,5 @@ any extension that breaks pay_rate by developer cohort.
 
 - SD model: `paper/sd.py::debt()`
 - Audit row: `paper/outputs/full_audit.csv` (line for `debt`)
-- Lift Rmd: `sci4seng/lifts/vignettes/debt_refactoring_pay_rate.Rmd`
+- Lift Rmd: [`debt_refactoring_pay_rate.Rmd`](https://github.com/sci4seng/lifts/blob/main/vignettes/debt_refactoring_pay_rate.Rmd)
 

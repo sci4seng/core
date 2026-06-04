@@ -73,5 +73,5 @@ release-tag phases. Each phase = (tag_i, tag_{i+1}].
 
 - SD model: `paper/sd.py::defmap()`
 - Audit row: `paper/outputs/full_audit.csv` (line for `defmap`)
-- Lift Rmd: `sci4seng/lifts/vignettes/defmap_bug_caught_ratio.Rmd`
+- Lift Rmd: [`defmap_bug_caught_ratio.Rmd`](https://github.com/sci4seng/lifts/blob/main/vignettes/defmap_bug_caught_ratio.Rmd)
 

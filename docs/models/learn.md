@@ -117,5 +117,5 @@ when seniors leave. Thesis CONFIRM in both cases.
 
 - SD model: `paper/sd.py::learn()`
 - Audit row: `paper/outputs/full_audit.csv` (line for `learn`)
-- Lift Rmd: `sci4seng/lifts/vignettes/learn_cohort_transitions.Rmd`
+- Lift Rmd: [`learn_cohort_transitions.Rmd`](https://github.com/sci4seng/lifts/blob/main/vignettes/learn_cohort_transitions.Rmd)
 

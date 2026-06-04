@@ -55,9 +55,81 @@ Cell: [`universal`](../glossary.md#universal "Both inputs and params CONFIRM") &
 
 _(showing first 5 of 7 metrics; full data in `paper/outputs/lifts.csv`)_
 
+## Lift methodology (from vignette)
+
+The `aiwork` model (GitClear 2024, METR 2025) expresses a quality
+tradeoff in AI-assisted coding: AI accelerates raw generation but
+inflates churn (code rewritten or abandoned) and adds a verification
+drag (humans must check outputs). Whether net delivery rises or
+falls depends on the per-unit-AI coefficients (`gen_boost`,
+`churn_mult`, `verify_drag`) **and** on the pre-AI baseline churn
+rate the team carries into the experiment. The SD model is in
+`models/sd.py:aiwork()`.
+
+OSS projects don't expose per-commit AI authorship, so the
+`ai`-controlled parameters can't be lifted directly. What we **can**
+lift is the no-AI baseline that the model needs:
+
+- **`churn_base`** — fraction of all commits that look like
+  revert / rollback / hotfix events. This is the rate at which the
+  team rewrites prior work even without AI in the loop. GitClear and
+  METR treat AI churn as a multiplicative inflation on top of this
+  base, so the lifted value calibrates one of the model's two free
+  baselines.
+
+- **`mature_rate`** — the SD model's Wip → Kept transition rate.
+  We lift it as a per-author proxy: 1 / (mean span between an
+  author's first and last commit). Lower span = faster cycle. A
+  proper PR-cycle lift from the issue tracker is a future
+  refinement; the gitlog-only proxy keeps the lift runnable on any
+  project with no JIRA/GitHub bridge.
+
+Both lifts are gitlog-only — no proprietary data, no bridging
+across sources, no AI telemetry required.
+
+## Lift verdict on the project
+
+The methodology paper compares aiwork's `rq()` at the model's
+default `churn_base = 0.05` against the lifted Helix value
+(typically 0.02–0.03 across the OSS projects we've measured).
+Under the lifted value, the CONFIRM verdict is retained but the
+verdict gap shrinks by roughly 97% (from ~−52 to ~−1.5). The
+AI-coding-quality concern is sensitive to the no-AI baseline — a
+team with low pre-AI churn shows much less AI penalty than the
+GitClear/METR priors assume by default.
+
+This is a *partial-data* lift: the per-unit-AI coefficients
+(`gen_boost`, `churn_mult`, `verify_drag`) still come from
+literature priors. The full inverse-fit calibration is blocked on
+the absence of per-commit AI-authorship data on OSS (TODO blocked
+item 14).
+
+## Sanity checks
+
+**(1) Bug-count dependency**: this lift uses git subject lines and
+per-author commit timestamps only. No bug count, no comms source.
+The choice of mbox / github / jira does not affect this lift.
+
+**(2) Identity bridging**: applied `identity_match` on the gitlog
+so authors with multiple emails are merged before the span
+computation. Without identity_match, the mean span would be
+biased downward (each alias contributes its own short span).
+
+## References
+
+- GitClear (2024). *Coding on Copilot: 2023 Data Suggests Downward
+- Pressure on Code Quality*.
+- METR (2025). *Measuring the impact of early-2025 AI on
+- experienced open-source developer productivity*.
+- coder's SD-framework `models/sd.py:aiwork()` (this repo) —
+- encodes the AI-quality tradeoff as a `Model(init, step, y, rq,
+- ctrl)` namedtuple.
+- Replication: re-run on a different Apache project by swapping
+- `../conf/helix.yml` for `../conf/<project>.yml`.
+
 ## Source
 
 - SD model: `paper/sd.py::aiwork()`
 - Audit row: `paper/outputs/full_audit.csv` (line for `aiwork`)
-- Lift Rmd: `sci4seng/lifts/vignettes/lift_aiwork.Rmd`
+- Lift Rmd: [`aiwork_churn_baseline.Rmd`](https://github.com/sci4seng/lifts/blob/main/vignettes/aiwork_churn_baseline.Rmd)
 

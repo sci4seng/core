@@ -125,5 +125,5 @@ run. See `findings.md` F4-related methodology note.
 
 - SD model: `paper/sd.py::congruence()`
 - Audit row: `paper/outputs/full_audit.csv` (line for `congruence`)
-- Lift Rmd: `sci4seng/lifts/vignettes/congruence_radio_silence_brokers.Rmd`
+- Lift Rmd: [`congruence_radio_silence_brokers.Rmd`](https://github.com/sci4seng/lifts/blob/main/vignettes/congruence_radio_silence_brokers.Rmd)
 

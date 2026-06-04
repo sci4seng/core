@@ -32,18 +32,25 @@ SCI  = CORE.parent                  # sci4seng/
 VIG  = SCI / "lifts" / "vignettes"
 OUT  = DOCS / "_data" / "vignette_extracts.yml"
 
-# Mirror gen_md.py: canonical filename per model.
+# Mirror gen_md.py: vignettes per model. First entry is the
+# canonical one whose intro / verdict / discussion seed the
+# model page's "Lift methodology" section; remaining entries are
+# additional shipped vignettes that the page should also link to
+# (e.g. archpat ships both the snapshot-based gof_pattern_partition
+# lift AND the per-region rates lift added 2026-06-03).
 MODEL_TO_VIGNETTE = {
-    "archpat":    "archpat_gof_pattern_partition",
-    "brooks":     "brooks_late_hire_velocity",
-    "brooksq":    "brooksq_injection_leak",
-    "bugs":       "bugs_goel_okumoto_fit",
-    "congruence": "congruence_radio_silence_brokers",
-    "debt":       "debt_refactoring_pay_rate",
-    "defmap":     "defmap_bug_caught_ratio",
-    "dora":       "dora_four_keys_lift",
-    "learn":      "learn_cohort_transitions",
-    "rework":     "rework_failrate_estimation",
+    "aiwork":     ["aiwork_churn_baseline"],
+    "archpat":    ["archpat_gof_pattern_partition",
+                   "archpat_region_rates"],
+    "brooks":     ["brooks_late_hire_velocity"],
+    "brooksq":    ["brooksq_injection_leak"],
+    "bugs":       ["bugs_goel_okumoto_fit"],
+    "congruence": ["congruence_radio_silence_brokers"],
+    "debt":       ["debt_refactoring_pay_rate"],
+    "defmap":     ["defmap_bug_caught_ratio"],
+    "dora":       ["dora_four_keys_lift"],
+    "learn":      ["learn_cohort_transitions"],
+    "rework":     ["rework_failrate_estimation"],
 }
 
 
@@ -168,7 +175,10 @@ def main():
     by_model = {}
     missing  = []
     empty    = []
-    for model, stem in MODEL_TO_VIGNETTE.items():
+    for model, stems in MODEL_TO_VIGNETTE.items():
+        # Extract from the canonical (first) vignette only; the
+        # additional ones surface as page-bottom links via gen_md.
+        stem = stems[0]
         rmd = VIG / f"{stem}.Rmd"
         if not rmd.exists():
             missing.append((model, rmd))

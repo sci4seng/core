@@ -153,5 +153,7 @@ cross-source identity_match required.
 
 - SD model: `paper/sd.py::archpat()`
 - Audit row: `paper/outputs/full_audit.csv` (line for `archpat`)
-- Lift Rmd: `sci4seng/lifts/vignettes/archpat_gof_pattern_partition.Rmd`
+- Lift Rmds:
+  - [`archpat_gof_pattern_partition.Rmd`](https://github.com/sci4seng/lifts/blob/main/vignettes/archpat_gof_pattern_partition.Rmd)
+  - [`archpat_region_rates.Rmd`](https://github.com/sci4seng/lifts/blob/main/vignettes/archpat_region_rates.Rmd)
 

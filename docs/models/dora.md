@@ -82,5 +82,5 @@ plug into `sd.opt(dora, ...)` then `verdict()`.
 
 - SD model: `paper/sd.py::dora()`
 - Audit row: `paper/outputs/full_audit.csv` (line for `dora`)
-- Lift Rmd: `sci4seng/lifts/vignettes/dora_four_keys_lift.Rmd`
+- Lift Rmd: [`dora_four_keys_lift.Rmd`](https://github.com/sci4seng/lifts/blob/main/vignettes/dora_four_keys_lift.Rmd)
 

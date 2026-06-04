@@ -100,5 +100,5 @@ to author-attributed injection rates.
 
 - SD model: `paper/sd.py::brooksq()`
 - Audit row: `paper/outputs/full_audit.csv` (line for `brooksq`)
-- Lift Rmd: `sci4seng/lifts/vignettes/brooksq_injection_leak.Rmd`
+- Lift Rmd: [`brooksq_injection_leak.Rmd`](https://github.com/sci4seng/lifts/blob/main/vignettes/brooksq_injection_leak.Rmd)
 

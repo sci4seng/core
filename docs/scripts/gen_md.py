@@ -242,7 +242,8 @@ def render_model(name, audit, idx):
         out.append("\n")
 
     # --- Vignette excerpt (auto-synced from kaiaulu-style Rmd) ---
-    vname = MODEL_TO_VIGNETTE.get(name)
+    vstems = MODEL_TO_VIGNETTE.get(name) or []
+    vname = vstems[0] if vstems else None
     if vname:
         rmd = VIG / f"{vname}.Rmd"
         if rmd.exists():
@@ -266,9 +267,26 @@ def render_model(name, audit, idx):
     out.append("## Source\n\n")
     out.append(f"- SD model: `paper/sd.py::{name}()`\n")
     out.append(f"- Audit row: `paper/outputs/full_audit.csv` (line for `{name}`)\n")
-    if lf:
-        vname2 = MODEL_TO_VIGNETTE.get(name, f"lift_{name}")
-        out.append(f"- Lift Rmd: `sci4seng/lifts/vignettes/{vname2}.Rmd`\n")
+    if lf or vstems:
+        # Emit hyperlinks to every shipped vignette so the model
+        # page connects out to the lift rules (clickable on the
+        # site, not just code-quoted strings).
+        link_stems = vstems or [f"lift_{name}"]
+        if len(link_stems) == 1:
+            out.append(
+                f"- Lift Rmd: "
+                f"[`{link_stems[0]}.Rmd`]"
+                f"(https://github.com/sci4seng/lifts/blob/main/"
+                f"vignettes/{link_stems[0]}.Rmd)\n"
+            )
+        else:
+            out.append("- Lift Rmds:\n")
+            for stem in link_stems:
+                out.append(
+                    f"  - [`{stem}.Rmd`]"
+                    f"(https://github.com/sci4seng/lifts/blob/main/"
+                    f"vignettes/{stem}.Rmd)\n"
+                )
     out.append("\n")
     return "".join(out)
 

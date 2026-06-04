@@ -77,5 +77,5 @@ the 0.5 mark. Compare Helix's median `failrate` to that threshold.
 
 - SD model: `paper/sd.py::rework()`
 - Audit row: `paper/outputs/full_audit.csv` (line for `rework`)
-- Lift Rmd: `sci4seng/lifts/vignettes/rework_failrate_estimation.Rmd`
+- Lift Rmd: [`rework_failrate_estimation.Rmd`](https://github.com/sci4seng/lifts/blob/main/vignettes/rework_failrate_estimation.Rmd)
 
