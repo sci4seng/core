@@ -1,0 +1,2 @@
+model,project,churn_base,n_churn,n_commits,mature_rate,mean_span_days,n_authors,seed
+aiwork,camel,0.0095,774,81341,0.00221,452.7,1349,1

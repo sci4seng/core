@@ -96,23 +96,96 @@ Snapshot 2026-05-25. Repo `github.com/sci4seng/core` @ `main`.
 
 ## LEFT (priority order)
 
-### High value, low effort
-1. **Send DBmang/intern status email** — draft in
-   `diary/2026-05-25_status_to_rick_umar.md`. coder's action.
-2. **Ping DBmang on `archpat.pat_strength`** — declared in init but
-   unused in `step()`. Dead code or missing equation?
-3. **Anonymous mirror for submission**: `github.com/sci4seng/...` URL
-   reveals identity. Use anonymous.4open.science or zip `docs/` as
-   supplementary material.
+### OPEN — USER-SIDE (user's actions, not coder's)
+
+These five items block on user (email, Drive op, decision call); no
+amount of coder work can move them. Re-emphasised here per the
+2026-06-03 session request to track them explicitly.
+
+1. **Send DBmang/intern status email** — draft already in
+   `diary/2026-05-25_status_to_rick_umar.md`. user's send.
+2. **Ping DBmang on `archpat.pat_strength`** — the param is declared
+   in `paper/sd.py` archpat init but never referenced in `step()`.
+   Either dead code (delete) or a missing equation in the
+   pattern-decay branch (add). Need DBmang's call.
+3. **Anonymous mirror for ICSE 2027 submission** —
+   `github.com/sci4seng/...` URL identifies the lab. Options:
+   anonymous.4open.science, or zip `docs/` + push as a separate
+   anonymised repo before the submission deadline.
+B5. **5 missing project bundles from Drive** — junit5, ambari,
+    kaiaulu, airflow, openssl. user must rsync/extract them under
+    `sci4seng/data/<project>/{git_repo,jira,mbox,github}/` to
+    unblock further family-member lifts. Tomcat / helix / camel
+    already in place locally.
+B6. **Inventory + cleanup of the existing Drive bundle** — pair
+    with B5; SME's cleaned-helix bundle established the layout
+    convention, but the rest haven't been audited against it.
+    user's call on whether to ingest other Drive folders.
+
+### OPEN — BLOCKED ON USER DATA (coder-ready otherwise)
+
+10. **Behavior reproduction (S17) + behavior prediction (S18)** for
+    each model — never attempted. Requires monthly historical CSVs
+    per project (release-month -> observed-metric pairs) so the
+    sim trajectory can be compared to ground truth. user has to
+    pull or generate those before the coder side can wire them in.
+    Once the CSVs land in `sci4seng/data/<project>/observed_*.csv`,
+    we can add a `paper/scripts/behavior_check.py` that reads them
+    + the corresponding sim trajectory and emits a fit-quality
+    row per (model, project) into a new
+    `outputs/behavior_check.csv`.
 
 ### Buildable today (15 candidates ranked in `docs/other.html`)
 4. **9 A-tier with HAVE-data** (ordered by paper impact):
    ownership, orgchurn, pareto, mirroring, little, entropy,
    costchange, deprot, ossfail.
+
+   **SCOPE SHRUNK 2026-06-03**: per a mid-session redirect, focus
+   is now **brooks, aiwork, archpat ONLY**. The other A-tier
+   candidates are deferred; their SD models + docs pages are
+   already shipped (paper/sd.py + docs/models/*.md), only the
+   lift pipelines (per-project metric extraction) remain. Each
+   lift is ~4-8h of kaiaulu-vignette work, so the deferred
+   inventory below is roughly 60-100h of follow-up.
+
+   **In-focus follow-ups (2026-06-03 status)**:
+   - **aiwork** lift PROTOTYPE shipped (`paper/scripts/lift_aiwork.py`)
+     -> helix/tomcat/camel CSVs in `outputs/lift_aiwork_<proj>.csv`.
+     `churn_base` observed 0.01-0.03 across the three (model
+     default 0.05). Calibrated rq stays CONFIRM on all three, but
+     gap weakens 25% on camel (low churn_base -> AI penalty
+     harder to detect). Python prototype, not the kaiaulu .Rmd
+     convention — wrap as a vignette in a follow-up.
+   - **brooks** lift already at 8 projects, 5 metrics
+     (`brooks_tax_mean`, `brooks_tax_median`, `n_hires`,
+     `window_days`, `seed`). Saturated for now — no obvious
+     next column without an SME request.
+   - **archpat** lift at 2 projects (ambari, helix). Next Java
+     target = tomcat, BUT ant isn't installed and tomcat's build
+     uses build.xml not Maven. Expansion blocked until ant is
+     installed or tomcat is built upstream. junit5 + camel
+     already blocked (TODO blocked 11 + 12).
+
+   **Out-of-focus but already shipped (out-of-band on 2026-06-03)**:
+   - `ownership` lift on helix/tomcat/camel —
+     `paper/scripts/lift_ownership.py`. user committed it
+     directly (commit 4d495cb); preserved in lifts.csv but
+     out of focus going forward.
+
+   **Deferred** (SD + docs shipped; lifts pending, ~half-day each):
+   orgchurn, pareto, mirroring, little, entropy, costchange,
+   deprot, ossfail. Pick up after brooks/aiwork/archpat are
+   exhausted.
 5. **6 B-tier with HAVE-data**: coordn2, scope, ctxswitch, limits,
    successful, linus.
 
-   Net coverage if all 15 built: **33 models with full lifts**.
+   **SCOPE SHRUNK 2026-06-03** — same redirect as item 4. All
+   six SD models + docs pages already shipped; lifts deferred.
+
+   Net coverage if all 15 deferred lifts ever land: **33 models
+   with full lifts** (vs 12 today: brooks, brooksq, bugs, debt,
+   rework, learn, defmap, dora, archpat, congruence, ownership,
+   aiwork).
 
 ### Needs new pipeline (~1-2 days each)
 6. **15 partial-data candidates** in `other.html`. Most leverage:
@@ -990,7 +1063,9 @@ YY (original spec). **audit_staleness.py misses prose-embedded lift
    propagation through step() — that would need a CAS pass.
 10. **Behavior reproduction (S17)** + **behavior prediction (S18)** —
     never attempted. Need monthly historical CSVs to compare against
-    sim trajectories.
+    sim trajectories. **See the "OPEN — BLOCKED ON USER DATA"
+    section near the top of this file for the expanded entry; this
+    line is the original placeholder kept for cross-reference.**
 
 ### Blocked
 11. **Pattern4 on junit5** — Gradle pins JDK 25; we have 26. Skip

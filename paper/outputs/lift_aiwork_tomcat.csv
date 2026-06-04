@@ -1,0 +1,2 @@
+model,project,churn_base,n_churn,n_commits,mature_rate,mean_span_days,n_authors,seed
+aiwork,tomcat,0.0303,1965,64857,0.00077,1300.0,85,1

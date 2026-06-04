@@ -1,0 +1,2 @@
+model,project,churn_base,n_churn,n_commits,mature_rate,mean_span_days,n_authors,seed
+aiwork,helix,0.0295,134,4545,0.00227,440.5,78,1

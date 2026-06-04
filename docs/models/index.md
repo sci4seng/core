@@ -51,7 +51,7 @@ has_children: true
 
 - [brooks](brooks.md) &middot; `verdict_n`: neutral &middot; `inp_cnt`: 12/200, `par_cnt`: 68/200
 - [brooksq](brooksq.md) &middot; `verdict_n`: neutral &middot; `inp_cnt`: 6/200, `par_cnt`: 79/200
-- [coordn2](coordn2.md) &middot; `verdict_n`: neutral &middot; `inp_cnt`: 0/200, `par_cnt`: 91/200
+- [coordn2](coordn2.md) &middot; `verdict_n`: neutral &middot; `inp_cnt`: 0/200, `par_cnt`: 99/200
 - [scope](scope.md) &middot; `verdict_n`: neutral &middot; `inp_cnt`: 25/200, `par_cnt`: 28/200
 
 ### world-conditional (1)
