@@ -293,7 +293,7 @@ def render_models_index(audit, candidates):
         out.append(f"### {cell} ({len(items)})\n\n")
         for n in items:
             r = audit[n]
-            out.append(f"- [{n}]({n}.md) &middot; "
+            out.append(f"- [{n}]({n}.html) &middot; "
                        f"`verdict_n`: {r['verdict_n']} &middot; "
                        f"`inp_cnt`: {r['inp_cnt']}/200, "
                        f"`par_cnt`: {r['par_cnt']}/200\n")
@@ -373,7 +373,7 @@ def render_findings(audit, lifts):
         for v, p in vals:
             out.append(f"| {p} | {v:+.3f} |\n")
         out.append("\n")
-    out.append("See [brooks](models/brooks.md) for the full discussion.\n\n")
+    out.append("See [brooks](models/brooks.html) for the full discussion.\n\n")
     return "".join(out)
 
 
@@ -592,10 +592,24 @@ def render_glossary():
        ]),
     ]
 
+    # Alphabetical index at the top — every anchor sorted, hyperlinked
+    # so readers can find a term without scanning the section grouping.
+    all_anchors = sorted(
+        anchor for _, _, entries in sections for anchor, *_ in entries
+    )
+    out.append("## Alphabetical index\n\n")
+    out.append(" &middot; ".join(
+        f"[`{a}`](#{a})" for a in all_anchors
+    ))
+    out.append("\n\n")
+
     for sec_title, sec_intro, entries in sections:
         out.append(f"## {sec_title}\n\n")
         out.append(sec_intro + "\n\n")
-        for anchor, body, cite, src in entries:
+        # Sort within each section so the body is also browsable
+        # alphabetically; group still surfaces in the section title.
+        for anchor, body, cite, src in sorted(entries,
+                                              key=lambda e: e[0]):
             out.append(f'<h3 id="{anchor}"><code>{anchor}</code></h3>\n\n')
             out.append(body + "\n\n")
             if cite:

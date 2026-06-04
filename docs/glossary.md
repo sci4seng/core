@@ -7,25 +7,13 @@ nav_order: 6
 
 Each scorecard term on the model pages links here for a one-line definition, a literature citation, and a deep link into the implementation in `paper/`. Hover any linked term in a model scorecard for the same tooltip.
 
+## Alphabetical index
+
+[`anomaly_check`](#anomaly_check) &middot; [`behavior_reproduction`](#behavior_reproduction) &middot; [`boundary_adq`](#boundary_adq) &middot; [`boundary_adq_data`](#boundary_adq_data) &middot; [`calibrated_rq_rerun`](#calibrated_rq_rerun) &middot; [`cell`](#cell) &middot; [`cliffs_delta`](#cliffs_delta) &middot; [`dim_check`](#dim_check) &middot; [`eps_n`](#eps_n) &middot; [`extreme_eqn`](#extreme_eqn) &middot; [`family_member_coherence`](#family_member_coherence) &middot; [`fragile`](#fragile) &middot; [`gap`](#gap) &middot; [`gap_n`](#gap_n) &middot; [`inp_cnt`](#inp_cnt) &middot; [`ks`](#ks) &middot; [`mr_bound_consist`](#mr_bound_consist) &middot; [`mr_dt_halving`](#mr_dt_halving) &middot; [`mr_monotone`](#mr_monotone) &middot; [`mr_scale`](#mr_scale) &middot; [`mr_zero_input`](#mr_zero_input) &middot; [`par_cnt`](#par_cnt) &middot; [`param_plausibility`](#param_plausibility) &middot; [`process-conditional`](#process-conditional) &middot; [`rq`](#rq) &middot; [`rq_n`](#rq_n) &middot; [`sd0_n`](#sd0_n) &middot; [`sd1_n`](#sd1_n) &middot; [`stress_inputs`](#stress_inputs) &middot; [`stress_params`](#stress_params) &middot; [`universal`](#universal) &middot; [`verdict`](#verdict) &middot; [`verdict_n`](#verdict_n) &middot; [`world-conditional`](#world-conditional)
+
 ## Forrester &amp; Senge / Sterman structural tests
 
 Nine automated structural tests run against every model. `dim_check` is a unit-string sanity probe. First three of the remaining are Forrester &amp; Senge (1980); last five are metamorphic relations after Chen et al. (1998). Source: `paper/tests.py`.
-
-<h3 id="dim_check"><code>dim_check</code></h3>
-
-Every init param entry must be `[default, lo, hi, units]` with `units` a non-empty identifier-shaped token (atom or `/`-separated atoms, optional `^N` power). Pragmatic dimensional probe; does NOT do full symbolic propagation.
-
-_MYTHS framework primitive (S4 in Sterman 2000)._
-
-Source: `paper/tests.py`
-
-<h3 id="boundary_adq"><code>boundary_adq</code></h3>
-
-Re-run `rq()` at `tmax=80` (4× default horizon). FAIL if the verdict flips — the time-horizon boundary is load-bearing.
-
-_Forrester &amp; Senge (1980) test 4/7._
-
-Source: `paper/tests.py:32`
 
 <h3 id="anomaly_check"><code>anomaly_check</code></h3>
 
@@ -35,6 +23,22 @@ _Forrester &amp; Senge (1980) behaviour-anomaly test._
 
 Source: `paper/tests.py:50`
 
+<h3 id="boundary_adq"><code>boundary_adq</code></h3>
+
+Re-run `rq()` at `tmax=80` (4× default horizon). FAIL if the verdict flips — the time-horizon boundary is load-bearing.
+
+_Forrester &amp; Senge (1980) test 4/7._
+
+Source: `paper/tests.py:32`
+
+<h3 id="dim_check"><code>dim_check</code></h3>
+
+Every init param entry must be `[default, lo, hi, units]` with `units` a non-empty identifier-shaped token (atom or `/`-separated atoms, optional `^N` power). Pragmatic dimensional probe; does NOT do full symbolic propagation.
+
+_MYTHS framework primitive (S4 in Sterman 2000)._
+
+Source: `paper/tests.py`
+
 <h3 id="extreme_eqn"><code>extreme_eqn</code></h3>
 
 Run with each UPPER input set to its `lo` and `hi` in turn. FAIL on any NaN, ±Inf in any state.
@@ -42,30 +46,6 @@ Run with each UPPER input set to its `lo` and `hi` in turn. FAIL on any NaN, ±I
 _Forrester &amp; Senge (1980) extreme-conditions test._
 
 Source: `paper/tests.py:70`
-
-<h3 id="mr_zero_input"><code>mr_zero_input</code></h3>
-
-Setting `ctrl` to its `lo` bound must produce the same trajectory as a baseline with `ctrl` explicitly held at `lo`.
-
-_Chen et al. (1998) metamorphic relation MR3._
-
-Source: `paper/tests.py:97`
-
-<h3 id="mr_monotone"><code>mr_monotone</code></h3>
-
-Sweep `ctrl` across 5 grid points in `[lo,hi]`. `y` must be monotone in the direction predicted by `rq()`.
-
-_Chen et al. (1998) MR1._
-
-Source: `paper/tests.py:118`
-
-<h3 id="mr_dt_halving"><code>mr_dt_halving</code></h3>
-
-Halve the integration step `dt`. `y` must agree within 10% — Sterman's integration-error check.
-
-_Chen et al. (1998) MR8; Sterman (2000) test 6._
-
-Source: `paper/tests.py:143`
 
 <h3 id="mr_bound_consist"><code>mr_bound_consist</code></h3>
 
@@ -75,6 +55,22 @@ _Chen et al. (1998) MR9._
 
 Source: `paper/tests.py:158`
 
+<h3 id="mr_dt_halving"><code>mr_dt_halving</code></h3>
+
+Halve the integration step `dt`. `y` must agree within 10% — Sterman's integration-error check.
+
+_Chen et al. (1998) MR8; Sterman (2000) test 6._
+
+Source: `paper/tests.py:143`
+
+<h3 id="mr_monotone"><code>mr_monotone</code></h3>
+
+Sweep `ctrl` across 5 grid points in `[lo,hi]`. `y` must be monotone in the direction predicted by `rq()`.
+
+_Chen et al. (1998) MR1._
+
+Source: `paper/tests.py:118`
+
 <h3 id="mr_scale"><code>mr_scale</code></h3>
 
 Scale all UPPER inputs by 2×. FAIL on sign-flip or 100× explosion. Nonlinear `y_ratio` is expected, not a bug.
@@ -83,9 +79,37 @@ _Chen et al. (1998) MR2 (linearity probe)._
 
 Source: `paper/tests.py:176`
 
+<h3 id="mr_zero_input"><code>mr_zero_input</code></h3>
+
+Setting `ctrl` to its `lo` bound must produce the same trajectory as a baseline with `ctrl` explicitly held at `lo`.
+
+_Chen et al. (1998) metamorphic relation MR3._
+
+Source: `paper/tests.py:97`
+
 ## rq() and verdict family
 
 Per-model research-question test and its N-shot stats-grade replacement. Source: `paper/sd.py`.
+
+<h3 id="eps_n"><code>eps_n</code></h3>
+
+Same-list tolerance used by `stats.same`: `0.35 · sd(y0s)`.
+
+_Knob: `the.stats.eps = 0.35`._
+
+Source: `paper/stats.py:65`
+
+<h3 id="gap"><code>gap</code></h3>
+
+Signed `y1 − y0` from a single-shot `rq()` call.
+
+Source: `paper/sd.py:82`
+
+<h3 id="gap_n"><code>gap_n</code></h3>
+
+Pooled-mean gap from `rq_n`: `mean(y1s) − mean(y0s)`. Reported with `sd0_n`, `sd1_n`, `eps_n`.
+
+Source: `paper/sd.py:93`
 
 <h3 id="rq"><code>rq</code></h3>
 
@@ -103,30 +127,6 @@ _MYTHS framework primitive._
 
 Source: `paper/sd.py:209`
 
-<h3 id="verdict"><code>verdict</code></h3>
-
-Single-shot verdict on `(y0, y1)`. CONFIRM if signed gap exceeds `max(5% · |y0|, 0.5)`; REFUTE if against; else neutral.
-
-Source: `paper/sd.py:82`
-
-<h3 id="verdict_n"><code>verdict_n</code></h3>
-
-Stats-grade verdict over two y-lists. `neutral` iff `stats.same(y0s, y1s, ε)`; else sign of `mean(y0)−mean(y1)`.
-
-Source: `paper/sd.py:93`
-
-<h3 id="gap"><code>gap</code></h3>
-
-Signed `y1 − y0` from a single-shot `rq()` call.
-
-Source: `paper/sd.py:82`
-
-<h3 id="gap_n"><code>gap_n</code></h3>
-
-Pooled-mean gap from `rq_n`: `mean(y1s) − mean(y0s)`. Reported with `sd0_n`, `sd1_n`, `eps_n`.
-
-Source: `paper/sd.py:93`
-
 <h3 id="sd0_n"><code>sd0_n</code></h3>
 
 Sample standard deviation of `y0s` from `rq_n`.
@@ -139,29 +139,31 @@ Sample standard deviation of `y1s` from `rq_n`.
 
 Source: `paper/sd.py:93`
 
-<h3 id="eps_n"><code>eps_n</code></h3>
+<h3 id="verdict"><code>verdict</code></h3>
 
-Same-list tolerance used by `stats.same`: `0.35 · sd(y0s)`.
+Single-shot verdict on `(y0, y1)`. CONFIRM if signed gap exceeds `max(5% · |y0|, 0.5)`; REFUTE if against; else neutral.
 
-_Knob: `the.stats.eps = 0.35`._
+Source: `paper/sd.py:82`
 
-Source: `paper/stats.py:65`
+<h3 id="verdict_n"><code>verdict_n</code></h3>
+
+Stats-grade verdict over two y-lists. `neutral` iff `stats.same(y0s, y1s, ε)`; else sign of `mean(y0)−mean(y1)`.
+
+Source: `paper/sd.py:93`
 
 ## Stress matrix and 2x2 typology
 
 Per-model classification from 200 perturbed-background runs.
 
-<h3 id="stress_inputs"><code>stress_inputs</code></h3>
+<h3 id="cell"><code>cell</code></h3>
 
-Run `rq()` on 200 triangular-perturbed backgrounds with only UPPER-case state variables perturbed (the world axis).
+2x2 classification from (inputs, params) verdict pair. CONFIRM on a side requires ≥50%; REFUTE requires ≥20%.
 
-Source: `paper/sd.py:161`
+Source: `paper/tests.py:226`
 
-<h3 id="stress_params"><code>stress_params</code></h3>
+<h3 id="fragile"><code>fragile</code></h3>
 
-Same harness, lower-case (parameter) perturbation only — the process axis.
-
-Source: `paper/sd.py:161`
+Neither axis returns a CONFIRM majority. Thesis depends on a narrow regime.
 
 <h3 id="inp_cnt"><code>inp_cnt</code></h3>
 
@@ -175,27 +177,29 @@ CONFIRM count out of 200 param-perturbed runs.
 
 Source: `paper/tests.py:208`
 
-<h3 id="cell"><code>cell</code></h3>
+<h3 id="process-conditional"><code>process-conditional</code></h3>
 
-2x2 classification from (inputs, params) verdict pair. CONFIRM on a side requires ≥50%; REFUTE requires ≥20%.
+Inputs CONFIRM, params not. Mechanism robust to environment; whether it manifests depends on team/process configuration.
 
-Source: `paper/tests.py:226`
+<h3 id="stress_inputs"><code>stress_inputs</code></h3>
+
+Run `rq()` on 200 triangular-perturbed backgrounds with only UPPER-case state variables perturbed (the world axis).
+
+Source: `paper/sd.py:161`
+
+<h3 id="stress_params"><code>stress_params</code></h3>
+
+Same harness, lower-case (parameter) perturbation only — the process axis.
+
+Source: `paper/sd.py:161`
 
 <h3 id="universal"><code>universal</code></h3>
 
 Both `stress(inputs)` and `stress(params)` return CONFIRM. Thesis holds across world and process variation.
 
-<h3 id="process-conditional"><code>process-conditional</code></h3>
-
-Inputs CONFIRM, params not. Mechanism robust to environment; whether it manifests depends on team/process configuration.
-
 <h3 id="world-conditional"><code>world-conditional</code></h3>
 
 Params CONFIRM, inputs not. Thesis holds for a fixed parameterisation but breaks under varied initial conditions.
-
-<h3 id="fragile"><code>fragile</code></h3>
-
-Neither axis returns a CONFIRM majority. Thesis depends on a narrow regime.
 
 ## Statistical primitives
 
@@ -221,11 +225,9 @@ Source: `paper/stats.py:70`
 
 Auto-derived from lift CSVs.
 
-<h3 id="param_plausibility"><code>param_plausibility</code></h3>
+<h3 id="behavior_reproduction"><code>behavior_reproduction</code></h3>
 
-Counts `in_range` / `at_boundary` / `out_of_range` from `boundary_check.csv`. Any `out_of_range` → FAIL.
-
-Source: `core/docs/scripts/gen_md.py`
+Sim trajectory vs monthly historical CSV. Not run (requires per-project monthly time series).
 
 <h3 id="boundary_adq_data"><code>boundary_adq_data</code></h3>
 
@@ -245,9 +247,11 @@ Per-project sign agreement across the family. Currently reports project count on
 
 Source: `core/docs/scripts/gen_md.py`
 
-<h3 id="behavior_reproduction"><code>behavior_reproduction</code></h3>
+<h3 id="param_plausibility"><code>param_plausibility</code></h3>
 
-Sim trajectory vs monthly historical CSV. Not run (requires per-project monthly time series).
+Counts `in_range` / `at_boundary` / `out_of_range` from `boundary_check.csv`. Any `out_of_range` → FAIL.
+
+Source: `core/docs/scripts/gen_md.py`
 
 ## References
 

@@ -42,11 +42,20 @@ Cell: [`universal`](../glossary.md#universal "Both inputs and params CONFIRM") &
 | [`param_plausibility`](../glossary.md#param_plausibility "in_range/at_boundary/out_of_range from boundary_check.csv") | N/A — no lift rows |
 | [`boundary_adq_data`](../glossary.md#boundary_adq_data "Lifted value reaches or exceeds declared [lo, hi]") | N/A — no lift rows |
 | [`calibrated_rq_rerun`](../glossary.md#calibrated_rq_rerun "rq() under Helix-calibrated init") | N/A — model not in calibrate.py |
-| [`family_member_coherence`](../glossary.md#family_member_coherence "Per-project sign agreement across the family") | N/A — no lift rows |
+| [`family_member_coherence`](../glossary.md#family_member_coherence "Per-project sign agreement across the family") | 3 projects lifted (sign tally not auto-computed) |
 | [`behavior_reproduction`](../glossary.md#behavior_reproduction "Sim trajectory vs monthly historical CSV") | not run — requires monthly historical CSV |
+
+## Lift values per project
+
+| project | `minor_share_mean` | `modules` | `n_commits_seen` | `seed` |
+|---|---|---|---|---|
+| camel | 0.4131 | 78134 | 1042735 | 1 |
+| helix | 0.3413 | 5510 | 42561 | 1 |
+| tomcat | 0.3431 | 6445 | 224898 | 1 |
 
 ## Source
 
 - SD model: `paper/sd.py::ownership()`
 - Audit row: `paper/outputs/full_audit.csv` (line for `ownership`)
+- Lift Rmd: `sci4seng/lifts/vignettes/lift_ownership.Rmd`
 

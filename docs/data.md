@@ -13,9 +13,9 @@ Raw project data is **not** in this repo. Drop bundles into [sci4seng/data/dropz
 |---|---|
 | airflow | 7 — brooks, brooksq, congruence, defmap, dora, learn, rework |
 | ambari | 8 — archpat, brooks, brooksq, debt, defmap, dora, learn, rework |
-| camel | 8 — brooks, brooksq, bugs, debt, defmap, dora, learn, rework |
-| helix | 10 — archpat, brooks, brooksq, bugs, congruence, debt, defmap, dora, learn, rework |
+| camel | 10 — aiwork, brooks, brooksq, bugs, debt, defmap, dora, learn, ownership, rework |
+| helix | 12 — aiwork, archpat, brooks, brooksq, bugs, congruence, debt, defmap, dora, learn, ownership, rework |
 | junit5 | 7 — brooks, brooksq, debt, defmap, dora, learn, rework |
 | kaiaulu | 7 — brooks, brooksq, bugs, defmap, dora, learn, rework |
 | openssl | 6 — brooks, brooksq, defmap, dora, learn, rework |
-| tomcat | 8 — brooks, brooksq, congruence, debt, defmap, dora, learn, rework |
+| tomcat | 10 — aiwork, brooks, brooksq, congruence, debt, defmap, dora, learn, ownership, rework |

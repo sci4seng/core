@@ -6,19 +6,19 @@ nav_order: 3
 
 # archpat
 
-Cell: [`process-conditional`](../glossary.md#process-conditional "Inputs CONFIRM, params not") &middot; [`verdict`](../glossary.md#verdict "CONFIRM / REFUTE / neutral on (y0, y1)"): CONFIRM ([`gap`](../glossary.md#gap "signed y1 - y0 from single-shot rq()") +228.69) &middot; [`verdict_n`](../glossary.md#verdict_n "N-shot verdict via stats.same"): neutral ([`gap_n`](../glossary.md#gap_n "pooled-mean y1 - y0 from rq_n") +15.56)
+Cell: [`process-conditional`](../glossary.md#process-conditional "Inputs CONFIRM, params not") &middot; [`verdict`](../glossary.md#verdict "CONFIRM / REFUTE / neutral on (y0, y1)"): CONFIRM ([`gap`](../glossary.md#gap "signed y1 - y0 from single-shot rq()") +228.69) &middot; [`verdict_n`](../glossary.md#verdict_n "N-shot verdict via stats.same"): neutral ([`gap_n`](../glossary.md#gap_n "pooled-mean y1 - y0 from rq_n") +15.29)
 
 ## Verdict (N=100 stats-grade)
 
 | metric | value |
 |---|---|
 | [`verdict_n`](../glossary.md#verdict_n "N-shot verdict via stats.same") | neutral |
-| [`gap_n`](../glossary.md#gap_n "pooled-mean y1 - y0 from rq_n") | +15.56 |
-| [`sd0_n`](../glossary.md#sd0_n "stddev of y0 samples in rq_n") | 220.44 |
-| [`sd1_n`](../glossary.md#sd1_n "stddev of y1 samples in rq_n") | 185.63 |
-| [`eps_n`](../glossary.md#eps_n "0.35 * sd(y0): same-list tolerance") | 77.15 |
+| [`gap_n`](../glossary.md#gap_n "pooled-mean y1 - y0 from rq_n") | +15.29 |
+| [`sd0_n`](../glossary.md#sd0_n "stddev of y0 samples in rq_n") | 175.36 |
+| [`sd1_n`](../glossary.md#sd1_n "stddev of y1 samples in rq_n") | 131.77 |
+| [`eps_n`](../glossary.md#eps_n "0.35 * sd(y0): same-list tolerance") | 61.38 |
 | [`stress(inputs)`](../glossary.md#stress_inputs "200 perturbed UPPER-input backgrounds") | 34 / 200 CONFIRM |
-| [`stress(params)`](../glossary.md#stress_params "200 perturbed lower-param backgrounds") | 122 / 200 CONFIRM |
+| [`stress(params)`](../glossary.md#stress_params "200 perturbed lower-param backgrounds") | 154 / 200 CONFIRM |
 | [`2x2 cell`](../glossary.md#cell "{universal, process, world, fragile} from (inp_cnt, par_cnt)") | [`process-conditional`](../glossary.md#process-conditional "Inputs CONFIRM, params not") |
 
 ## Tier 1 — Structural V&V (prudence)
@@ -41,7 +41,7 @@ Cell: [`process-conditional`](../glossary.md#process-conditional "Inputs CONFIRM
 |---|---|
 | [`param_plausibility`](../glossary.md#param_plausibility "in_range/at_boundary/out_of_range from boundary_check.csv") | PASS &middot; 4/4 in_range |
 | [`boundary_adq_data`](../glossary.md#boundary_adq_data "Lifted value reaches or exceeds declared [lo, hi]") | warn — all lifted values strictly inside [lo, hi] |
-| [`calibrated_rq_rerun`](../glossary.md#calibrated_rq_rerun "rq() under Helix-calibrated init") | CONFIRM — verdict stable (default=CONFIRM) |
+| [`calibrated_rq_rerun`](../glossary.md#calibrated_rq_rerun "rq() under Helix-calibrated init") | neutral — verdict changed (default=CONFIRM) |
 | [`family_member_coherence`](../glossary.md#family_member_coherence "Per-project sign agreement across the family") | 2 projects lifted (sign tally not auto-computed) |
 | [`behavior_reproduction`](../glossary.md#behavior_reproduction "Sim trajectory vs monthly historical CSV") | not run — requires monthly historical CSV |
 
@@ -52,7 +52,7 @@ Cell: [`process-conditional`](../glossary.md#process-conditional "Inputs CONFIRM
 | ambari | 1890 | 4329 | 381 | ambari-serve | 6600 |
 | helix | 384 | 1452 | 149 | helix-core,m | 1985 |
 
-_(showing first 5 of 7 metrics; full data in `paper/outputs/lifts.csv`)_
+_(showing first 5 of 13 metrics; full data in `paper/outputs/lifts.csv`)_
 
 ## Lift methodology (from vignette)
 

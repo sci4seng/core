@@ -41,12 +41,23 @@ Cell: [`universal`](../glossary.md#universal "Both inputs and params CONFIRM") &
 |---|---|
 | [`param_plausibility`](../glossary.md#param_plausibility "in_range/at_boundary/out_of_range from boundary_check.csv") | N/A — no lift rows |
 | [`boundary_adq_data`](../glossary.md#boundary_adq_data "Lifted value reaches or exceeds declared [lo, hi]") | N/A — no lift rows |
-| [`calibrated_rq_rerun`](../glossary.md#calibrated_rq_rerun "rq() under Helix-calibrated init") | N/A — model not in calibrate.py |
-| [`family_member_coherence`](../glossary.md#family_member_coherence "Per-project sign agreement across the family") | N/A — no lift rows |
+| [`calibrated_rq_rerun`](../glossary.md#calibrated_rq_rerun "rq() under Helix-calibrated init") | CONFIRM — verdict stable (default=CONFIRM) |
+| [`family_member_coherence`](../glossary.md#family_member_coherence "Per-project sign agreement across the family") | 3 projects lifted (sign tally not auto-computed) |
 | [`behavior_reproduction`](../glossary.md#behavior_reproduction "Sim trajectory vs monthly historical CSV") | not run — requires monthly historical CSV |
+
+## Lift values per project
+
+| project | `churn_base` | `mature_rate` | `mean_span_days` | `n_authors` | `n_churn` |
+|---|---|---|---|---|---|
+| camel | 0.0095 | 0.00221 | 452.7 | 1349 | 774 |
+| helix | 0.0295 | 0.00227 | 440.5 | 78 | 134 |
+| tomcat | 0.0303 | 0.00077 | 1300.0 | 85 | 1965 |
+
+_(showing first 5 of 7 metrics; full data in `paper/outputs/lifts.csv`)_
 
 ## Source
 
 - SD model: `paper/sd.py::aiwork()`
 - Audit row: `paper/outputs/full_audit.csv` (line for `aiwork`)
+- Lift Rmd: `sci4seng/lifts/vignettes/lift_aiwork.Rmd`
 

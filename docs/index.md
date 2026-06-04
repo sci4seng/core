@@ -13,10 +13,10 @@ The whole battery runs in **~1.3 seconds**.
 
 ## Walk this site
 
-- **[Findings](findings.md)** — F0–F5 headline results.
-- **[Typology](typology.md)** — 2×2 stress-matrix cells explained.
+- **[Findings](findings.html)** — F0–F5 headline results.
+- **[Typology](typology.html)** — 2×2 stress-matrix cells explained.
 - **[Models](models/)** — 35 models, one page each.
-- **[Data](data.md)** — sources + lift status per project.
+- **[Data](data.html)** — sources + lift status per project.
 
 ## Repo layout
 
