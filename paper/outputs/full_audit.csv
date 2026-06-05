@@ -1,7 +1,7 @@
 model,verdict,gap,verdict_n,gap_n,sd0_n,sd1_n,eps_n,cell,inp_cnt,par_cnt,dim_check,boundary_adq,anomaly_check,extreme_eqn,mr_zero_input,mr_monotone,mr_dt_halving,mr_bound_consist,mr_scale
 diapers,CONFIRM,-24.00,neutral,-19.60,58.42,63.69,20.45,process-conditional,84,200,PASS,PASS,FAIL,PASS,PASS,PASS,FAIL,PASS,FAIL
 brooks,CONFIRM,-147.50,neutral,-6.07,234.65,223.29,82.13,process-conditional,12,139,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,FAIL
-brooks_teams,CONFIRM,-2505.81,neutral,-486.00,2362.91,2386.18,827.02,universal,100,185,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,FAIL
+brooks_teams,CONFIRM,-1252.91,neutral,-255.65,7366.85,7376.99,2578.40,universal,118,179,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS
 bugs,CONFIRM,+38.06,CONFIRM,+22.16,47.22,33.59,16.53,universal,130,200,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS
 debt,CONFIRM,-56.65,CONFIRM,-34.00,46.24,75.62,16.19,universal,200,200,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS
 sir,CONFIRM,-21.90,CONFIRM,-21.94,26.14,25.21,9.15,universal,200,165,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS

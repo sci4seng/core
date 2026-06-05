@@ -388,8 +388,13 @@ def brooks_teams():
   'diluting the veteran share inside each team makes the project
   later, because teams without enough vets can't carry the
   newcomers'."""
-  init = {'Devs':[50,1,500,'devs'], 'Team':[8,2,20,'devs/team'],
-          'Done':[0,0,5000,'items'], 'Todo':[3000,0,5000,'items'],
+  # Devs hi tightened 500 -> 100 on 2026-06-04: 500-dev orgs are
+  # exceptional and made the stress sampler dominate the baseline
+  # variance. Todo / Done hi widened 5000 -> 30000 on 2026-06-04 to
+  # absorb high-Devs + high-prod_rate runs without the Todo cap
+  # silently turning vet_frac differences into identical y.
+  init = {'Devs':[50,1,100,'devs'], 'Team':[8,2,20,'devs/team'],
+          'Done':[0,0,30000,'items'], 'Todo':[3000,0,30000,'items'],
           # ctrl: starting veteran share per team
           'vet_frac':[0.8,0.1,1,'frac'],
           # Per-pair within-team comm drag (Brooks's 0.5%/pair).
@@ -429,9 +434,12 @@ def brooks_teams():
       setattr(v, p, getattr(u, p))
 
   def y(out):
-    # Success = net progress (Done minus remaining Todo).
-    end = out[-1][1]
-    return end.Done - end.Todo
+    # Success = items shipped. Earlier (Done - Todo) was load-bearing
+    # on the sampler-randomised initial Todo, which spans two orders
+    # of magnitude under the wide [0, 100000] bound and dominated
+    # sd(y0) -> eps_n drowned the dilution signal at stats-grade
+    # verdict_n. Done alone keeps the lift signal clean.
+    return out[-1][1].Done
 
   def rq(bg=None):
     # Mature-org (vet_frac=0.8) vs startup-dilution (vet_frac=0.4):
