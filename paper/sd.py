@@ -294,11 +294,27 @@ def brooks():
           'Done':[0,0,500,'items'], 'Todo':[500,0,500,'items'],
           # ctrl: late-hire shock size injected at t=10
           'boost':[0,0,100,'devs'],
-          # Communication coefficient per dev-pair (Brooks: 0.005 = 0.5% drag/pair)
-          'comm_coef':[0.005,0,0.05,'frac/pair'],
-          # Training drag per newcomer on veteran capacity
-          'train_coef':[0.2,0,1,'frac/newhire'],
-          'prod_rate':[5,0.1,20,'items/vet/tick'],
+          # Communication coefficient per dev-pair (Brooks: 0.005 = 0.5% drag/pair).
+          # Hi tightened 0.05 -> 0.01 on 2026-06-04: under the wider range
+          # the stress sampler hit comm = Vet*(Vet-1)/2 * 0.05 = 2.25 >> 1,
+          # which clamped prod to 0 via max(0,prod) in BOTH boost arms ->
+          # exactly identical y for 99/100 paired runs -> false neutral
+          # verdict_n. Tighter hi keeps the realistic Brooks regime where
+          # the boost actually has gradient signal.
+          'comm_coef':[0.005,0,0.01,'frac/pair'],
+          # Training drag per newcomer on veteran capacity.
+          # Hi tightened 1.0 -> 0.4 on 2026-06-04 alongside comm_coef:
+          # with boost=10, train = New * train_coef saturates the
+          # 1-comm-train clamp for train_coef > 0.1, so the wider
+          # range was masking the boost gradient. 0.4 still permits
+          # "newcomer = 40% of one vet" — already an extreme drag.
+          'train_coef':[0.2,0,0.4,'frac/newhire'],
+          # Hi tightened 20 -> 8 on 2026-06-04: at prod_rate=20 with
+          # Vet=10, Todo=500 exhausts in ~3 ticks, before the boost
+          # event fires at t=10. Both arms then sit at Done=500 and
+          # the boost has nothing to perturb. 8 keeps Todo unfinished
+          # at t=10 across the sampler so boost can show signal.
+          'prod_rate':[5,0.1,8,'items/vet/tick'],
           # New -> Vet maturation rate (per-tick fraction of New cohort)
           'mature_rate':[0.1,0,1,'frac/tick']}
 
