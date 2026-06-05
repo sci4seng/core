@@ -1,0 +1,2 @@
+model,project,Patterned_n,Legacy_n,Other_n,modules,n_files,n_patterned_input,seed
+archpat,tomcat,664,1141,44,"jakarta.el,jakarta.security.auth,jakarta.servlet,jakarta.servlet.http,jakarta.servlet.jsp,jakarta.transaction,jakarta.websocket,jakarta.websocket.server,org.apache.catalina,org.apache.coyote,org.apache.el,org.apache.jasper,org.apache.juli,org.apache.naming,org.apache.tomcat",1770,664,1

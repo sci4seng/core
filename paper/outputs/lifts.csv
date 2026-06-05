@@ -472,3 +472,10 @@ rework,tomcat,failrate_median,0.179425837320574
 rework,tomcat,n_windows,59
 rework,tomcat,seed,1
 rework,tomcat,window_days,90
+archpat,tomcat,Patterned_n,664
+archpat,tomcat,Legacy_n,1141
+archpat,tomcat,Other_n,44
+archpat,tomcat,modules,"jakarta.el,jakarta.security.auth,jakarta.servlet,jakarta.servlet.http,jakarta.servlet.jsp,jakarta.transaction,jakarta.websocket,jakarta.websocket.server,org.apache.catalina,org.apache.coyote,org.apache.el,org.apache.jasper,org.apache.juli,org.apache.naming,org.apache.tomcat"
+archpat,tomcat,n_files,1770
+archpat,tomcat,n_patterned_input,664
+archpat,tomcat,seed,1
