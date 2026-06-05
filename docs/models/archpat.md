@@ -42,7 +42,7 @@ Cell: [`process-conditional`](../glossary.md#process-conditional "Inputs CONFIRM
 | [`param_plausibility`](../glossary.md#param_plausibility "in_range/at_boundary/out_of_range from boundary_check.csv") | PASS &middot; 4/4 in_range |
 | [`boundary_adq_data`](../glossary.md#boundary_adq_data "Lifted value reaches or exceeds declared [lo, hi]") | warn — all lifted values strictly inside [lo, hi] |
 | [`calibrated_rq_rerun`](../glossary.md#calibrated_rq_rerun "rq() under Helix-calibrated init") | neutral — verdict changed (default=CONFIRM) |
-| [`family_member_coherence`](../glossary.md#family_member_coherence "Per-project sign agreement across the family") | 2 projects lifted (sign tally not auto-computed) |
+| [`family_member_coherence`](../glossary.md#family_member_coherence "Per-project sign agreement across the family") | 3 projects lifted (sign tally not auto-computed) |
 | [`behavior_reproduction`](../glossary.md#behavior_reproduction "Sim trajectory vs monthly historical CSV") | not run — requires monthly historical CSV |
 
 ## Lift values per project
@@ -51,6 +51,7 @@ Cell: [`process-conditional`](../glossary.md#process-conditional "Inputs CONFIRM
 |---|---|---|---|---|---|
 | ambari | 1890 | 4329 | 381 | ambari-serve | 6600 |
 | helix | 384 | 1452 | 149 | helix-core,m | 1985 |
+| tomcat | 1141 | 44 | 664 | jakarta.el,j | 1770 |
 
 _(showing first 5 of 13 metrics; full data in `paper/outputs/lifts.csv`)_
 

@@ -1,7 +1,7 @@
 ---
 title: congruence
 parent: Models
-nav_order: 8
+nav_order: 9
 ---
 
 # congruence

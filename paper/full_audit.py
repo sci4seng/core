@@ -13,7 +13,7 @@ OUTPUTS = HERE / "outputs"
 sys.path.insert(0, str(HERE))
 
 import sd
-from sd import (diapers, brooks, bugs, debt, sir, rework, learn, brooksq,
+from sd import (diapers, brooks, brooks_teams, bugs, debt, sir, rework, learn, brooksq,
                 defmap, aiwork, flaky, dora, micro, teamtopo, burnout, aidebt,
                 archpat, congruence, stress,
                 # 15 newly added from docs/other.html buildable-today set:
@@ -29,7 +29,7 @@ from tests import (dim_check, boundary_adq, anomaly_check, extreme_eqn,
                    mr_bound_consist, mr_scale, stress_matrix)
 
 
-MODELS = [diapers, brooks, bugs, debt, sir, rework, learn, brooksq,
+MODELS = [diapers, brooks, brooks_teams, bugs, debt, sir, rework, learn, brooksq,
           defmap, aiwork, flaky, dora, micro, teamtopo, burnout, aidebt,
           archpat, congruence, congruence_motif,
           little, coordn2, entropy, costchange, pareto, linus, mirroring,

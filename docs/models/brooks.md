@@ -6,20 +6,20 @@ nav_order: 4
 
 # brooks
 
-Cell: [`fragile`](../glossary.md#fragile "Neither axis CONFIRMs in majority") &middot; [`verdict`](../glossary.md#verdict "CONFIRM / REFUTE / neutral on (y0, y1)"): CONFIRM ([`gap`](../glossary.md#gap "signed y1 - y0 from single-shot rq()") -147.50) &middot; [`verdict_n`](../glossary.md#verdict_n "N-shot verdict via stats.same"): neutral ([`gap_n`](../glossary.md#gap_n "pooled-mean y1 - y0 from rq_n") -0.58)
+Cell: [`process-conditional`](../glossary.md#process-conditional "Inputs CONFIRM, params not") &middot; [`verdict`](../glossary.md#verdict "CONFIRM / REFUTE / neutral on (y0, y1)"): CONFIRM ([`gap`](../glossary.md#gap "signed y1 - y0 from single-shot rq()") -147.50) &middot; [`verdict_n`](../glossary.md#verdict_n "N-shot verdict via stats.same"): neutral ([`gap_n`](../glossary.md#gap_n "pooled-mean y1 - y0 from rq_n") -6.07)
 
 ## Verdict (N=100 stats-grade)
 
 | metric | value |
 |---|---|
 | [`verdict_n`](../glossary.md#verdict_n "N-shot verdict via stats.same") | neutral |
-| [`gap_n`](../glossary.md#gap_n "pooled-mean y1 - y0 from rq_n") | -0.58 |
-| [`sd0_n`](../glossary.md#sd0_n "stddev of y0 samples in rq_n") | 188.32 |
-| [`sd1_n`](../glossary.md#sd1_n "stddev of y1 samples in rq_n") | 186.41 |
-| [`eps_n`](../glossary.md#eps_n "0.35 * sd(y0): same-list tolerance") | 65.91 |
+| [`gap_n`](../glossary.md#gap_n "pooled-mean y1 - y0 from rq_n") | -6.07 |
+| [`sd0_n`](../glossary.md#sd0_n "stddev of y0 samples in rq_n") | 234.65 |
+| [`sd1_n`](../glossary.md#sd1_n "stddev of y1 samples in rq_n") | 223.29 |
+| [`eps_n`](../glossary.md#eps_n "0.35 * sd(y0): same-list tolerance") | 82.13 |
 | [`stress(inputs)`](../glossary.md#stress_inputs "200 perturbed UPPER-input backgrounds") | 12 / 200 CONFIRM |
-| [`stress(params)`](../glossary.md#stress_params "200 perturbed lower-param backgrounds") | 68 / 200 CONFIRM |
-| [`2x2 cell`](../glossary.md#cell "{universal, process, world, fragile} from (inp_cnt, par_cnt)") | [`fragile`](../glossary.md#fragile "Neither axis CONFIRMs in majority") |
+| [`stress(params)`](../glossary.md#stress_params "200 perturbed lower-param backgrounds") | 139 / 200 CONFIRM |
+| [`2x2 cell`](../glossary.md#cell "{universal, process, world, fragile} from (inp_cnt, par_cnt)") | [`process-conditional`](../glossary.md#process-conditional "Inputs CONFIRM, params not") |
 
 ## Tier 1 — Structural V&V (prudence)
 

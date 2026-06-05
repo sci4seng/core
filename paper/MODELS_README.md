@@ -13,7 +13,7 @@ five F-findings in <30 seconds. No R, no Perceval, no kaiaulu.
   `mr_bound_consist`, `mr_scale`. Plus `stress_matrix()` for 2×2 cell
   classification.
 
-## Scorecard structure (standard, all 35 model pages)
+## Scorecard structure (standard, all 36 model pages)
 
 Every `docs/models/<name>.html` carries the same 18-row V&V scorecard
 in Panel 5. Auto-derived from CSVs by `docs/scripts/gen_rich.py`'s
@@ -53,7 +53,7 @@ Two pages are hand-tuned (`manual=True` in `gen_rich.py`):
 - `brooks.html` — full hand-written prose throughout; data-tier rows
   conform to the same 5-row schema.
 - `diapers.html` — toy demonstrator; no lift relevance.
-- `full_audit.py` — runs the stress matrix + 9-test bank across all 35
+- `full_audit.py` — runs the stress matrix + 9-test bank across all 36
   models. Writes `outputs/full_audit.csv`.
 - `calibrate.py` — CSV-anchored verdicts. Reads `outputs/lift_<model>_<project>.csv`,
   substitutes lifted values into `model.init`, re-runs `rq()`, writes
@@ -65,7 +65,7 @@ Two pages are hand-tuned (`manual=True` in `gen_rich.py`):
   upstream extraction lives in `extract/`.
 - `Makefile` — targets to run all of the above + per-finding reports.
 
-## The 35 models
+## The 36 models
 
 Year-tagged. Diapers is the toy demonstrator.
 

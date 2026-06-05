@@ -1,7 +1,7 @@
 ---
 title: congruence_motif
 parent: Models
-nav_order: 9
+nav_order: 10
 ---
 
 # congruence_motif

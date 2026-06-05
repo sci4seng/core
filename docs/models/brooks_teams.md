@@ -1,25 +1,25 @@
 ---
-title: pareto
+title: brooks_teams
 parent: Models
-nav_order: 31
+nav_order: 5
 ---
 
-# pareto
+# brooks_teams
 
-Cell: [`process-conditional`](../glossary.md#process-conditional "Inputs CONFIRM, params not") &middot; [`verdict`](../glossary.md#verdict "CONFIRM / REFUTE / neutral on (y0, y1)"): CONFIRM ([`gap`](../glossary.md#gap "signed y1 - y0 from single-shot rq()") -64.00) &middot; [`verdict_n`](../glossary.md#verdict_n "N-shot verdict via stats.same"): neutral ([`gap_n`](../glossary.md#gap_n "pooled-mean y1 - y0 from rq_n") -47.15)
+Cell: [`universal`](../glossary.md#universal "Both inputs and params CONFIRM") &middot; [`verdict`](../glossary.md#verdict "CONFIRM / REFUTE / neutral on (y0, y1)"): CONFIRM ([`gap`](../glossary.md#gap "signed y1 - y0 from single-shot rq()") -2505.81) &middot; [`verdict_n`](../glossary.md#verdict_n "N-shot verdict via stats.same"): neutral ([`gap_n`](../glossary.md#gap_n "pooled-mean y1 - y0 from rq_n") -486.00)
 
 ## Verdict (N=100 stats-grade)
 
 | metric | value |
 |---|---|
 | [`verdict_n`](../glossary.md#verdict_n "N-shot verdict via stats.same") | neutral |
-| [`gap_n`](../glossary.md#gap_n "pooled-mean y1 - y0 from rq_n") | -47.15 |
-| [`sd0_n`](../glossary.md#sd0_n "stddev of y0 samples in rq_n") | 1400.92 |
-| [`sd1_n`](../glossary.md#sd1_n "stddev of y1 samples in rq_n") | 1370.12 |
-| [`eps_n`](../glossary.md#eps_n "0.35 * sd(y0): same-list tolerance") | 490.32 |
-| [`stress(inputs)`](../glossary.md#stress_inputs "200 perturbed UPPER-input backgrounds") | 69 / 200 CONFIRM |
-| [`stress(params)`](../glossary.md#stress_params "200 perturbed lower-param backgrounds") | 198 / 200 CONFIRM |
-| [`2x2 cell`](../glossary.md#cell "{universal, process, world, fragile} from (inp_cnt, par_cnt)") | [`process-conditional`](../glossary.md#process-conditional "Inputs CONFIRM, params not") |
+| [`gap_n`](../glossary.md#gap_n "pooled-mean y1 - y0 from rq_n") | -486.00 |
+| [`sd0_n`](../glossary.md#sd0_n "stddev of y0 samples in rq_n") | 2362.91 |
+| [`sd1_n`](../glossary.md#sd1_n "stddev of y1 samples in rq_n") | 2386.18 |
+| [`eps_n`](../glossary.md#eps_n "0.35 * sd(y0): same-list tolerance") | 827.02 |
+| [`stress(inputs)`](../glossary.md#stress_inputs "200 perturbed UPPER-input backgrounds") | 100 / 200 CONFIRM |
+| [`stress(params)`](../glossary.md#stress_params "200 perturbed lower-param backgrounds") | 185 / 200 CONFIRM |
+| [`2x2 cell`](../glossary.md#cell "{universal, process, world, fragile} from (inp_cnt, par_cnt)") | [`universal`](../glossary.md#universal "Both inputs and params CONFIRM") |
 
 ## Tier 1 — Structural V&V (prudence)
 
@@ -33,7 +33,7 @@ Cell: [`process-conditional`](../glossary.md#process-conditional "Inputs CONFIRM
 | [`mr_monotone`](../glossary.md#mr_monotone "Chen MR1: y monotone in ctrl over 5 grid points") | PASS |
 | [`mr_dt_halving`](../glossary.md#mr_dt_halving "Chen MR8 / Sterman 6: y invariant to dt/2") | PASS |
 | [`mr_bound_consist`](../glossary.md#mr_bound_consist "Chen MR9: clip vs reject agree") | PASS |
-| [`mr_scale`](../glossary.md#mr_scale "Chen MR2: 2x inputs do not flip sign or explode") | PASS |
+| [`mr_scale`](../glossary.md#mr_scale "Chen MR2: 2x inputs do not flip sign or explode") | FAIL |
 
 ## Tier 2 — Data-tier checks (auto from lift CSVs)
 
@@ -47,6 +47,6 @@ Cell: [`process-conditional`](../glossary.md#process-conditional "Inputs CONFIRM
 
 ## Source
 
-- SD model: `paper/sd.py::pareto()`
-- Audit row: `paper/outputs/full_audit.csv` (line for `pareto`)
+- SD model: `paper/sd.py::brooks_teams()`
+- Audit row: `paper/outputs/full_audit.csv` (line for `brooks_teams`)
 

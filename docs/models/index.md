@@ -4,16 +4,17 @@ nav_order: 4
 has_children: true
 ---
 
-# Models — 35 active, 32 future-work
+# Models — 36 active, 32 future-work
 
-- **35 active**: SD model in `paper/sd.py`, audit row in `full_audit.csv`, per-model page below.
+- **36 active**: SD model in `paper/sd.py`, audit row in `full_audit.csv`, per-model page below.
 - **32 future-work**: named in the SE literature but not yet built. See [future-work candidates](future).
 
 ## Active models, grouped by 2x2 cell
 
-### universal (21)
+### universal (22)
 
 - [aiwork](aiwork.html) &middot; `verdict_n`: neutral &middot; `inp_cnt`: 188/200, `par_cnt`: 170/200
+- [brooks_teams](brooks_teams.html) &middot; `verdict_n`: neutral &middot; `inp_cnt`: 100/200, `par_cnt`: 185/200
 - [bugs](bugs.html) &middot; `verdict_n`: CONFIRM &middot; `inp_cnt`: 130/200, `par_cnt`: 200/200
 - [burnout](burnout.html) &middot; `verdict_n`: neutral &middot; `inp_cnt`: 105/200, `par_cnt`: 200/200
 - [congruence](congruence.html) &middot; `verdict_n`: CONFIRM &middot; `inp_cnt`: 177/200, `par_cnt`: 196/200
@@ -35,9 +36,10 @@ has_children: true
 - [sir](sir.html) &middot; `verdict_n`: CONFIRM &middot; `inp_cnt`: 200/200, `par_cnt`: 165/200
 - [teamtopo](teamtopo.html) &middot; `verdict_n`: CONFIRM &middot; `inp_cnt`: 200/200, `par_cnt`: 145/200
 
-### process-conditional (9)
+### process-conditional (10)
 
 - [archpat](archpat.html) &middot; `verdict_n`: neutral &middot; `inp_cnt`: 34/200, `par_cnt`: 154/200
+- [brooks](brooks.html) &middot; `verdict_n`: neutral &middot; `inp_cnt`: 12/200, `par_cnt`: 139/200
 - [diapers](diapers.html) &middot; `verdict_n`: neutral &middot; `inp_cnt`: 84/200, `par_cnt`: 200/200
 - [learn](learn.html) &middot; `verdict_n`: neutral &middot; `inp_cnt`: 13/200, `par_cnt`: 198/200
 - [limits](limits.html) &middot; `verdict_n`: neutral &middot; `inp_cnt`: 36/200, `par_cnt`: 181/200
@@ -47,9 +49,8 @@ has_children: true
 - [pareto](pareto.html) &middot; `verdict_n`: neutral &middot; `inp_cnt`: 69/200, `par_cnt`: 198/200
 - [successful](successful.html) &middot; `verdict_n`: REFUTE &middot; `inp_cnt`: 47/200, `par_cnt`: 200/200
 
-### fragile (4)
+### fragile (3)
 
-- [brooks](brooks.html) &middot; `verdict_n`: neutral &middot; `inp_cnt`: 12/200, `par_cnt`: 68/200
 - [brooksq](brooksq.html) &middot; `verdict_n`: neutral &middot; `inp_cnt`: 6/200, `par_cnt`: 79/200
 - [coordn2](coordn2.html) &middot; `verdict_n`: neutral &middot; `inp_cnt`: 0/200, `par_cnt`: 99/200
 - [scope](scope.html) &middot; `verdict_n`: neutral &middot; `inp_cnt`: 25/200, `par_cnt`: 28/200

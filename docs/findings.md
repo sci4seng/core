@@ -7,9 +7,9 @@ nav_order: 2
 
 ## F0 — Most published SE theses dissolve under stats
 
-Of 35 models: 20 neutral, 14 CONFIRM, 1 REFUTE.
+Of 36 models: 21 neutral, 14 CONFIRM, 1 REFUTE.
 
-Roughly 57% are stats-grade neutral — the single-shot CONFIRM is hiding noise as signal. Either narrow ranges via lift, or accept the thesis is not statistically detectable under author-declared priors.
+Roughly 58% are stats-grade neutral — the single-shot CONFIRM is hiding noise as signal. Either narrow ranges via lift, or accept the thesis is not statistically detectable under author-declared priors.
 
 ## F0 — Boundary-adequacy violations
 

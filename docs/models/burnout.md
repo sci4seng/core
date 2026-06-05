@@ -1,7 +1,7 @@
 ---
 title: burnout
 parent: Models
-nav_order: 7
+nav_order: 8
 ---
 
 # burnout

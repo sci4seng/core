@@ -359,6 +359,91 @@ def brooks():
   return Model(init, step, y, rq, 'boost')
 
 
+def brooks_teams():
+  """Brooks's law re-shaped for org scale (2026-06-04).
+
+  Classic brooks() pools every developer into one Vet/New compartment
+  with quadratic comm = Vet*(Vet-1)/2 — fine for a single team, wrong
+  for an organisation that structures into many small teams. Real
+  orgs cap team size around 5-12 (the "two-pizza team"); coordination
+  cost grows quadratically WITHIN a team but the organisation pays
+  that cost once per team, so total org comm cost is roughly linear
+  in head count and quadratic in team_size.
+
+  Stocks (UPPER):
+    Devs : total org head count
+    Team : per-team size cap (the model's most load-bearing knob)
+    Done : cumulative work delivered
+    Todo : remaining backlog
+  Control (lower):
+    vet_frac : starting share of veterans in each team. Mature
+               orgs sit near 0.8; startups dilute toward 0.4
+               because they grow faster than they mature people.
+
+  Thesis: dropping vet_frac from 0.8 (mature org) to 0.4 (startup
+  dilution) tanks net delivery — not because more people hurt, but
+  because each team's vet share gets too thin to absorb training
+  drag from the new cohort. This is the org-scale rephrasing of
+  Brooks: 'adding people to a late project makes it later' becomes
+  'diluting the veteran share inside each team makes the project
+  later, because teams without enough vets can't carry the
+  newcomers'."""
+  init = {'Devs':[50,1,500,'devs'], 'Team':[8,2,20,'devs/team'],
+          'Done':[0,0,5000,'items'], 'Todo':[3000,0,5000,'items'],
+          # ctrl: starting veteran share per team
+          'vet_frac':[0.8,0.1,1,'frac'],
+          # Per-pair within-team comm drag (Brooks's 0.5%/pair).
+          'comm_coef':[0.005,0,0.01,'frac/pair'],
+          # Training drag per newcomer on a veteran.
+          'train_coef':[0.2,0,0.4,'frac/newhire'],
+          'prod_rate':[5,0.1,8,'items/vet/tick'],
+          # vet_frac recovers toward 0.8 (mature equilibrium) at this rate.
+          'mature_rate':[0.1,0,1,'frac/tick']}
+
+  def step(dt, t, u, v):
+    # Number of teams = head count / team-size cap (continuous so
+    # the gradient is smooth; max(1, ...) avoids divide-by-zero at
+    # Devs < Team).
+    n_teams         = max(1.0, u.Devs / u.Team)
+    per_team_size   = u.Devs / n_teams
+    per_team_vet    = per_team_size * u.vet_frac
+    per_team_new    = per_team_size * (1 - u.vet_frac)
+    # Comm is quadratic WITHIN a team (Brooks's original formula at
+    # team scale); train is linear in newcomers per team.
+    per_team_comm   = per_team_size * (per_team_size - 1) / 2 * u.comm_coef
+    per_team_train  = per_team_new * u.train_coef
+    per_team_prod   = per_team_vet * (1 - per_team_comm - per_team_train) * u.prod_rate
+    # Organisation throughput = per-team prod times team count.
+    # Linear in Devs, quadratic in Team — the org-scale reshape.
+    total_prod      = n_teams * per_team_prod
+    # Conserve total work: cap at remaining Todo (same shape as the
+    # brooks/brooksq fix from VV step 6).
+    delta           = min(dt * max(0, total_prod), u.Todo)
+    v.Todo          = u.Todo  - delta
+    v.Done          = u.Done  + delta
+    # vet_frac mean-reverts toward 0.8 (org maturation): a startup
+    # with low vet_frac slowly ages into a mature shape.
+    v.vet_frac      = u.vet_frac + dt * u.mature_rate * (0.8 - u.vet_frac)
+    for p in ('Devs','Team','comm_coef','train_coef',
+              'prod_rate','mature_rate'):
+      setattr(v, p, getattr(u, p))
+
+  def y(out):
+    # Success = net progress (Done minus remaining Todo).
+    end = out[-1][1]
+    return end.Done - end.Todo
+
+  def rq(bg=None):
+    # Mature-org (vet_frac=0.8) vs startup-dilution (vet_frac=0.4):
+    # the startup arm should net less progress.
+    bi = init if bg is None else bg
+    return verdict("vet_frac=0.4 (startup) hurts net progress vs 0.8 (mature)",
+                   y(run({**bi, 'vet_frac':[0.8,0.1,1,'frac']}, step)),
+                   y(run({**bi, 'vet_frac':[0.4,0.1,1,'frac']}, step)), 'down')
+
+  return Model(init, step, y, rq, 'vet_frac')
+
+
 def bugs():
   """Goel-Okumoto [2]: classical software reliability growth model.
   An unknown pool of latent defects is discovered at a rate proportional
@@ -2099,7 +2184,7 @@ def maturity():
   return Model(init, step, y, rq, 'maturity')
 
 
-ALL_MODELS = [diapers, brooks, bugs, debt, sir, rework, learn, brooksq,
+ALL_MODELS = [diapers, brooks, brooks_teams, bugs, debt, sir, rework, learn, brooksq,
               defmap, aiwork, flaky, dora, micro, teamtopo, burnout, aidebt,
               archpat, congruence, congruence_motif,
               # 15 added 2026-05-25 from docs/other.html buildable-today list:

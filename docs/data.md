@@ -18,4 +18,4 @@ Raw project data is **not** in this repo. Drop bundles into [sci4seng/data/dropz
 | junit5 | 7 — brooks, brooksq, debt, defmap, dora, learn, rework |
 | kaiaulu | 7 — brooks, brooksq, bugs, defmap, dora, learn, rework |
 | openssl | 6 — brooks, brooksq, defmap, dora, learn, rework |
-| tomcat | 10 — aiwork, brooks, brooksq, congruence, debt, defmap, dora, learn, ownership, rework |
+| tomcat | 11 — aiwork, archpat, brooks, brooksq, congruence, debt, defmap, dora, learn, ownership, rework |
