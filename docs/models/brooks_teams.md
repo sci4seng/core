@@ -50,3 +50,45 @@ Cell: [`universal`](../glossary.md#universal "Both inputs and params CONFIRM") &
 - SD model: `paper/sd.py::brooks_teams()`
 - Audit row: `paper/outputs/full_audit.csv` (line for `brooks_teams`)
 
+## R lift helpers (kaiaulu-style)
+
+**Status (2026-06-04): no lift shipped yet.** `brooks_teams` is
+a new model; nothing in
+[`lifts/R/functions.R`](https://github.com/sci4seng/lifts/blob/main/R/functions.R)
+or [`lifts/vignettes/`](https://github.com/sci4seng/lifts/tree/main/vignettes)
+targets it. The sketches below describe the helpers a future
+`brooks_teams_org_shape.Rmd` would call. Names and signatures
+are proposals; revise during the actual lift PR.
+
+### `infer_team_topology(project_git, team_size_target = 8)`
+
+Group developers into approximate teams by clustering on shared
+file paths over the project's life. Each commit names one or
+more files; co-authors of overlapping file sets land in the
+same team. Output rows: `(team_id, devs, top_files,
+first_commit, last_commit)`. The lifted `Team` for the SD model
+is the median team size; `Devs` is the total identity count
+across all teams.
+
+### `compute_vet_share(project_git, teams, vet_threshold_days = 365)`
+
+For each team identity, classify members as veteran (joined at
+least `vet_threshold_days` before the team's last activity) or
+new. Returns one row per team with `(team_id, vet_n, new_n,
+vet_frac = vet_n / (vet_n + new_n))`. The project-level lifted
+`vet_frac` is the mean (or median) across teams.
+
+### `compute_team_comm_coef(project_git, teams, window_days = 90)`
+
+Within each team, estimate the per-pair coordination cost as the
+share of commit time spent on cross-author files (proxy for
+context switches). Output: `(team_id, comm_coef_team)`; lifted
+project value = the median.
+
+**Why all three matter to the SD model.** `Team` calibrates the
+quadratic-in-team-size drag; `vet_frac` is the `rq()` control
+(mature-vs-startup arm); `comm_coef` scales the within-team
+overhead. Without the lift, `brooks_teams` runs only on
+literature-prior defaults (Team=8, vet_frac=0.8, comm_coef=0.005).
+
+
