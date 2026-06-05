@@ -135,6 +135,26 @@ B6. **Inventory + cleanup of the existing Drive bundle** — pair
     row per (model, project) into a new
     `outputs/behavior_check.csv`.
 
+11. **Surface R lift helpers on every model page** (2026-06-04).
+    Today every `docs/models/<name>.md` shows the SD model + lift
+    Rmd link but not the actual R helper functions the Rmd calls
+    from `sci4seng/lifts/R/functions.R`. brooks.md got the helpers
+    inlined by hand on 2026-06-04 as a sample
+    (`detect_late_hires` + `compute_velocity_changes`); next
+    `gen_md.py` run will clobber that edit.
+
+    Proper fix: add a per-model sidecar dir (e.g.
+    `docs/_notes/<name>.md` — plain markdown, no frontmatter) +
+    teach gen_md.py to inline the sidecar under a `## Notes` or
+    `## R lift helpers` section when present. Sidecars are
+    READ-only from gen_md's perspective, so hand-written notes
+    survive regen forever. Then back-fill the helper bodies for
+    the other 35 models (brooksq's SZZ helpers, debt's pay/born
+    rate helpers, etc.) from `lifts/R/functions.R` roxygen
+    blocks. Should also surface the helper's `#' @export`
+    docstring as the body, not paraphrased prose, so the page
+    stays a faithful mirror of the R source.
+
 ### Buildable today (15 candidates ranked in `docs/other.html`)
 4. **9 A-tier with HAVE-data** (ordered by paper impact):
    ownership, orgchurn, pareto, mirroring, little, entropy,

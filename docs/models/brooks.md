@@ -129,3 +129,30 @@ alias source.
 - Audit row: `paper/outputs/full_audit.csv` (line for `brooks`)
 - Lift Rmd: [`brooks_late_hire_velocity.Rmd`](https://github.com/sci4seng/lifts/blob/main/vignettes/brooks_late_hire_velocity.Rmd)
 
+## R lift helpers (kaiaulu-style)
+
+The lift Rmd above orchestrates `kaiaulu::parse_gitlog` +
+`kaiaulu::identity_match` and then calls two helpers in
+[`lifts/R/functions.R`](https://github.com/sci4seng/lifts/blob/main/R/functions.R)
+that are PR-ready for upstream contribution into kaiaulu:
+
+### `detect_late_hires(project_git, min_project_age_days = 365)`
+
+Find every developer whose first commit lands at least
+`min_project_age_days` after the project's first commit. Returns
+one row per late hire with the join date and days-after-start.
+Identity is taken from `identity_id` when available, otherwise
+the raw `author_name_email`.
+[source](https://github.com/sci4seng/lifts/blob/main/R/functions.R#L30)
+
+### `compute_velocity_changes(project_git, late_hires, window_days = 90)`
+
+For each late hire, slice the gitlog into a symmetric pre / post
+window around the join date and tally veteran commit rates
+(veterans = developers who joined strictly before the hire, so
+the cohort doesn't count its own commits). The downstream
+`brooks_tax = (pre_velocity - post_velocity) / pre_velocity`
+captures the relative velocity drop that Brooks predicts.
+[source](https://github.com/sci4seng/lifts/blob/main/R/functions.R#L65)
+
+
