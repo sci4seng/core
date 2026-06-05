@@ -57,5 +57,4 @@ Cell: [`universal`](../glossary.md#universal "Both inputs and params CONFIRM") &
 
 - SD model: `paper/sd.py::ownership()`
 - Audit row: `paper/outputs/full_audit.csv` (line for `ownership`)
-- Lift Rmd: [`lift_ownership.Rmd`](https://github.com/sci4seng/lifts/blob/main/vignettes/lift_ownership.Rmd)
 

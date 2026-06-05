@@ -267,26 +267,25 @@ def render_model(name, audit, idx):
     out.append("## Source\n\n")
     out.append(f"- SD model: `paper/sd.py::{name}()`\n")
     out.append(f"- Audit row: `paper/outputs/full_audit.csv` (line for `{name}`)\n")
-    if lf or vstems:
-        # Emit hyperlinks to every shipped vignette so the model
-        # page connects out to the lift rules (clickable on the
-        # site, not just code-quoted strings).
-        link_stems = vstems or [f"lift_{name}"]
-        if len(link_stems) == 1:
+    # Only link to vignettes that actually exist on disk — the
+    # earlier fallback ('lift_{name}') 404'd for models like
+    # ownership that ship a Python lift but no .Rmd wrap.
+    link_stems = [s for s in vstems if (VIG / f"{s}.Rmd").exists()]
+    if len(link_stems) == 1:
+        out.append(
+            f"- Lift Rmd: "
+            f"[`{link_stems[0]}.Rmd`]"
+            f"(https://github.com/sci4seng/lifts/blob/main/"
+            f"vignettes/{link_stems[0]}.Rmd)\n"
+        )
+    elif link_stems:
+        out.append("- Lift Rmds:\n")
+        for stem in link_stems:
             out.append(
-                f"- Lift Rmd: "
-                f"[`{link_stems[0]}.Rmd`]"
+                f"  - [`{stem}.Rmd`]"
                 f"(https://github.com/sci4seng/lifts/blob/main/"
-                f"vignettes/{link_stems[0]}.Rmd)\n"
+                f"vignettes/{stem}.Rmd)\n"
             )
-        else:
-            out.append("- Lift Rmds:\n")
-            for stem in link_stems:
-                out.append(
-                    f"  - [`{stem}.Rmd`]"
-                    f"(https://github.com/sci4seng/lifts/blob/main/"
-                    f"vignettes/{stem}.Rmd)\n"
-                )
     out.append("\n")
     return "".join(out)
 
